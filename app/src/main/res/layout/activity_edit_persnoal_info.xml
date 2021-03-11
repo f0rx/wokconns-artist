@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/action_bar_menus"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="@color/colorPrimary"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/llBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/back"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <com.wokconns.wokconns.utils.CustomTextViewBold
+                    android:id="@+id/tvHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/my_profile"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/action_bar_menus">
+
+                <ImageView
+                    android:id="@+id/ivBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_120sdp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/banner_img" />
+
+                <LinearLayout
+                    android:id="@+id/ll_banner"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:background="@drawable/shape_for_round"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center">
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_camera" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_120sdp"
+                android:elevation="8dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civProfile"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="start"
+                        android:src="@drawable/dummyuser_image"
+                        app:civ_border_color="@color/white"
+                        app:civ_border_width="5dp" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_profile_photo"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="@dimen/_60sdp"
+                        android:background="@drawable/shape_for_round"
+                        android:elevation="@dimen/_2sdp"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:src="@drawable/ic_camera" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rl_banner"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_60sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:orientation="vertical">
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_name"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_name_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etNameD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:hint="@string/your_name"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/artist_category"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_category_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etCategoryD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:drawableEnd="@drawable/ic_drop_down"
+                    android:editable="false"
+                    android:hint="@string/select_your_speciality"
+                    android:padding="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/artist_city"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_city_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etCityD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:hint="@string/your_city"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/your_country"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/your_country"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/et_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:hint="@string/your_country"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/artist_location"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_location_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etLocationD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:drawableEnd="@drawable/ic_placeholder"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:hint="@string/your_location"
+                    android:padding="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/artist_rate"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_rate_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.wokconns.wokconns.utils.CustomAutoCompleteTextView
+                        android:id="@+id/et_currency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edittext_bg_profile"
+                        android:drawableEnd="@drawable/ic_drop_down"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:hint="@string/currency_msg"
+                        android:inputType="number"
+                        android:padding="@dimen/_7sdp"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textSize="@dimen/_13sdp" />
+
+                    <com.wokconns.wokconns.utils.CustomEditText
+                        android:id="@+id/etRateD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_bg_profile"
+                        android:drawableEnd="@drawable/ic_dollar"
+                        android:hint="@string/my_rate"
+                        android:inputType="number"
+                        android:maxLength="4"
+                        android:padding="@dimen/_7sdp"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textSize="@dimen/_13sdp" />
+                </LinearLayout>
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/your_bio"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_bio_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etBioD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:gravity="top"
+                    android:hint="@string/your_bio"
+                    android:maxLength="40"
+                    android:padding="@dimen/_7sdp"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/bioLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="2dp"
+                    android:text="" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text="@string/your_description"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_14sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/your_description_msg"
+                    android:textColor="@color/black_off"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/etAboutD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg_profile"
+                    android:gravity="top"
+                    android:hint="@string/write_description"
+                    android:inputType="textMultiLine"
+                    android:maxEms="200"
+                    android:maxLength="200"
+                    android:maxLines="6"
+                    android:minLines="3"
+                    android:padding="@dimen/_7sdp"
+                    android:text=""
+                    android:textSize="@dimen/_13sdp" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/aboutLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="2dp"
+                    android:text="" />
+
+
+                <com.wokconns.wokconns.utils.CustomTextViewBold
+                    android:id="@+id/tvText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/black" />
+
+                <com.wokconns.wokconns.utils.CustomButton
+                    android:id="@+id/btnSubmit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/button_selector2"
+                    android:gravity="center"
+                    android:text="@string/submit"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

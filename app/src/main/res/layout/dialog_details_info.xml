@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.wokconns.wokconns.utils.CustomTextViewBold
+                    android:id="@+id/ctvbTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/profile_details"
+                    android:textColor="@color/black_off"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/red" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <com.wokconns.wokconns.utils.InputOpenFieldView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <com.wokconns.wokconns.utils.CustomEditText
+                        android:id="@+id/etNameSelfD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/full_name"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textSize="@dimen/_11sdp" />
+
+                </com.wokconns.wokconns.utils.InputOpenFieldView>
+
+                <com.wokconns.wokconns.utils.InputFieldView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <com.wokconns.wokconns.utils.CustomEditText
+                        android:id="@+id/etEmailD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:hint="@string/email_address"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textSize="@dimen/_11sdp" />
+
+                </com.wokconns.wokconns.utils.InputFieldView>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/ccp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        app:ccp_countryAutoDetectionPref="SIM_NETWORK_LOCALE"
+                        app:ccp_countryPreference="IN"
+                        app:ccp_defaultNameCode="in"
+                        app:ccp_hintExampleNumber="true"
+                        app:ccp_hintExampleNumberType="MOBILE"
+                        app:ccp_textSize="16sp" />
+
+                    <com.wokconns.wokconns.utils.InputOpenFieldView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp">
+
+                        <com.wokconns.wokconns.utils.CustomEditText
+                            android:id="@+id/etMobileD"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/mobile_number"
+                            android:inputType="number"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textSize="@dimen/_11sdp" />
+
+                    </com.wokconns.wokconns.utils.InputOpenFieldView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_gender_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@string/gender"
+                        android:textSize="14sp" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_gender_options"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_gender_female"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:checked="true"
+                            android:text="@string/female"
+                            android:textColor="@drawable/app_radio_button_selector"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_gender_male"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:checked="false"
+                            android:text="@string/male"
+                            android:textColor="@drawable/app_radio_button_selector"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_other"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:checked="false"
+                            android:text="@string/other"
+                            android:textColor="@drawable/app_radio_button_selector"
+                            android:textSize="14sp" />
+
+                    </RadioGroup>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="35dp"
+                android:background="@color/quantum_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.wokconns.wokconns.utils.CustomTextViewBold
+                    android:id="@+id/tv_submit"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="@string/submit"
+                    android:textColor="@color/black_off"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

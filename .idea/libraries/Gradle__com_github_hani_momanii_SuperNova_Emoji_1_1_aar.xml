@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.hani-momanii:SuperNova-Emoji:1.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1fd3c5d7e2f3d1a29f86009e0c0d5060/jetified-SuperNova-Emoji-1.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1fd3c5d7e2f3d1a29f86009e0c0d5060/jetified-SuperNova-Emoji-1.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1fd3c5d7e2f3d1a29f86009e0c0d5060/jetified-SuperNova-Emoji-1.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76fcc5c79acf0f4d719edb133d3dbc5b/jetified-SuperNova-Emoji-1.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76fcc5c79acf0f4d719edb133d3dbc5b/jetified-SuperNova-Emoji-1.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76fcc5c79acf0f4d719edb133d3dbc5b/jetified-SuperNova-Emoji-1.1/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.hani-momanii/SuperNova-Emoji/1.1/a51ed55a78c8843d70f32d27f6a363213565c96/SuperNova-Emoji-1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.fragment.NewBookings">
+
+        <RelativeLayout
+            android:id="@+id/rlSearch"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            android:visibility="gone">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/search_back"
+                app:cardCornerRadius="5dp">
+
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/svSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/search_back"
+                    android:focusable="false"
+                    android:paddingStart="3dp"
+                    app:defaultQueryHint="@string/search_by_cus"
+                    app:iconifiedByDefault="false"
+                    app:theme="@style/AppSearchView">
+
+
+                </androidx.appcompat.widget.SearchView>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/rlSearch">
+
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBooking"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <com.wokconns.wokconns.utils.CustomTextViewBold
+                android:id="@+id/tvNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/no_booking_found"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+        <com.wokconns.wokconns.utils.CustomTextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="25dp"
+            android:layout_toStartOf="@+id/fab"
+            android:text=""
+            android:textColor="@color/black" />
+
+        <!-- Your FAB implementation -->
+        <com.wokconns.wokconns.utils.Fab
+            android:id="@+id/fab"
+            style="@style/Widget.MaterialSheetFab.Fab"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp" />
+
+        <!-- Overlay that dims the screen -->
+        <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Circular reveal container for the sheet -->
+        <io.codetail.widget.RevealLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end|bottom"
+            android:orientation="vertical">
+
+            <!-- Sheet that contains your items -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/fab_sheet"
+                style="@style/Widget.MaterialSheetFab.Sheet">
+
+                <!-- Sheet items -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Recording -->
+                    <com.wokconns.wokconns.utils.CustomTextView
+                        android:id="@+id/tvPendings"
+                        style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
+                        android:text="@string/pendings" />
+
+                    <!-- Reminder -->
+                    <com.wokconns.wokconns.utils.CustomTextView
+                        android:id="@+id/tvAccepted"
+                        style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
+                        android:text="@string/accepted" />
+
+                    <!-- Photo -->
+                    <com.wokconns.wokconns.utils.CustomTextView
+                        android:id="@+id/tvRejected"
+                        style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
+                        android:text="@string/rejected" />
+
+                    <com.wokconns.wokconns.utils.CustomTextView
+                        android:id="@+id/tvCompleted"
+                        style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
+                        android:text="@string/completed" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </io.codetail.widget.RevealLinearLayout>
+    </RelativeLayout>
+</layout>

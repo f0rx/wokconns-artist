@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp"
+        card_view:cardBackgroundColor="@color/white"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <com.wokconns.wokconns.utils.CustomTextViewBold
+                android:id="@+id/CTVBservice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <LinearLayout
+                android:id="@+id/llStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvTxt"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/rectangle_orange">
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="@string/pending"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <com.wokconns.wokconns.utils.CustomTextView
+                android:id="@+id/CTVdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/CTVBservice"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                android:textSize="@dimen/_12sdp" />
+
+            <com.wokconns.wokconns.utils.CustomTextViewSemiBold
+                android:id="@+id/CTVprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/llStatus"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                android:textColor="@color/green"
+                android:textSize="@dimen/_12sdp"/>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/CTVprice"
+                android:layout_marginTop="5dp"
+                android:background="@color/gray" />
+
+            <RelativeLayout
+                android:id="@+id/RRview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="8dp">
+
+                <com.wokconns.wokconns.utils.CustomTextViewBold
+                    android:id="@+id/CTVBser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/services_type" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/CTVServicetype"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/CTVBser"
+                    android:text=""
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/RRview"
+                android:layout_marginTop="15dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    app:cardCornerRadius="@dimen/_8sdp">
+
+                    <ImageView
+                        android:id="@+id/IVprofile"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:src="@drawable/dummyuser_image" />
+                </androidx.cardview.widget.CardView>
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/CTVwork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/card_image"
+                    android:text=""
+                    android:textAllCaps="true" />
+
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/CTVname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/CTVwork"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/card_image"
+                    android:text="" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:visibility="gone"
+                    android:id="@+id/CTVTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/CTVname"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="15dp"
+                    android:text=""
+                    android:textColor="@color/colorPrimary" />
+
+                <com.wokconns.wokconns.utils.CustomTextView
+                    android:id="@+id/tvView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/CTVname"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:padding="5dp"
+                    android:text="@string/view_invoice" />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

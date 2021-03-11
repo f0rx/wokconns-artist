@@ -1,11 +1,7 @@
 package com.wokconns.wokconns.interfacess;
 
-/**
- * Created by VARUN on 01/01/19.
- */
-
 public interface Consts {
-    String APP_NAME = "WOKCONNS";
+    String APP_NAME = "Artisan";
     //old 677440
     String BASE_URL = "https://wms.wokconns.com/Webservice/";
     String PAYMENT_FAIL = "https://wms.wokconns.com/Stripe/Payment/fail";

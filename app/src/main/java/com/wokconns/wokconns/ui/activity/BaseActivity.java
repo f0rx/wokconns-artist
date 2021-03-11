@@ -297,13 +297,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
 
-        menuLeftIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                drawerOpen();
-            }
-        });
+        menuLeftIV.setOnClickListener(v -> drawerOpen());
 
         setUpNavigationView();
         Menu menu = navigationView.getMenu();

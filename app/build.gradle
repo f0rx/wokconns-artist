@@ -1,12 +1,29 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def prodStoreFile = keystoreProperties.getProperty('prod.file')
+def prodStorePassword = keystoreProperties.getProperty('prod.storePassword')
+def prodKeyAlias = keystoreProperties.getProperty('prod.alias')
+def prodKeyPassword = keystoreProperties.getProperty('prod.keyPassword')
+
 android {
     buildFeatures {
         dataBinding = true
     }
 
     compileSdkVersion 30
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 
     defaultConfig {
         applicationId "com.wokconns.wokconns"
@@ -30,6 +47,13 @@ android {
             keyAlias "debugKey"
             keyPassword "android"
         }
+
+        release {
+            storeFile rootProject.file(prodStoreFile)
+            storePassword prodStorePassword
+            keyAlias prodKeyAlias
+            keyPassword prodKeyPassword
+        }
     }
 
     buildTypes {
@@ -40,12 +64,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
-        }
-
-        lintOptions {
-            checkReleaseBuilds false
-            abortOnError false
+            signingConfig signingConfigs.release
         }
     }
     ext {

@@ -150,6 +150,8 @@
     <string name="review_by">Review By</string>
     <string name="add_title">Add Title</string>
     <string name="enter_title">Enter Title</string>
+    <string name="createnote">Create note</string>
+    <string name="semi_transparent">#50000000</string>
 
     <string name="cancel1">Cancel</string>
     <string name="add">Add</string>

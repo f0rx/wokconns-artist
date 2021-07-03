@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     buildFeatures {
@@ -97,6 +98,4 @@ android {
         implementation 'com.hbb20:ccp:2.3.8'
 
     }
-
-    apply plugin: 'com.google.gms.google-services'
 }

@@ -12,10 +12,10 @@
         android:id="@+id/ivLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="false"
+        android:layout_centerHorizontal="true"
         android:scaleType="centerInside"
-        android:layout_marginTop="60dp"
-        android:src="@drawable/logo_fab" />
+        android:layout_marginTop="50dp"
+        android:src="@drawable/logo" />
 
 
     <LinearLayout

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FabArtist</string>
+    <string name="app_name">Artisan</string>
     <string name="permission_pick_rationale">مطلوب إذن READ_EXTERNAL_STORAGE لاختيار الصورة.</string>
     <string name="permission_crop_rationale">مطلوب إذن WRITE_EXTERNAL_STORAGE لحفظ الصورة التي تم اقتصاصها.</string>
     <string name="button_allow">السماح</string>
@@ -150,6 +150,8 @@
     <string name="review_by">مراجعة بواسطة</string>
     <string name="add_title">إضافة عنوان</string>
     <string name="enter_title">أدخل العنوان</string>
+    <string name="createnote">Create note</string>
+    <string name="semi_transparent">#50000000</string>
 
     <string name="cancel1">إلغاء</string>
     <string name="add">أضف</string>

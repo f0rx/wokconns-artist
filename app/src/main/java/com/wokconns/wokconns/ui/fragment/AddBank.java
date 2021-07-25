@@ -1,5 +1,6 @@
 package com.wokconns.wokconns.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
@@ -17,9 +18,10 @@ import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.wokconns.wokconns.dto.UserDTO;
+import com.schibstedspain.leku.LocationPickerActivity;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentAddBankBinding;
+import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.interfacess.Helper;
@@ -27,7 +29,6 @@ import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
-import com.schibstedspain.leku.LocationPickerActivity;
 
 import org.json.JSONObject;
 
@@ -69,7 +70,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
     public void setUiAction() {
         binding.back.setOnClickListener(this);
         binding.btnSubmit.setOnClickListener(this);
-        binding.etBranchAddress.setOnClickListener(this);
+//        binding.etBranchAddress.setOnClickListener(this);
 
         paramsGetAccount.put(Consts.ARTIST_ID, userDTO.getUser_id());
 
@@ -77,6 +78,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -90,9 +92,9 @@ public class AddBank extends Fragment implements View.OnClickListener {
                     baseActivity.drawer.openDrawer(GravityCompat.START);
                 }
                 break;
-            case R.id.et_branch_address:
-                findPlace();
-                break;
+//            case R.id.et_branch_address:
+//                findPlace();
+//                break;
         }
     }
 
@@ -108,7 +110,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
                         binding.etAccountNumber.setText(response.getJSONObject("data").getString("account_no"));
                         binding.etBranchCode.setText(response.getJSONObject("data").getString("ifsc_code"));
                         binding.etNameCard.setText(response.getJSONObject("data").getString("account_holder_name"));
-                        binding.etBranchAddress.setText(response.getJSONObject("data").getString("bank_address"));
+//                        binding.etBranchAddress.setText(response.getJSONObject("data").getString("bank_address"));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -130,10 +132,6 @@ public class AddBank extends Fragment implements View.OnClickListener {
             return;
         } else if (!validateValue(binding.etNameCard, getResources().getString(R.string.enter_name_on_card))) {
             return;
-        } else if (!validateValue(binding.etBranchCode, getResources().getString(R.string.enter_branch_code))) {
-            return;
-        } else if (!validateValue(binding.etBranchAddress, getResources().getString(R.string.enter_branch_address))) {
-            return;
         } else {
             if (NetworkManager.isConnectToInternet(baseActivity)) {
                 addAccount();
@@ -149,24 +147,22 @@ public class AddBank extends Fragment implements View.OnClickListener {
         paramsAddAccount.put(Consts.ACCOUNT_NUMBER, ProjectUtils.getEditTextValue(binding.etAccountNumber));
         paramsAddAccount.put(Consts.IFSC_CODE, ProjectUtils.getEditTextValue(binding.etBranchCode));
         paramsAddAccount.put(Consts.ACCOUNT_HOLDER_NAME, ProjectUtils.getEditTextValue(binding.etNameCard));
-        paramsAddAccount.put(Consts.BANK_ADDRESS, ProjectUtils.getEditTextValue(binding.etBranchAddress));
+//        paramsAddAccount.put(Consts.BANK_ADDRESS, ProjectUtils.getEditTextValue(binding.etBranchAddress));
 
-        new HttpsRequest(Consts.ADD_ACCOUNT_DETAIL, paramsAddAccount, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(baseActivity, msg);
-                        getAccount();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        new HttpsRequest(Consts.ADD_ACCOUNT_DETAIL, paramsAddAccount, getActivity()).stringPost(TAG,
+                (flag, msg, response) -> {
+                    ProjectUtils.pauseProgressDialog();
+                    if (flag) {
+                        try {
+                            ProjectUtils.showToast(baseActivity, msg);
+                            getAccount();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
                     }
-                } else {}
-            }
-        });
+                });
     }
-
 
 
     public boolean validateValue(EditText editText, String message) {
@@ -207,7 +203,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
             // Toast.makeText(this, "Address=>" + add,
             // Toast.LENGTH_SHORT).show();
 
-            binding.etBranchAddress.setText(obj.getAddressLine(0));
+//            binding.etBranchAddress.setText(obj.getAddressLine(0));
 
 //            lats = lat;
 //            longs = lng;

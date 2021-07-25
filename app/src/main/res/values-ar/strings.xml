@@ -355,10 +355,11 @@
     <string name="enter_bank_name">يرجى إدخال اسم البنك الذي تتعامل معه</string>
     <string name="account_number">رقم الحساب</string>
     <string name="enter_bank_account">يرجى إدخال رقم الحساب المصرفي</string>
-    <string name="name_on_card">الاسم الموجود على البطاقة</string>
-    <string name="enter_name_on_card">يرجى إدخال الاسم على بطاقتك</string>
-    <string name="branch_code">رمز الفرع</string>
-    <string name="enter_branch_code">الرجاء إدخال رمز فرع البنك الذي تتعامل معه</string>
+    <string name="name_on_card">أسم الحساب</string>
+    <string name="enter_name_on_card">الرجاء إدخال اسم الحساب بالكامل
+        أو اسمك الكامل كما يظهر في بطاقة الخصم الخاصة بك *</string>
+    <string name="branch_code">كود فرز البنك</string>
+    <string name="enter_branch_code">أدخل رمز الفرز لهذا البنك (اختياري)</string>
     <string name="branch_address">عنوان الفرع</string>
     <string name="enter_branch_address">يرجى إدخال عنوان فرع البنك الذي تتعامل معه</string>
 

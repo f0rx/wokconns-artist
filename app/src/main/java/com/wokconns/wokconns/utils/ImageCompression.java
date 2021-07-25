@@ -10,7 +10,6 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
 
-
 import com.wokconns.wokconns.interfacess.Consts;
 
 import java.io.File;
@@ -18,22 +17,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by VARUN on 01/01/19.
- */
 public class ImageCompression extends AsyncTask<String, Void, String> {
 
-    private Context context;
+    private final Context context;
     private static final float maxHeight = 1280.0f;
     private static final float maxWidth = 1280.0f;
 
 
-    public ImageCompression(Context context){
-        this.context=context;
+    public ImageCompression(Context context) {
+        this.context = context;
     }
+
     public interface AsyncResponse {
         void processFinish(String imagePath);
     }
+
     public AsyncResponse delegate = null;
 
     public void setOnTaskFinishedEvent(AsyncResponse delegate) {
@@ -44,13 +42,13 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        if(strings.length == 0 || strings[0] == null)
+        if (strings.length == 0 || strings[0] == null)
             return null;
 
         return compressImage(strings[0]);
     }
 
-    protected void onPostExecute(String imagePath){
+    protected void onPostExecute(String imagePath) {
         // imagePath is path of new compressed image.
         if (delegate != null)
             this.delegate.processFinish(imagePath);
@@ -117,10 +115,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
 
-        if(bmp!=null)
-        {
-            bmp.recycle();
-        }
+        if (bmp != null) bmp.recycle();
 
         ExifInterface exif;
         try {
@@ -143,7 +138,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         try {
             out = new FileOutputStream(filepath);
 
-           //write the compressed bitmap at the destination specified by filename.
+            //write the compressed bitmap at the destination specified by filename.
             scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
 
         } catch (FileNotFoundException e) {
@@ -175,7 +170,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
 
     public String getFilename() {
 
-//        File file = new File(Environment.getExternalStorageDirectory()
+//        File file = new File(Environment.getExternalStorageDir∂ectory()
 //                .getPath(), Consts.POOCH_PLAY + File.separator + Consts.DATABASE);
 //        if (!file.exists()) {
 //            file.mkdirs();
@@ -185,16 +180,15 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
 //                + "/Android/data/"
 //                + context.getApplicationContext().getPackageName()
 //                + "/Files/Compressed");
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()+ File.separator+ Consts.APP_NAME);
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + File.separator + Consts.APP_NAME);
 
         // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
+        if (!mediaStorageDir.exists()) {
             mediaStorageDir.mkdirs();
         }
 
-        String mImageName="IMG_"+ String.valueOf(System.currentTimeMillis()) +".jpg";
-        String uriString = (mediaStorageDir.getAbsolutePath() + "/"+ mImageName);;
-        return uriString;
+        String mImageName = "IMG_" + System.currentTimeMillis() + ".jpg";
+        return (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
 
     }
 

@@ -37,7 +37,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private CustomEditText CETfirstname, CETemailadd, CETenterpassword, CETenterpassagain, etReferal;
     private CustomButton CBsignup;
     private CustomTextView CTVsignin;
-    private String TAG = SignUpActivity.class.getSimpleName();
+    private final String TAG = SignUpActivity.class.getSimpleName();
     private RelativeLayout RRsncbar;
     private SharedPrefrence prefrence;
     private UserDTO userDTO;

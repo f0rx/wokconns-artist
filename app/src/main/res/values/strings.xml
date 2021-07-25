@@ -10,8 +10,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="hindi">Hindi</string>
-    <string name="intro_1">Search your nearby Make-up Artist and Hair Stylish.</string>
-    <string name="intro_2">Make yourself more beautiful more than you think.</string>
+    <string name="intro_1">Search your nearby Make-up Artist and Hair Stylist.</string>
+    <string name="intro_2">Make yourself more beautiful than you think.</string>
     <string name="intro_3">Hire the best Photographer &amp; create your moment.</string>
     <string name="internet_concation">Please enable your internet connection.</string>
     <string name="server_error">Unable to connect server.</string>
@@ -359,11 +359,11 @@
     <string name="bank_name">Bank Name</string>
     <string name="enter_bank_name">Please enter the name of your bank</string>
     <string name="account_number">Account Number</string>
-    <string name="enter_bank_account">Please enter bank account number</string>
-    <string name="name_on_card">Name On Card</string>
-    <string name="enter_name_on_card">Please enter the name on your card</string>
-    <string name="branch_code">Branch Code</string>
-    <string name="enter_branch_code">Please enter branch code of your bank</string>
+    <string name="enter_bank_account">Please enter account number</string>
+    <string name="name_on_card">Account Name</string>
+    <string name="enter_name_on_card">Please enter full Account Name</string>
+    <string name="branch_code">Bank Sort Code</string>
+    <string name="enter_branch_code">Enter the sort code of this bank (Optional)</string>
     <string name="branch_address">Branch Address</string>
     <string name="enter_branch_address">Please enter branch address of your bank</string>
 

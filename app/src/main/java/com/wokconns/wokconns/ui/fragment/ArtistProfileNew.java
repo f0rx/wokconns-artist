@@ -1,6 +1,7 @@
 package com.wokconns.wokconns.ui.fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -410,7 +411,7 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
                 intent4.putExtra(Consts.ARTIST_DTO, artistDetailsDTO);
                 intent4.putExtra(Consts.CATEGORY_list, categoryDTOS);
                 startActivity(intent4);
-                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stay);
+                requireActivity().overridePendingTransition(R.anim.slide_up, R.anim.stay);
                 break;
             case R.id.iv_edit:
                 dialogForSubmit();
@@ -421,6 +422,7 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void dialogForSubmit() {
         dialog = new Dialog(baseActivity /*R.style.AlertDialogCustom*/);
 //        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -436,7 +438,7 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
         dialogBinding.etMobileD.setText(userDTO.getMobile());
 
         try {
-            dialogBinding.ccp.setDefaultCountryUsingPhoneCode(Integer.parseInt(userDTO.getCountry_code()));
+            dialogBinding.ccp.setDefaultCountryUsingNameCode("NG");
             dialogBinding.ccp.resetToDefaultCountry();
         } catch (Exception e) {
             e.printStackTrace();
@@ -457,59 +459,48 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
                 break;
         }
 
-        dialogBinding.tvSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (NetworkManager.isConnectToInternet(baseActivity)) {
+        dialogBinding.tvSubmit.setOnClickListener(v -> {
+            if (NetworkManager.isConnectToInternet(baseActivity)) {
 
-                    if (!ProjectUtils.isEditTextFilled(dialogBinding.etNameSelfD)) {
-                        ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_name));
-                        return;
-                    }
-                    if (!ProjectUtils.isEditTextFilled(dialogBinding.etEmailD)) {
-                        ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_email));
-                        return;
-                    }
-                    if (!ProjectUtils.isEditTextFilled(dialogBinding.etMobileD)) {
-                        ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_phone));
-                        return;
-                    } else {
-                        updateProfile();
-                    }
+                if (!ProjectUtils.isEditTextFilled(dialogBinding.etNameSelfD)) {
+                    ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_name));
+                    return;
+                }
+                if (!ProjectUtils.isEditTextFilled(dialogBinding.etEmailD)) {
+                    ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_email));
+                    return;
+                }
+                if (!ProjectUtils.isEditTextFilled(dialogBinding.etMobileD)) {
+                    ProjectUtils.showToast(baseActivity, getResources().getString(R.string.val_phone));
+                    return;
                 } else {
-
+                    updateProfile();
                 }
+            } else {
+
             }
         });
 
-        dialogBinding.ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialogBinding.ivClose.setOnClickListener(v -> dialog.dismiss());
 
 
-        dialogBinding.rgGenderOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.rb_gender_female:
-                        genderString = "female";
-                        break;
-                    case R.id.rb_gender_male:
-                        genderString = "male";
-                        break;
-                    case R.id.rb_other:
-                        genderString = "other";
-                        break;
-                }
+        dialogBinding.rgGenderOptions.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.rb_gender_female:
+                    genderString = "female";
+                    break;
+                case R.id.rb_gender_male:
+                    genderString = "male";
+                    break;
+                case R.id.rb_other:
+                    genderString = "other";
+                    break;
             }
         });
     }
 
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -557,19 +548,17 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
     }
 
     public void isOnline() {
-        new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showToast(getActivity(), msg);
-                    getArtist();
+        new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG,
+                (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showToast(getActivity(), msg);
+                getArtist();
 
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
-
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
@@ -645,28 +634,25 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(getActivity());
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        Log.e("image", imagePath);
+                        try {
+                            file = new File(imagePath);
+                            paramsFile = new HashMap<>();
+                            paramsFile.put(Consts.IMAGE, file);
                             Log.e("image", imagePath);
-                            try {
-                                file = new File(imagePath);
-                                paramsFile = new HashMap<>();
-                                paramsFile.put(Consts.IMAGE, file);
-                                Log.e("image", imagePath);
-                                params = new HashMap<>();
-                                params.put(Consts.USER_ID, userDTO.getUser_id());
-                                if (NetworkManager.isConnectToInternet(getActivity())) {
-                                    updateProfileSelf();
-                                } else {
-                                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                }
-
-
-                                Log.e("image", imagePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            params = new HashMap<>();
+                            params.put(Consts.USER_ID, userDTO.getUser_id());
+                            if (NetworkManager.isConnectToInternet(getActivity())) {
+                                updateProfileSelf();
+                            } else {
+                                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                             }
+
+
+                            Log.e("image", imagePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -708,27 +694,25 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
     }
 
     public void updateProfileSelf() {
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(getActivity(), msg);
-
-                        userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        baseActivity.showImage();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG,
+                (flag, msg, response) -> {
+            if (flag) {
+                try {
                     ProjectUtils.showToast(getActivity(), msg);
+
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    baseActivity.showImage();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
@@ -768,24 +752,22 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
         paramsUpdate.put(Consts.ID, artistDetailsDTO.getCurrency_id());
 
         ProjectUtils.showProgressDialog(baseActivity, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, baseActivity).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                dialog.dismiss();
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(baseActivity, msg);
-                        artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                        userDTO.setMobile(dialogBinding.etMobileD.getText().toString());
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, baseActivity).imagePost(TAG,
+                (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            dialog.dismiss();
+            if (flag) {
+                try {
                     ProjectUtils.showToast(baseActivity, msg);
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    userDTO.setMobile(dialogBinding.etMobileD.getText().toString());
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
         });
     }

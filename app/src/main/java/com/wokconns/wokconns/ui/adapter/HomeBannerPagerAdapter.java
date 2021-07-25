@@ -42,10 +42,15 @@ public class HomeBannerPagerAdapter extends PagerAdapter {
         binding.tvTitle.setText(bannerDTOArrayList.get(position).getTitle());
         binding.tvDescription.setText(bannerDTOArrayList.get(position).getDescription());
 
+//        Glide.with(mContext)
+//                .load(bannerDTOArrayList.get(position).getImage())
+//                .apply(new RequestOptions())
+//                .placeholder(R.drawable.ic_placeholder_white)
+//                .into(binding.ivImage);
+
         Glide.with(mContext)
-                .load(bannerDTOArrayList.get(position).getImage())
-                .apply(new RequestOptions())
-                .placeholder(R.drawable.ic_placeholder_white)
+                .load(R.drawable.home_banner)
+                .centerCrop()
                 .into(binding.ivImage);
 
         container.addView(itemView);

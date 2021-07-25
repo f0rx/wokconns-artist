@@ -10,14 +10,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,18 +21,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.databinding.DataBindingUtil;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.gms.location.places.Place;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.schibstedspain.leku.LocationPickerActivity;
+import com.wokconns.wokconns.R;
+import com.wokconns.wokconns.databinding.ActivityEditPersnoalInfoBinding;
 import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.CategoryDTO;
 import com.wokconns.wokconns.dto.CurrencyDTO;
 import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.databinding.ActivityEditPersnoalInfoBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.interfacess.Helper;
@@ -48,7 +48,6 @@ import com.wokconns.wokconns.utils.ImageCompression;
 import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
 import com.wokconns.wokconns.utils.SpinnerDialog;
-import com.schibstedspain.leku.LocationPickerActivity;
 
 import org.json.JSONObject;
 
@@ -696,25 +695,21 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
 
     public void updateProfile() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-
-                    try {
-                        ProjectUtils.showToast(mContext, msg);
-                        artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                        userDTO.setIs_profile(1);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        finish();
-                        overridePendingTransition(R.anim.stay, R.anim.slide_down);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
                     ProjectUtils.showToast(mContext, msg);
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    userDTO.setIs_profile(1);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    finish();
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }

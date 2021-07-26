@@ -20,12 +20,7 @@ public class Terms extends AppCompatActivity {
         setContentView(R.layout.activity_terms);
         mWebView = (WebView) findViewById(R.id.mWebView);
         rlclose = (RelativeLayout) findViewById(R.id.rlclose);
-        rlclose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        rlclose.setOnClickListener(v -> finish());
 
         mWebView.setWebViewClient(new MyBrowser());
         mWebView.getSettings().setLoadsImagesAutomatically(true);

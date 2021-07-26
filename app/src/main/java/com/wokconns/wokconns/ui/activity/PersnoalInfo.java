@@ -79,17 +79,14 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
         binding.rvQualification.setLayoutManager(mLayoutManagerQuali);
 
 
-        binding.switchRate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (compoundButton.isShown()) {
-                    if (b == true) {
-                        paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "0");
-                        chnageRate();
-                    } else {
-                        paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "1");
-                        chnageRate();
-                    }
+        binding.switchRate.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (compoundButton.isShown()) {
+                if (b == true) {
+                    paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "0");
+                    chnageRate();
+                } else {
+                    paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "1");
+                    chnageRate();
                 }
             }
         });
@@ -151,34 +148,25 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
         dialogEditQualification.show();
         dialogEditQualification.setCancelable(false);
 
-        binding1.tvNoQuali.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogEditQualification.dismiss();
-
-            }
-        });
+        binding1.tvNoQuali.setOnClickListener(v -> dialogEditQualification.dismiss());
         binding1.tvYesQuali.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
-                        paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(binding1.etQaulTitleD));
-                        paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(binding1.etQaulDesD));
+                v -> {
+                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
+                    paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(binding1.etQaulTitleD));
+                    paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(binding1.etQaulDesD));
 
-                        if (NetworkManager.isConnectToInternet(context)) {
-                            if (!ProjectUtils.isEditTextFilled(binding1.etQaulTitleD)) {
-                                ProjectUtils.showLong(context, getResources().getString(R.string.val_title1));
-                                return;
-                            } else if (!ProjectUtils.isEditTextFilled(binding1.etQaulDesD)) {
-                                ProjectUtils.showLong(context, getResources().getString(R.string.val_description));
-                                return;
-                            } else {
-                                addQualification();
-                            }
+                    if (NetworkManager.isConnectToInternet(context)) {
+                        if (!ProjectUtils.isEditTextFilled(binding1.etQaulTitleD)) {
+                            ProjectUtils.showLong(context, getResources().getString(R.string.val_title1));
+                            return;
+                        } else if (!ProjectUtils.isEditTextFilled(binding1.etQaulDesD)) {
+                            ProjectUtils.showLong(context, getResources().getString(R.string.val_description));
+                            return;
                         } else {
-                            ProjectUtils.showToast(context, getResources().getString(R.string.internet_concation));
+                            addQualification();
                         }
+                    } else {
+                        ProjectUtils.showToast(context, getResources().getString(R.string.internet_concation));
                     }
                 });
 
@@ -186,33 +174,27 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
 
     public void addQualification() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_QUALIFICATION_API, paramsUpdate, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
-                    parentFrag.getArtist();
-                    dialogEditQualification.dismiss();
-                } else {
-                    ProjectUtils.showToast(context, msg);
-                }
-
-
+        new HttpsRequest(Consts.ADD_QUALIFICATION_API, paramsUpdate, context).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
+                parentFrag.getArtist();
+                dialogEditQualification.dismiss();
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
+
+
         });
     }
 
     public void chnageRate() {
-        new HttpsRequest(Consts.CHANGE_COMMISSION_ARTIST_API, paramsRate, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showLong(context, msg);
-                    parentFrag.getArtist();
-                } else {
-                    ProjectUtils.showLong(context, msg);
-                }
+        new HttpsRequest(Consts.CHANGE_COMMISSION_ARTIST_API, paramsRate, context).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showLong(context, msg);
+                parentFrag.getArtist();
+            } else {
+                ProjectUtils.showLong(context, msg);
             }
         });
     }
@@ -239,27 +221,23 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
 
     public void updateProfileSelf() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(context, msg);
-                        userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        showDataSelf();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, context).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
                     ProjectUtils.showToast(context, msg);
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    showDataSelf();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
+
 
         });
     }

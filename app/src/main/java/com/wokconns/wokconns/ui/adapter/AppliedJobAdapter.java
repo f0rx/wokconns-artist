@@ -5,6 +5,7 @@ package com.wokconns.wokconns.ui.adapter;
  */
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,7 +68,7 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public AppliedJobAdapter(AppliedJobsFrag appliedJobsFrag, ArrayList<AppliedJobDTO> objects, UserDTO userDTO, LayoutInflater inflater) {
         this.appliedJobsFrag = appliedJobsFrag;
         this.objects = objects;
-        this.appliedJobDTOSList = new ArrayList<AppliedJobDTO>();
+        this.appliedJobDTOSList = new ArrayList<>();
         this.appliedJobDTOSList.addAll(objects);
         this.userDTO = userDTO;
         this.mContext = appliedJobsFrag.getActivity();
@@ -94,6 +95,7 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holderMain, final int position) {
         if (holderMain instanceof MyViewHolder) {
@@ -111,24 +113,21 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.appliedJobBinding.tvTitle.setText(objects.get(position).getTitle());
             holder.appliedJobBinding.tvPrice.setText(objects.get(position).getCurrency_symbol() + objects.get(position).getPrice());
 
-            holder.appliedJobBinding.tvMobile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (ProjectUtils.hasPermissionInManifest(mContext, CALL_PERMISSION, Manifest.permission.CALL_PHONE)) {
-                        if (objects.get(position).getUser_mobile().equalsIgnoreCase("")) {
-                            ProjectUtils.showToast(mContext, mContext.getResources().getString(R.string.mobile_no_not));
-                        } else {
-                            try {
-                                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:" + objects.get(position).getUser_mobile()));
-                                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                    return;
-                                }
-                                appliedJobsFrag.startActivity(callIntent);
-
-                            } catch (Exception e) {
-                                Log.e("Exception", "" + e);
+            holder.appliedJobBinding.tvMobile.setOnClickListener(v -> {
+                if (ProjectUtils.hasPermissionInManifest(mContext, CALL_PERMISSION, Manifest.permission.CALL_PHONE)) {
+                    if (objects.get(position).getUser_mobile().equalsIgnoreCase("")) {
+                        ProjectUtils.showToast(mContext, mContext.getResources().getString(R.string.mobile_no_not));
+                    } else {
+                        try {
+                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            callIntent.setData(Uri.parse("tel:" + objects.get(position).getUser_mobile()));
+                            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                return;
                             }
+                            appliedJobsFrag.startActivity(callIntent);
+
+                        } catch (Exception e) {
+                            Log.e("Exception", "" + e);
                         }
                     }
                 }
@@ -173,28 +172,22 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
 
 
-            holder.appliedJobBinding.llDecline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    params = new HashMap<>();
-                    params.put(Consts.AJ_ID, objects.get(position).getAj_id());
-                    params.put(Consts.STATUS, "3");
-                    rejectDialog(mContext.getResources().getString(R.string.reject), mContext.getResources().getString(R.string.reject_msg));
-                }
+            holder.appliedJobBinding.llDecline.setOnClickListener(v -> {
+                params = new HashMap<>();
+                params.put(Consts.AJ_ID, objects.get(position).getAj_id());
+                params.put(Consts.STATUS, "3");
+                rejectDialog(mContext.getResources().getString(R.string.reject), mContext.getResources().getString(R.string.reject_msg));
             });
 
-            holder.appliedJobBinding.llStart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    paramsStart = new HashMap<>();
-                    paramsStart.put(Consts.USER_ID, objects.get(position).getUser_id());
-                    paramsStart.put(Consts.ARTIST_ID, objects.get(position).getArtist_id());
-                    paramsStart.put(Consts.DATE_STRING, sdf1.format(date).toString().toUpperCase());
-                    paramsStart.put(Consts.TIMEZONE, timeZone.format(date));
-                    paramsStart.put(Consts.PRICE, objects.get(position).getPrice());
-                    paramsStart.put(Consts.JOB_ID, objects.get(position).getJob_id());
-                    startDialog(mContext.getResources().getString(R.string.start), mContext.getResources().getString(R.string.start_app));
-                }
+            holder.appliedJobBinding.llStart.setOnClickListener(v -> {
+                paramsStart = new HashMap<>();
+                paramsStart.put(Consts.USER_ID, objects.get(position).getUser_id());
+                paramsStart.put(Consts.ARTIST_ID, objects.get(position).getArtist_id());
+                paramsStart.put(Consts.DATE_STRING, sdf1.format(date).toString().toUpperCase());
+                paramsStart.put(Consts.TIMEZONE, timeZone.format(date));
+                paramsStart.put(Consts.PRICE, objects.get(position).getPrice());
+                paramsStart.put(Consts.JOB_ID, objects.get(position).getJob_id());
+                startDialog(mContext.getResources().getString(R.string.start), mContext.getResources().getString(R.string.start_app));
             });
 
         } else {
@@ -237,34 +230,28 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void reject() {
 
-        new HttpsRequest(Consts.JOB_STATUS_ARTIST_API, params, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
-                    dialog_book.dismiss();
-                    appliedJobsFrag.getjobs();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
+        new HttpsRequest(Consts.JOB_STATUS_ARTIST_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
+                dialog_book.dismiss();
+                appliedJobsFrag.getjobs();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }
 
     public void startJob() {
-        new HttpsRequest(Consts.START_JOB_API, paramsStart, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
-                    dialog_book.dismiss();
-                    appliedJobsFrag.gotos();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
-
-
+        new HttpsRequest(Consts.START_JOB_API, paramsStart, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
+                dialog_book.dismiss();
+                appliedJobsFrag.gotos();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
+
+
         });
     }
 
@@ -275,21 +262,12 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .setTitle(title)
                     .setMessage(msg)
                     .setCancelable(false)
-                    .setPositiveButton(mContext.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            reject();
+                    .setPositiveButton(mContext.getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        reject();
 
-                        }
                     })
-                    .setNegativeButton(mContext.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(mContext.getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {
@@ -304,21 +282,12 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .setTitle(title)
                     .setMessage(msg)
                     .setCancelable(false)
-                    .setPositiveButton(mContext.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            startJob();
+                    .setPositiveButton(mContext.getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        startJob();
 
-                        }
                     })
-                    .setNegativeButton(mContext.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(mContext.getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {

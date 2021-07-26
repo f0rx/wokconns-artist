@@ -219,12 +219,7 @@ public class ProjectUtils {
             title = context.getResources().getString(R.string.app_name);
 
         if (OK == null)
-            OK = new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    hideDialog();
-                }
-            };
+            OK = (paramDialogInterface, paramInt) -> hideDialog();
 
         if (dialog == null) {
             Builder builder = new Builder(context);
@@ -260,22 +255,10 @@ public class ProjectUtils {
             title = context.getResources().getString(R.string.app_name);
 
         if (OK == null)
-            OK = new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface paramDialogInterface,
-                                    int paramInt) {
-                    hideDialog();
-                }
-            };
+            OK = (paramDialogInterface, paramInt) -> hideDialog();
 
         if (cancel == null)
-            cancel = new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface paramDialogInterface,
-                                    int paramInt) {
-                    hideDialog();
-                }
-            };
+            cancel = (paramDialogInterface, paramInt) -> hideDialog();
 
         if (dialog == null) {
             Builder builder = new Builder(context);
@@ -503,13 +486,7 @@ public class ProjectUtils {
 
         //On Pressing Setting button
         alertDialog.setPositiveButton("Ok",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 

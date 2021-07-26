@@ -56,12 +56,9 @@ public class PaymetWeb extends AppCompatActivity {
 
     private void init() {
         IVback = (ImageView) findViewById(R.id.IVback);
-        IVback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.click_event));
-                finish();
-            }
+        IVback.setOnClickListener(view -> {
+            view.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.click_event));
+            finish();
         });
     }
 

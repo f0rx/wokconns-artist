@@ -119,75 +119,66 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
         });*/
 
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                                            swipeRefreshLayout.setRefreshing(true);
-                                            getjobs();
+        swipeRefreshLayout.post(() -> {
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                swipeRefreshLayout.setRefreshing(true);
+                getjobs();
 
-                                        } else {
-                                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
 
 
-        baseActivity.ivSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        baseActivity.ivSearch.setOnClickListener(v1 -> {
 
-                if (NetworkManager.isConnectToInternet(getActivity())) {
-                    if (rlSearch.getVisibility() == View.VISIBLE) {
-                        ProjectUtils.hideKeyboard(getActivity());
-                        baseActivity.ivSearch.setImageResource(R.drawable.ic_search_white);
-                        rlSearch.setVisibility(View.GONE);
-                    } else {
-                        baseActivity.ivSearch.setImageResource(R.drawable.ic_close_circle);
-                        rlSearch.setVisibility(View.VISIBLE);
-
-                    }
-
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                if (rlSearch.getVisibility() == View.VISIBLE) {
+                    ProjectUtils.hideKeyboard(getActivity());
+                    baseActivity.ivSearch.setImageResource(R.drawable.ic_search_white);
+                    rlSearch.setVisibility(View.GONE);
                 } else {
-                    ProjectUtils.showToast(getActivity(), getString(R.string.internet_concation));
+                    baseActivity.ivSearch.setImageResource(R.drawable.ic_close_circle);
+                    rlSearch.setVisibility(View.VISIBLE);
+
                 }
 
-
+            } else {
+                ProjectUtils.showToast(getActivity(), getString(R.string.internet_concation));
             }
+
+
         });
 
     }
 
     public void getjobs() {
-        new HttpsRequest(Consts.GET_APPLIED_JOB_ARTIST_API, getparm(), getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    tvNo.setVisibility(View.GONE);
-                    RVhistorylist.setVisibility(View.VISIBLE);
-                    baseActivity.ivSearch.setVisibility(View.VISIBLE);
-                    try {
-                        appliedJobDTOSList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<AppliedJobDTO>>() {
-                        }.getType();
-                        appliedJobDTOSList = (ArrayList<AppliedJobDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+        new HttpsRequest(Consts.GET_APPLIED_JOB_ARTIST_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                tvNo.setVisibility(View.GONE);
+                RVhistorylist.setVisibility(View.VISIBLE);
+                baseActivity.ivSearch.setVisibility(View.VISIBLE);
+                try {
+                    appliedJobDTOSList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<AppliedJobDTO>>() {
+                    }.getType();
+                    appliedJobDTOSList = (ArrayList<AppliedJobDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
 
-                        if (appliedJobDTOSList != null) {
-                            showData();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (appliedJobDTOSList != null) {
+                        showData();
                     }
-
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    RVhistorylist.setVisibility(View.GONE);
-                    baseActivity.ivSearch.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                RVhistorylist.setVisibility(View.GONE);
+                baseActivity.ivSearch.setVisibility(View.GONE);
             }
         });
     }

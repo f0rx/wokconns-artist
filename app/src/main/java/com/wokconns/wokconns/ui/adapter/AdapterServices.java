@@ -94,12 +94,9 @@ public class AdapterServices extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(myViewHolder.binding.IVproduct);
 
-            myViewHolder.binding.ivDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    parms.put(Consts.PRODUCT_ID, productDTOList.get(position).getId());
-                    deleteDialog();
-                }
+            myViewHolder.binding.ivDelete.setOnClickListener(v -> {
+                parms.put(Consts.PRODUCT_ID, productDTOList.get(position).getId());
+                deleteDialog();
             });
         }
     }
@@ -145,21 +142,12 @@ public class AdapterServices extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .setTitle(context.getResources().getString(R.string.delete_service))
                     .setMessage(context.getResources().getString(R.string.delete_service_msg))
                     .setCancelable(false)
-                    .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            deleteGallery();
+                    .setPositiveButton(context.getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        deleteGallery();
 
-                        }
                     })
-                    .setNegativeButton(context.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(context.getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {
@@ -168,16 +156,13 @@ public class AdapterServices extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void deleteGallery() {
-        new HttpsRequest(Consts.DELETE_PRODUCT_API, parms, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    if (type.equalsIgnoreCase("services")) {
-                        ((Services) context).getArtist();
-                    }
-                } else {
-                    ProjectUtils.showLong(context, msg);
+        new HttpsRequest(Consts.DELETE_PRODUCT_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                if (type.equalsIgnoreCase("services")) {
+                    ((Services) context).getArtist();
                 }
+            } else {
+                ProjectUtils.showLong(context, msg);
             }
         });
     }

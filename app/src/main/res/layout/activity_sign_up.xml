@@ -16,7 +16,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/ivLogo"
@@ -43,7 +43,8 @@
                     android:background="@drawable/edittext_background"
                     android:hint="@string/first_name"
                     android:inputType="textCapWords"
-                    android:paddingStart="20dp"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingEnd="@dimen/_20sdp"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="@color/editketext" />
@@ -56,11 +57,25 @@
                     android:background="@drawable/edittext_background"
                     android:hint="@string/email_address1"
                     android:inputType="textEmailAddress"
-                    android:paddingStart="20dp"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingEnd="@dimen/_20sdp"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="@color/editketext" />
 
+                <com.wokconns.wokconns.utils.CustomEditText
+                    android:id="@+id/mobileNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_background"
+                    android:hint="@string/mobile_number"
+                    android:inputType="phone"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingEnd="@dimen/_20sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/editketext" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -76,7 +91,8 @@
                         android:background="@android:color/transparent"
                         android:hint="@string/enter_password"
                         android:inputType="textPassword"
-                        android:paddingStart="20dp"
+                        android:paddingStart="@dimen/_20sdp"
+                        android:paddingEnd="@dimen/_20sdp"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textColorHint="@color/editketext" />
@@ -108,7 +124,8 @@
                         android:drawablePadding="10dp"
                         android:hint="@string/enter_password_again"
                         android:inputType="textPassword"
-                        android:paddingStart="20dp"
+                        android:paddingStart="@dimen/_20sdp"
+                        android:paddingEnd="@dimen/_20sdp"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textColorHint="@color/editketext" />
@@ -133,7 +150,8 @@
                     android:background="@drawable/edittext_background"
                     android:hint="@string/referal"
                     android:inputType="text"
-                    android:paddingStart="20dp"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingEnd="@dimen/_20sdp"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="@color/editketext" />
@@ -249,6 +267,6 @@
         android:id="@+id/RRsncbar"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_alignParentBottom="true"></RelativeLayout>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

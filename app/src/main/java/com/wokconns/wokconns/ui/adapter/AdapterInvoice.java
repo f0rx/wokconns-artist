@@ -4,6 +4,7 @@ package com.wokconns.wokconns.ui.adapter;
  * Created by VARUN on 01/01/19.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class AdapterInvoice extends RecyclerView.Adapter<AdapterInvoice.MyViewHo
     public AdapterInvoice(Context mContext, ArrayList<HistoryDTO> objects, LayoutInflater inflater) {
         this.mContext = mContext;
         this.objects = objects;
-        this.historyDTOList = new ArrayList<HistoryDTO>();
+        this.historyDTOList = new ArrayList<>();
         this.historyDTOList.addAll(objects);
         this.inflater = inflater;
         preference = SharedPrefrence.getInstance(mContext);
@@ -48,6 +49,7 @@ public class AdapterInvoice extends RecyclerView.Adapter<AdapterInvoice.MyViewHo
         return new MyViewHolder(binding);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         holder.binding.CTVBservice.setText(mContext.getResources().getString(R.string.service) + " " + objects.get(position).getInvoice_id());

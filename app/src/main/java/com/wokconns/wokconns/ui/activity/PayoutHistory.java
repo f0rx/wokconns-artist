@@ -86,28 +86,25 @@ public class PayoutHistory extends AppCompatActivity implements View.OnClickList
 
     public void getPayoutHistory() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_PAYOUT_DATA, getparam(), context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
+        new HttpsRequest(Consts.GET_PAYOUT_DATA, getparam(), context).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
 
-                    binding.tvNo.setVisibility(View.GONE);
-                    binding.rvPayout.setVisibility(View.VISIBLE);
-                    try {
-                        payoutDTOList = new ArrayList<>();
-                        Type getPayout = new TypeToken<List<PayoutDTO>>() {
-                        }.getType();
-                        payoutDTOList = (ArrayList<PayoutDTO>) new Gson().fromJson(response.getJSONObject("data").getJSONArray("payout").toString(), getPayout);
-                        showData();
+                binding.tvNo.setVisibility(View.GONE);
+                binding.rvPayout.setVisibility(View.VISIBLE);
+                try {
+                    payoutDTOList = new ArrayList<>();
+                    Type getPayout = new TypeToken<List<PayoutDTO>>() {
+                    }.getType();
+                    payoutDTOList = (ArrayList<PayoutDTO>) new Gson().fromJson(response.getJSONObject("data").getJSONArray("payout").toString(), getPayout);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    binding.tvNo.setVisibility(View.VISIBLE);
-                    binding.rvPayout.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                binding.tvNo.setVisibility(View.VISIBLE);
+                binding.rvPayout.setVisibility(View.GONE);
             }
         });
     }

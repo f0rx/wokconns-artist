@@ -117,20 +117,17 @@ public class PreviousWork extends AppCompatActivity implements View.OnClickListe
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
+        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
 
-                        artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                        showData();
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
             }
         });
     }

@@ -84,19 +84,16 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
             fileParams.put(Consts.PRODUCT_IMAGE, file_service);
         }
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_PRODUCT_API, (getParamsAddService()), fileParams, context).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
+        new HttpsRequest(Consts.ADD_PRODUCT_API, (getParamsAddService()), fileParams, context).imagePost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
 
-                    finish();
+                finish();
 //                    arrayList = new Gson().fromJson(response.getJSONArray("data").toString(), getUserImage);
 
-                } else {
-                    ProjectUtils.showToast(context, msg);
-                }
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
         });
     }
@@ -214,25 +211,17 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
     public void imagePickerSheet() {
         builder = new BottomSheet.Builder(AddServiceActivity.this).sheet(R.menu.menu_cards);
         builder.title(getResources().getString(R.string.select_img));
-        builder.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case R.id.camera_cards:
-                        profilePhotoCamera();
-                        break;
-                    case R.id.gallery_cards:
-                        profilePhotoGallery();
-                        break;
-                    case R.id.cancel_cards:
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                dialog.dismiss();
-                            }
-                        });
-                        break;
-                }
+        builder.listener((dialog, which) -> {
+            switch (which) {
+                case R.id.camera_cards:
+                    profilePhotoCamera();
+                    break;
+                case R.id.gallery_cards:
+                    profilePhotoGallery();
+                    break;
+                case R.id.cancel_cards:
+                    builder.setOnDismissListener(dialog1 -> dialog1.dismiss());
+                    break;
             }
         });
     }
@@ -259,23 +248,20 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
                 String pathOfImage = picUri.getPath();
                 imageCompression = new ImageCompression(context);
                 imageCompression.execute(pathOfImage);
-                imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                    @Override
-                    public void processFinish(String imagePath) {
-                        addServiceBinding.rlContainer.setVisibility(View.VISIBLE);
-                        addServiceBinding.ivServiceImage.setVisibility(View.VISIBLE);
-                        addServiceBinding.cardViewServiceImage.setVisibility(View.GONE);
+                imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                    addServiceBinding.rlContainer.setVisibility(View.VISIBLE);
+                    addServiceBinding.ivServiceImage.setVisibility(View.VISIBLE);
+                    addServiceBinding.cardViewServiceImage.setVisibility(View.GONE);
 
-                        Glide.with(context).load("file://" + imagePath)
-                                .thumbnail(0.5f)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(addServiceBinding.ivServiceImage);
-                        Log.e("image", imagePath);
-                        try {
-                            file_service = new File(imagePath);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    Glide.with(context).load("file://" + imagePath)
+                            .thumbnail(0.5f)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(addServiceBinding.ivServiceImage);
+                    Log.e("image", imagePath);
+                    try {
+                        file_service = new File(imagePath);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             } catch (Exception e) {
@@ -300,22 +286,19 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(context);
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            addServiceBinding.rlContainer.setVisibility(View.VISIBLE);
-                            addServiceBinding.ivServiceImage.setVisibility(View.VISIBLE);
-                            addServiceBinding.cardViewServiceImage.setVisibility(View.GONE);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        addServiceBinding.rlContainer.setVisibility(View.VISIBLE);
+                        addServiceBinding.ivServiceImage.setVisibility(View.VISIBLE);
+                        addServiceBinding.cardViewServiceImage.setVisibility(View.GONE);
 
-                            Glide.with(context).load("file://" + imagePath)
-                                    .thumbnail(0.5f)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .into(addServiceBinding.ivServiceImage);
-                            try {
-                                file_service = new File(imagePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                        Glide.with(context).load("file://" + imagePath)
+                                .thumbnail(0.5f)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(addServiceBinding.ivServiceImage);
+                        try {
+                            file_service = new File(imagePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {

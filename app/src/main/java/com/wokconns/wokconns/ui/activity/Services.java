@@ -134,41 +134,27 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
         dialogEditProduct.setCancelable(false);
 
 
-        binding1.etImageD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder.show();
-            }
-        });
-        binding1.tvNoPro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogEditProduct.dismiss();
-
-            }
-        });
+        binding1.etImageD.setOnClickListener(v -> builder.show());
+        binding1.tvNoPro.setOnClickListener(v -> dialogEditProduct.dismiss());
         binding1.tvYesPro.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
-                        paramsUpdate.put(Consts.PRODUCT_NAME, ProjectUtils.getEditTextValue(binding1.etProNameD));
-                        paramsUpdate.put(Consts.PRICE, ProjectUtils.getEditTextValue(binding1.etRateProD));
-                        paramsFile.put(Consts.PRODUCT_IMAGE, file);
+                v -> {
+                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
+                    paramsUpdate.put(Consts.PRODUCT_NAME, ProjectUtils.getEditTextValue(binding1.etProNameD));
+                    paramsUpdate.put(Consts.PRICE, ProjectUtils.getEditTextValue(binding1.etRateProD));
+                    paramsFile.put(Consts.PRODUCT_IMAGE, file);
 
-                        if (NetworkManager.isConnectToInternet(context)) {
-                            if (!validation(binding1.etImageD, getResources().getString(R.string.val_iamg_ad))) {
-                                return;
-                            } else if (!validation(binding1.etProNameD, getResources().getString(R.string.val_namepro))) {
-                                return;
-                            } else if (!validation(binding1.etRateProD, getResources().getString(R.string.val_rate))) {
-                                return;
-                            } else {
-                                addProduct();
-                            }
+                    if (NetworkManager.isConnectToInternet(context)) {
+                        if (!validation(binding1.etImageD, getResources().getString(R.string.val_iamg_ad))) {
+                            return;
+                        } else if (!validation(binding1.etProNameD, getResources().getString(R.string.val_namepro))) {
+                            return;
+                        } else if (!validation(binding1.etRateProD, getResources().getString(R.string.val_rate))) {
+                            return;
                         } else {
-                            ProjectUtils.showToast(context, getResources().getString(R.string.internet_concation));
+                            addProduct();
                         }
+                    } else {
+                        ProjectUtils.showToast(context, getResources().getString(R.string.internet_concation));
                     }
                 });
 
@@ -184,37 +170,31 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
+        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
 
-                        artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                        showData();
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
             }
         });
     }
 
     public void addProduct() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_PRODUCT_API, paramsUpdate, paramsFile, context).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
+        new HttpsRequest(Consts.ADD_PRODUCT_API, paramsUpdate, paramsFile, context).imagePost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
 //                    parentFrag.getArtist();
-                    dialogEditProduct.dismiss();
-                } else {
-                    ProjectUtils.showToast(context, msg);
-                }
+                dialogEditProduct.dismiss();
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
         });
     }

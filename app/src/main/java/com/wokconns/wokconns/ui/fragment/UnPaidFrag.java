@@ -98,52 +98,46 @@ public class UnPaidFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
         });
 
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
+        swipeRefreshLayout.post(() -> {
 
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                                            swipeRefreshLayout.setRefreshing(true);
-                                            getHistroy();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                swipeRefreshLayout.setRefreshing(true);
+                getHistroy();
 
-                                        } else {
-                                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
     }
 
 
     public void getHistroy() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_INVOICE_API, getparm(), getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    tvNo.setVisibility(View.GONE);
-                    RVhistorylist.setVisibility(View.VISIBLE);
-                    rlSearch.setVisibility(View.VISIBLE);
-                    try {
-                        historyDTOList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<HistoryDTO>>() {
-                        }.getType();
-                        historyDTOList = (ArrayList<HistoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_INVOICE_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                tvNo.setVisibility(View.GONE);
+                RVhistorylist.setVisibility(View.VISIBLE);
+                rlSearch.setVisibility(View.VISIBLE);
+                try {
+                    historyDTOList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<HistoryDTO>>() {
+                    }.getType();
+                    historyDTOList = (ArrayList<HistoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    RVhistorylist.setVisibility(View.GONE);
-                    rlSearch.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                RVhistorylist.setVisibility(View.GONE);
+                rlSearch.setVisibility(View.GONE);
             }
         });
     }

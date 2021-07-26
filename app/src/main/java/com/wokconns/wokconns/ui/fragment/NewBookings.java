@@ -93,20 +93,17 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
         });
 
         binding.swipeLayout.setOnRefreshListener(this);
-        binding.swipeLayout.post(new Runnable() {
-                                     @Override
-                                     public void run() {
+        binding.swipeLayout.post(() -> {
 
-                                         Log.e("Runnable", "FIRST");
-                                         if (NetworkManager.isConnectToInternet(getActivity())) {
-                                             binding.swipeLayout.setRefreshing(true);
-                                             getBookings();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                binding.swipeLayout.setRefreshing(true);
+                getBookings();
 
-                                         } else {
-                                             ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                         }
-                                     }
-                                 }
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
     }
 
@@ -143,32 +140,29 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void getBookings() {
         parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        new HttpsRequest(Consts.GET_ALL_BOOKING_ARTIST_API, parms, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                binding.swipeLayout.setRefreshing(false);
-                if (flag) {
-                    binding.tvNo.setVisibility(View.GONE);
-                    binding.rvBooking.setVisibility(View.VISIBLE);
-                    // binding.rlSearch.setVisibility(View.VISIBLE);
-                    try {
-                        artistBookingsList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<ArtistBooking>>() {
-                        }.getType();
-                        artistBookingsList = (ArrayList<ArtistBooking>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_ALL_BOOKING_ARTIST_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            binding.swipeLayout.setRefreshing(false);
+            if (flag) {
+                binding.tvNo.setVisibility(View.GONE);
+                binding.rvBooking.setVisibility(View.VISIBLE);
+                // binding.rlSearch.setVisibility(View.VISIBLE);
+                try {
+                    artistBookingsList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<ArtistBooking>>() {
+                    }.getType();
+                    artistBookingsList = (ArrayList<ArtistBooking>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-
-                    binding.tvNo.setVisibility(View.VISIBLE);
-                    binding.rvBooking.setVisibility(View.GONE);
-                    //binding.rlSearch.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+
+                binding.tvNo.setVisibility(View.VISIBLE);
+                binding.rvBooking.setVisibility(View.GONE);
+                //binding.rlSearch.setVisibility(View.GONE);
             }
         });
     }

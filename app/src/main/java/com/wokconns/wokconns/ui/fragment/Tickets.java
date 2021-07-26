@@ -77,12 +77,7 @@ public class Tickets extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         RVhistorylist.setLayoutManager(mLayoutManager);
 
-        ivPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogshow();
-            }
-        });
+        ivPost.setOnClickListener(v1 -> dialogshow());
     }
 
 
@@ -99,29 +94,26 @@ public class Tickets extends Fragment {
 
     public void getTicket() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_MY_TICKET_API, getparm(), getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    tvNo.setVisibility(View.GONE);
-                    RVhistorylist.setVisibility(View.VISIBLE);
-                    try {
-                        ticketDTOSList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<TicketDTO>>() {
-                        }.getType();
-                        ticketDTOSList = (ArrayList<TicketDTO>) new Gson().fromJson(response.getJSONArray("my_ticket").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_MY_TICKET_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                tvNo.setVisibility(View.GONE);
+                RVhistorylist.setVisibility(View.VISIBLE);
+                try {
+                    ticketDTOSList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<TicketDTO>>() {
+                    }.getType();
+                    ticketDTOSList = (ArrayList<TicketDTO>) new Gson().fromJson(response.getJSONArray("my_ticket").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    RVhistorylist.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                RVhistorylist.setVisibility(View.GONE);
             }
         });
     }
@@ -157,18 +149,8 @@ public class Tickets extends Fragment {
 
         dialog.show();
         dialog.setCancelable(false);
-        tvCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        tvAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitForm();
-            }
-        });
+        tvCancel.setOnClickListener(v -> dialog.dismiss());
+        tvAdd.setOnClickListener(v -> submitForm());
 
     }
 
@@ -213,17 +195,14 @@ public class Tickets extends Fragment {
         parmsadd.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(etReason));
         parmsadd.put(Consts.USER_ID, userDTO.getUser_id());
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GENERATE_TICKET_API, parmsadd, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    dialog.dismiss();
-                    ProjectUtils.showToast(getActivity(), msg);
-                    getTicket();
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
+        new HttpsRequest(Consts.GENERATE_TICKET_API, parmsadd, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                dialog.dismiss();
+                ProjectUtils.showToast(getActivity(), msg);
+                getTicket();
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
         });
     }

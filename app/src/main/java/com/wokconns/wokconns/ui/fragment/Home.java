@@ -181,28 +181,25 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
     public void getHomeData() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_HOME_DATA, params, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                binding.swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    binding.tvNo.setVisibility(View.GONE);
-                    try {
-                        homeDataDTO = new Gson().fromJson(response.getJSONObject("data").toString(), HomeDataDTO.class);
-                        globalState.setHomeData(homeDataDTO);
-                        setData();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    binding.tvNo.setVisibility(View.VISIBLE);
-                    binding.rvNearBy.setVisibility(View.GONE);
-                    binding.rvRecommended.setVisibility(View.GONE);
-                    binding.rvLastInvoice.setVisibility(View.GONE);
-                    binding.rvServices.setVisibility(View.GONE);
-                    binding.rvGallery.setVisibility(View.GONE);
+        new HttpsRequest(Consts.ARTIST_HOME_DATA, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            binding.swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                binding.tvNo.setVisibility(View.GONE);
+                try {
+                    homeDataDTO = new Gson().fromJson(response.getJSONObject("data").toString(), HomeDataDTO.class);
+                    globalState.setHomeData(homeDataDTO);
+                    setData();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                binding.tvNo.setVisibility(View.VISIBLE);
+                binding.rvNearBy.setVisibility(View.GONE);
+                binding.rvRecommended.setVisibility(View.GONE);
+                binding.rvLastInvoice.setVisibility(View.GONE);
+                binding.rvServices.setVisibility(View.GONE);
+                binding.rvGallery.setVisibility(View.GONE);
             }
         });
     }
@@ -210,20 +207,17 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
     @Override
     public void onResume() {
         super.onResume();
-        binding.swipeRefreshLayout.post(new Runnable() {
-                                            @Override
-                                            public void run() {
+        binding.swipeRefreshLayout.post(() -> {
 
-                                                Log.e("Runnable", "FIRST");
-                                                if (NetworkManager.isConnectToInternet(getActivity())) {
-                                                    binding.swipeRefreshLayout.setRefreshing(true);
-                                                    getHomeData();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                binding.swipeRefreshLayout.setRefreshing(true);
+                getHomeData();
 
-                                                } else {
-                                                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                                }
-                                            }
-                                        }
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
 
     }

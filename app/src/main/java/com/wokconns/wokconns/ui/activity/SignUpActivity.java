@@ -34,7 +34,7 @@ import java.util.HashMap;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Context mContext;
-    private CustomEditText CETfirstname, CETemailadd, CETenterpassword, CETenterpassagain, etReferal;
+    private CustomEditText CETfirstname, CETMobileNumber, CETemailadd, CETenterpassword, CETenterpassagain, etReferal;
     private CustomButton CBsignup;
     private CustomTextView CTVsignin;
     private final String TAG = SignUpActivity.class.getSimpleName();
@@ -66,6 +66,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         etReferal = findViewById(R.id.etReferal);
         CETfirstname = findViewById(R.id.CETfirstname);
         CETemailadd = findViewById(R.id.CETemailadd);
+        CETMobileNumber = findViewById(R.id.mobileNumber);
         CETenterpassword = findViewById(R.id.CETenterpassword);
         CETenterpassagain = findViewById(R.id.CETenterpassagain);
         CBsignup = findViewById(R.id.CBsignup);
@@ -133,11 +134,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void register() {
-        ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
+        ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-//        _mockRegistration();
+        HashMap<String, String> params = getparm();
 
-        new HttpsRequest(Consts.REGISTER_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
+//        Log.i(TAG, "Params length ==> " + params.size());
+
+        new HttpsRequest(Consts.REGISTER_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
@@ -164,6 +167,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         } else if (!ProjectUtils.isEmailValid(CETemailadd.getText().toString().trim())) {
             showSickbar(getResources().getString(R.string.val_email));
+        } else if (!validation(CETMobileNumber, getResources().getString(R.string.val_phone))) {
+            showSickbar(getResources().getString(R.string.val_phone));
         } else if (!ProjectUtils.isPasswordValid(CETenterpassword.getText().toString().trim())) {
             showSickbar(getResources().getString(R.string.val_pass));
         } else if (!checkpass()) {
@@ -206,12 +211,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         HashMap<String, String> parms = new HashMap<>();
         parms.put(Consts.NAME, ProjectUtils.getEditTextValue(CETfirstname));
         parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));
+        parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
+//        parms.put("mobile_no", ProjectUtils.getEditTextValue(CETMobileNumber));
         parms.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
         parms.put(Consts.REFERRAL_CODE, ProjectUtils.getEditTextValue(etReferal));
+//        parms.put("use_code", ProjectUtils.getEditTextValue(etReferal));
         parms.put(Consts.ROLE, "1");
+        parms.put(Consts.DEVICE_ID, "12345");
         parms.put(Consts.DEVICE_TYPE, "ANDROID");
         parms.put(Consts.DEVICE_TOKEN, firebase.getString(Consts.DEVICE_TOKEN, ""));
-        parms.put(Consts.DEVICE_ID, "12345");
         Log.e(TAG, parms.toString());
         return parms;
     }
@@ -236,31 +244,28 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void getURLForWebView() {
-        if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
+        if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase(""))
             prefrence.setValue(Consts.LANGUAGE_SELECTION, "en");
-        }
-        new HttpsRequest(baseURL, mContext).stringGet(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
-                            Intent intent1 = new Intent(mContext, WebViewCommon.class);
-                            intent1.putExtra(Consts.URL, msg);
-                            intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
-                            startActivity(intent1);
-                        } else if (baseURL.equalsIgnoreCase(Consts.TERMS_URL)) {
-                            Intent intent3 = new Intent(mContext, WebViewCommon.class);
-                            intent3.putExtra(Consts.URL, msg);
-                            intent3.putExtra(Consts.HEADER, getResources().getString(R.string.terms_of_use));
-                            startActivity(intent3);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+        new HttpsRequest(baseURL, mContext).stringGet(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
+                        Intent intent1 = new Intent(mContext, WebViewCommon.class);
+                        intent1.putExtra(Consts.URL, msg);
+                        intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
+                        startActivity(intent1);
+                    } else if (baseURL.equalsIgnoreCase(Consts.TERMS_URL)) {
+                        Intent intent3 = new Intent(mContext, WebViewCommon.class);
+                        intent3.putExtra(Consts.URL, msg);
+                        intent3.putExtra(Consts.HEADER, getResources().getString(R.string.terms_of_use));
+                        startActivity(intent3);
                     }
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }
@@ -270,30 +275,5 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         // super.onBackPressed();
         startActivity(new Intent(mContext, SignInActivity.class));
         finish();
-    }
-
-    private void _mockRegistration() {
-        userDTO = new UserDTO("9023223asa", ProjectUtils.getEditTextValue(CETfirstname),
-                ProjectUtils.getEditTextValue(CETemailadd), "passworD12", "https://firebasestorage.googleapis.com/v0/b/smartlets-x.appspot.com/o/assets%2Fdefault-user.png?alt=media&token=82e08454-1786-4f0f-989a-03605e489a64",
-                "72 Congress Road", "Lekki Phase 1", "",
-                "", "1", "", "", "",
-                "", ProjectUtils.getEditTextValue(etReferal), "Male", "Lagos",
-                "Nigeria", "", "ANDROID",
-                "12345", firebase.getString(Consts.DEVICE_TOKEN, ""),
-                "", "",
-                "", "NG", "",
-                "Access Bank (Diamond)", "0182928122", "",
-                "Ben Joe Cherish", 1, 1);
-        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-
-        prefrence.setBooleanValue(Consts.IS_REGISTERED, true);
-
-        ProjectUtils.showToast(mContext, "Welcome " + ProjectUtils.getEditTextValue(CETfirstname) + "!!");
-
-        Intent in = new Intent(mContext, BaseActivity.class);
-        startActivity(in);
-        finish();
-        overridePendingTransition(R.anim.anim_slide_in_left,
-                R.anim.anim_slide_out_left);
     }
 }

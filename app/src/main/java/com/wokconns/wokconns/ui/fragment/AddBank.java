@@ -100,22 +100,19 @@ public class AddBank extends Fragment implements View.OnClickListener {
 
     public void getAccount() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_ACCOUNT_DETAIL, paramsGetAccount, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        binding.etBankName.setText(response.getJSONObject("data").getString("bank_name"));
-                        binding.etAccountNumber.setText(response.getJSONObject("data").getString("account_no"));
-                        binding.etBranchCode.setText(response.getJSONObject("data").getString("ifsc_code"));
-                        binding.etNameCard.setText(response.getJSONObject("data").getString("account_holder_name"));
+        new HttpsRequest(Consts.GET_ACCOUNT_DETAIL, paramsGetAccount, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
+                    binding.etBankName.setText(response.getJSONObject("data").getString("bank_name"));
+                    binding.etAccountNumber.setText(response.getJSONObject("data").getString("account_no"));
+                    binding.etBranchCode.setText(response.getJSONObject("data").getString("ifsc_code"));
+                    binding.etNameCard.setText(response.getJSONObject("data").getString("account_holder_name"));
 //                        binding.etBranchAddress.setText(response.getJSONObject("data").getString("bank_address"));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
             }
         });
     }

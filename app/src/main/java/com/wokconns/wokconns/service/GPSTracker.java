@@ -22,6 +22,8 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import com.wokconns.wokconns.R;
+
 
 public class GPSTracker extends Service implements LocationListener {
 
@@ -177,29 +179,25 @@ public class GPSTracker extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         // Setting DialogHelp Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("Enable GPS Settings");
 
         // Setting DialogHelp Message
         alertDialog
-                .setMessage("GPS is not enabled. Do you want to go to settings menu?");
+                .setMessage(String.format("GPS is not enabled. \n\n%s needs GPS enabled to function properly." +
+                                "\nDo you want to go to settings menu?",
+                        mContext.getResources().getString(R.string.app_name)));
 
         // On pressing Settings button
         alertDialog.setPositiveButton("Settings",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(
-                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        mContext.startActivity(intent);
-                    }
+                (dialog, which) -> {
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    mContext.startActivity(intent);
                 });
 
         // on pressing cancel button
         alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                (dialog, which) -> dialog.cancel());
 
         // Showing Alert Message
         alertDialog.show();

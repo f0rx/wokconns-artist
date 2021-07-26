@@ -70,30 +70,23 @@ public class SpinnerDialog {
         this.alertDialog.getWindow().getAttributes().windowAnimations = this.style;
         this.alertDialog.setCancelable(false);
 
-        close.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                SpinnerDialog.this.alertDialog.dismiss();
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView t = (TextView) view.findViewById(R.id.text1);
-                String selectedID = "";
-                for (int j = 0; j < categoryDTOS.size(); j++) {
-                    if (t.getText().toString().equalsIgnoreCase(categoryDTOS.get(j).toString())) {
-                        pos = j;
-                        selectedID = categoryDTOS.get(j).getId();
-                    }
-                    if (j == i) {
-                        categoryDTOS.get(j).setSelected(true);
-                    } else {
-                        categoryDTOS.get(j).setSelected(false);
-                    }
+        close.setOnClickListener(v1 -> SpinnerDialog.this.alertDialog.dismiss());
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            TextView t = (TextView) view.findViewById(R.id.text1);
+            String selectedID = "";
+            for (int j = 0; j < categoryDTOS.size(); j++) {
+                if (t.getText().toString().equalsIgnoreCase(categoryDTOS.get(j).toString())) {
+                    pos = j;
+                    selectedID = categoryDTOS.get(j).getId();
                 }
-                onSpinerItemClick.onClick(t.getText().toString(), selectedID, pos);
-                alertDialog.dismiss();
+                if (j == i) {
+                    categoryDTOS.get(j).setSelected(true);
+                } else {
+                    categoryDTOS.get(j).setSelected(false);
+                }
             }
+            onSpinerItemClick.onClick(t.getText().toString(), selectedID, pos);
+            alertDialog.dismiss();
         });
 
 

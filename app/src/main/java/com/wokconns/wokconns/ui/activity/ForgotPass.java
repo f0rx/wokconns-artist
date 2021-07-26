@@ -41,18 +41,8 @@ public class ForgotPass extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         btnSubmit = findViewById(R.id.btnSubmit);
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitForm();
-            }
-        });
-        llBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnSubmit.setOnClickListener(v -> submitForm());
+        llBack.setOnClickListener(v -> finish());
     }
 
     public void submitForm() {
@@ -81,18 +71,15 @@ public class ForgotPass extends AppCompatActivity {
     public void updatepass() {
         parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(etEmail));
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.FORGET_PASSWORD_API, parms, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
-                    finish();
-                    overridePendingTransition(R.anim.anim_slide_in_left,
-                            R.anim.anim_slide_out_left);
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
+        new HttpsRequest(Consts.FORGET_PASSWORD_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
+                finish();
+                overridePendingTransition(R.anim.anim_slide_in_left,
+                        R.anim.anim_slide_out_left);
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }

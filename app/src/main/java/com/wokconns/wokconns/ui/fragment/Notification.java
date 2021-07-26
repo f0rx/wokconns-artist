@@ -79,30 +79,27 @@ public class Notification extends Fragment {
 
     public void getNotification() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_NOTIFICATION_API, getparm(), getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
+        new HttpsRequest(Consts.GET_NOTIFICATION_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
 
-                    tvNo.setVisibility(View.GONE);
-                    RVnotification.setVisibility(View.VISIBLE);
-                    try {
-                        notificationDTOlist = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<NotificationDTO>>() {
-                        }.getType();
-                        notificationDTOlist = (ArrayList<NotificationDTO>) new Gson().fromJson(response.getJSONArray("my_notifications").toString(), getpetDTO);
-                        showData();
+                tvNo.setVisibility(View.GONE);
+                RVnotification.setVisibility(View.VISIBLE);
+                try {
+                    notificationDTOlist = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<NotificationDTO>>() {
+                    }.getType();
+                    notificationDTOlist = (ArrayList<NotificationDTO>) new Gson().fromJson(response.getJSONArray("my_notifications").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    RVnotification.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                RVnotification.setVisibility(View.GONE);
             }
         });
     }

@@ -48,7 +48,7 @@
     <string name="commis_msg">Artist commission will be added into your hourly rate. It will vary according to category selection. Category rate :</string>
     <string name="select_cate">Select Category</string>
     <string name="val_cat_sele">Please select category.</string>
-    <string name="val_name">Please enter name.</string>
+    <string name="val_name">Please enter full name.</string>
     <string name="val_bio">Please enter bio.</string>
     <string name="val_location">Please enter location.</string>
     <string name="val_rate">Please enter rate.</string>
@@ -56,14 +56,15 @@
     <string name="chats">Chats</string>
     <string name="val_comment">Please enter comment</string>
     <string name="val_email">Please enter email id.</string>
-    <string name="val_phone">Please enter mobile number.</string>
+    <string name="val_phone">Please enter your mobile number.</string>
     <string name="val_pass">Password must contain at least six characters.</string>
-    <string name="val_pass1">Please renter at least six characters password.</string>
+    <string name="val_pass1">Password must be at least 6 characters long.</string>
     <string name="val_pass3">Password does not match.</string>
     <string name="my_appoin">My Appointments</string>
     <string name="customer_booking">Current Booking</string>
     <string name="dec_cpas">Decline</string>
     <string name="decline_msg">Are you sure you want to decline request?</string>
+    <string name="cancel_msg">Are you sure you want to cancel this job?</string>
     <string name="finish_msg">Are you sure you want to Finish this job?</string>
     <string name="get_discount">Get Discount</string>
     <string name="code_copy">Code Copy</string>

@@ -1,7 +1,9 @@
 package com.wokconns.wokconns.ui.fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,16 +13,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -30,24 +31,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.wokconns.wokconns.dto.ArtistBooking;
-import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentCustomerBookingBinding;
+import com.wokconns.wokconns.dto.ArtistBooking;
+import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.LocationPermissionManager;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
 
 import org.json.JSONObject;
 
@@ -58,68 +58,49 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 
-public class CustomerBooking extends Fragment implements View.OnClickListener {
-    private String TAG = CustomerBooking.class.getSimpleName();
-    private View view;
+public class CustomerBooking extends LocationPermissionManager implements View.OnClickListener {
+    private final String TAG = CustomerBooking.class.getSimpleName();
     private SharedPrefrence prefrence;
     private UserDTO userDTO;
-    private HashMap<String, String> paramsGetBooking = new HashMap<>();
-    private HashMap<String, String> paramsBookingOp;
-    private HashMap<String, String> paramsDecline;
+    private final HashMap<String, String> paramsGetBooking = new HashMap<>();
     private ArtistBooking artistBooking;
     private MapView mMapView;
     private GoogleMap googleMap;
     private BaseActivity baseActivity;
+
     FragmentCustomerBookingBinding binding;
     View mCustomMarkerView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_customer_booking, container, false);
-        view = binding.getRoot();
+        View view = binding.getRoot();
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         baseActivity.headerNameTV.setText(getResources().getString(R.string.customer_booking));
         prefrence = SharedPrefrence.getInstance(getActivity());
         userDTO = prefrence.getParentUser(Consts.USER_DTO);
         paramsGetBooking.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        mMapView = (MapView) view.findViewById(R.id.mapView);
+        mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
+            MapsInitializer.initialize(requireActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
 
-                // For showing a move to my location buttont
-                googleMap.setMyLocationEnabled(true);
-
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(Double.parseDouble(prefrence.getValue(Consts.LATITUDE)), Double.parseDouble(prefrence.getValue(Consts.LONGITUDE)));
-                googleMap.addMarker(new MarkerOptions().position(sydney).title(userDTO.getName()).snippet(userDTO.getAddress())
-                        .title("My Location"));
-
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(14).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        });
-
-
+        panGoogleMap(prefrence.getValue(Consts.LATITUDE), prefrence.getValue(Consts.LONGITUDE),
+                userDTO.getName(), userDTO.getAddress());
         setUiAction();
         return view;
     }
@@ -129,9 +110,9 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
         super.onResume();
         mMapView.onResume();
         if (NetworkManager.isConnectToInternet(getActivity())) {
-            getBooking();
+            if (!isShowingRationale) getBooking();
         } else {
-            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
         }
     }
 
@@ -154,81 +135,93 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
     }
 
     public void setUiAction() {
-
         binding.llAccept.setOnClickListener(this);
         binding.llDecline.setOnClickListener(this);
         binding.llStart.setOnClickListener(this);
         binding.llCancel.setOnClickListener(this);
         binding.llFinishJob.setOnClickListener(this);
-
     }
 
+    void panGoogleMap(String latitude, String longitude, String markerTitle, String snippet) {
+        panGoogleMap(latitude, longitude, markerTitle, snippet, true);
+    }
 
+    void panGoogleMap(String latitude, String longitude, String markerTitle, String snippet, boolean animate) {
+        panGoogleMap(latitude, longitude, markerTitle, snippet, animate, null);
+    }
+
+    void panGoogleMap(String latitude, String longitude, String markerTitle,
+                      String snippet, boolean animate, Callable<Object> callback) {
+        mMapView.getMapAsync(mMap -> {
+            googleMap = mMap;
+
+            // For showing a move to my location button
+            if (ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                googleMap.setMyLocationEnabled(true);
+
+                // For dropping a marker at a point on the Map
+                LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                googleMap.addMarker(new MarkerOptions().position(latLng)
+                        .title(markerTitle == null ? "My Location" : markerTitle).snippet(snippet));
+
+                if (animate) {
+                    // For zooming automatically to the location of the marker
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) && !isShowingRationale) {
+                showInContextUI(baseActivity);
+            } else {
+                if (callback != null) requestLocationPermissions(callback);
+                else requestLocationPermissions();
+            }
+        });
+    }
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.llAccept:
                 if (NetworkManager.isConnectToInternet(getActivity())) {
-
                     booking("1");
                 } else {
-                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+                    ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
                 }
                 break;
             case R.id.llDecline:
-                ProjectUtils.showDialog(getActivity(), getResources().getString(R.string.dec_cpas), getResources().getString(R.string.decline_msg), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        decline();
-
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }, false);
+                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.dec_cpas),
+                        getResources().getString(R.string.decline_msg),
+                        (dialog, which) -> decline(), (dialog, which) -> {
+                        }, false);
 
                 break;
             case R.id.llStart:
-                if (NetworkManager.isConnectToInternet(getActivity())) {
-
+                if (NetworkManager.isConnectToInternet(requireActivity())) {
                     booking("2");
                 } else {
-                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+                    ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
                 }
                 break;
             case R.id.llCancel:
-                ProjectUtils.showDialog(getActivity(), getResources().getString(R.string.dec_cpas), getResources().getString(R.string.decline_msg), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        decline();
-
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }, false);
+                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.cancel), getResources().getString(R.string.cancel_msg),
+                        (dialog, which) -> decline(), (dialog, which) -> {
+                        }, false);
                 break;
             case R.id.llFinishJob:
-                ProjectUtils.showDialog(getActivity(), getResources().getString(R.string.finish_the_job), getResources().getString(R.string.finish_msg), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                            booking("3");
-                        } else {
-                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                        }
+                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.finish_the_job),
+                        getResources().getString(R.string.finish_msg), (dialog, which) -> {
+                            if (NetworkManager.isConnectToInternet(getActivity())) {
+                                booking("3");
+                            } else {
+                                ProjectUtils.showToast(requireActivity(),
+                                        getResources().getString(R.string.internet_concation));
+                            }
 
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }, false);
+                        }, (dialog, which) -> {
+                        }, false);
                 break;
         }
 
@@ -236,61 +229,46 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
 
 
     public void getBooking() {
-        new HttpsRequest(Consts.CURRENT_BOOKING_API, paramsGetBooking, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    binding.cardData.setVisibility(View.VISIBLE);
-                    binding.cardNoRequest.setVisibility(View.GONE);
-                    try {
+        new HttpsRequest(Consts.CURRENT_BOOKING_API, paramsGetBooking, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                binding.cardData.setVisibility(View.VISIBLE);
+                binding.cardNoRequest.setVisibility(View.GONE);
+                try {
 
-                        artistBooking = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistBooking.class);
-                        showData();
+                    artistBooking = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistBooking.class);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        binding.cardData.setVisibility(View.GONE);
-                        binding.cardNoRequest.setVisibility(View.VISIBLE);
-                    }
-
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                     binding.cardData.setVisibility(View.GONE);
                     binding.cardNoRequest.setVisibility(View.VISIBLE);
-                    mMapView.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap mMap) {
-                            googleMap = mMap;
-
-                            // For showing a move to my location button
-                            googleMap.setMyLocationEnabled(true);
-
-                            // For dropping a marker at a point on the Map
-                            LatLng sydney = new LatLng(Double.parseDouble(prefrence.getValue(Consts.LATITUDE)), Double.parseDouble(prefrence.getValue(Consts.LONGITUDE)));
-                            googleMap.addMarker(new MarkerOptions().position(sydney).title(userDTO.getName()).snippet(userDTO.getAddress()).title("My Location"));
-
-                            // For zooming automatically to the location of the marker
-                            CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(14).build();
-                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        }
-                    });
-
                 }
 
-
+            } else {
+                binding.cardData.setVisibility(View.GONE);
+                binding.cardNoRequest.setVisibility(View.VISIBLE);
+                panGoogleMap(prefrence.getValue(Consts.LATITUDE), prefrence.getValue(Consts.LONGITUDE),
+                        userDTO.getName(), userDTO.getAddress());
             }
+
+
         });
     }
 
-    public void showData() {
+    public Void showData() {
         binding.tvName.setText(artistBooking.getUserName());
         binding.tvLocation.setText(artistBooking.getAddress());
-        binding.tvDate.setText(ProjectUtils.changeDateFormate1(artistBooking.getBooking_date()) + " " + artistBooking.getBooking_time());
-        Glide.with(getActivity()).
+        binding.tvDate.setText(String.format("%s %s",
+                ProjectUtils.changeDateFormate1(artistBooking.getBooking_date()),
+                artistBooking.getBooking_time()));
+
+        Glide.with(requireActivity()).
                 load(artistBooking.getUserImage())
                 .placeholder(R.drawable.dummyuser_image)
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(binding.ivArtist);
+
         binding.tvDescription.setText(artistBooking.getDescription());
         if (artistBooking.getBooking_type().equalsIgnoreCase("0") || artistBooking.getBooking_type().equalsIgnoreCase("3")) {
 
@@ -300,14 +278,20 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                 binding.llSt.setVisibility(View.GONE);
                 binding.llFinishJob.setVisibility(View.GONE);
 
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.pending) + "[" + artistBooking.getId() + "]");
+                binding.tvTxt.setText(String.format("%s %s[%s]",
+                        getResources().getString(R.string.booking),
+                        getResources().getString(R.string.pending),
+                        artistBooking.getId()));
             } else if (artistBooking.getBooking_flag().equalsIgnoreCase("1")) {
                 binding.llSt.setVisibility(View.VISIBLE);
                 binding.llACDE.setVisibility(View.GONE);
                 binding.llTime.setVisibility(View.GONE);
                 binding.llFinishJob.setVisibility(View.GONE);
 
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.acc) + "[" + artistBooking.getId() + "]");
+                binding.tvTxt.setText(String.format("%s %s[%s]",
+                        getResources().getString(R.string.booking),
+                        getResources().getString(R.string.acc),
+                        artistBooking.getId()));
             } else if (artistBooking.getBooking_flag().equalsIgnoreCase("3")) {
 
                 binding.llSt.setVisibility(View.GONE);
@@ -316,7 +300,7 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                 binding.llFinishJob.setVisibility(View.VISIBLE);
                 binding.llWork.setVisibility(View.GONE);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss", Locale.getDefault());
 
                 try {
                     Date dt;
@@ -328,7 +312,7 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                         dt = sdf.parse(artistBooking.getWorking_min());
 
                     }
-                    sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                     System.out.println(sdf.format(dt));
                     int min = dt.getHours() * 60 + dt.getMinutes();
                     int sec = dt.getSeconds();
@@ -338,26 +322,14 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.acc) + "[" + artistBooking.getId() + "]");
+                binding.tvTxt.setText(String.format("%s %s[%s]",
+                        getResources().getString(R.string.booking),
+                        getResources().getString(R.string.acc),
+                        artistBooking.getId()));
             }
 
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap mMap) {
-                    googleMap = mMap;
-
-                    // For showing a move to my location button
-                    googleMap.setMyLocationEnabled(true);
-
-                    // For dropping a marker at a point on the Map
-                    LatLng sydney = new LatLng(Double.parseDouble(artistBooking.getC_latitude()), Double.parseDouble(artistBooking.getC_longitude()));
-                    googleMap.addMarker(new MarkerOptions().position(sydney).title(artistBooking.getUserName()).snippet(artistBooking.getAddress()));
-
-                    // For zooming automatically to the location of the marker
-//                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-//                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                }
-            });
+            panGoogleMap(artistBooking.getC_latitude(), artistBooking.getC_longitude(),
+                    artistBooking.getUserName(), artistBooking.getAddress(), false, this::showData);
 
         } else if (artistBooking.getBooking_type().equalsIgnoreCase("2")) {
 
@@ -385,7 +357,7 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                 binding.llFinishJob.setVisibility(View.VISIBLE);
                 binding.llWork.setVisibility(View.GONE);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss", Locale.getDefault());
 
                 try {
                     Date dt;
@@ -397,7 +369,7 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                         dt = sdf.parse(artistBooking.getWorking_min());
 
                     }
-                    sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                     System.out.println(sdf.format(dt));
                     int min = dt.getHours() * 60 + dt.getMinutes();
                     int sec = dt.getSeconds();
@@ -407,91 +379,74 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.acc) + "[" + artistBooking.getId() + "]");
+                binding.tvTxt.setText(String.format("%s %s[%s]",
+                        getResources().getString(R.string.booking),
+                        getResources().getString(R.string.acc),
+                        artistBooking.getId()));
 
             }
 
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap mMap) {
-                    googleMap = mMap;
-
-                    // For showing a move to my location button
-                    googleMap.setMyLocationEnabled(true);
-
-                    // For dropping a marker at a point on the Map
-                    LatLng sydney = new LatLng(Double.parseDouble(artistBooking.getC_latitude()), Double.parseDouble(artistBooking.getC_longitude()));
-                    googleMap.addMarker(new MarkerOptions().position(sydney).title(artistBooking.getUserName()).snippet(artistBooking.getAddress()));
-
-                    // For zooming automatically to the location of the marker
-//                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-//                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                }
-            });
+            panGoogleMap(artistBooking.getC_latitude(), artistBooking.getC_longitude(),
+                    artistBooking.getUserName(), artistBooking.getAddress(), false);
         }
 
+        return null;
     }
 
     public void booking(String req) {
-        paramsBookingOp = new HashMap<>();
+        HashMap<String, String> paramsBookingOp = new HashMap<>();
         paramsBookingOp.put(Consts.BOOKING_ID, artistBooking.getId());
         paramsBookingOp.put(Consts.REQUEST, req);
         paramsBookingOp.put(Consts.USER_ID, artistBooking.getUser_id());
         ProjectUtils.showProgressDialog(baseActivity, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(baseActivity, msg);
-                    getBooking();
+        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(baseActivity, msg);
+                getBooking();
 
 
-                    try {
-                        baseActivity.ivSearch.setVisibility(View.GONE);
-                        baseActivity.rlheader.setVisibility(View.VISIBLE);
+                try {
+                    baseActivity.ivSearch.setVisibility(View.GONE);
+                    baseActivity.rlheader.setVisibility(View.VISIBLE);
 
-                        BaseActivity.navItemIndex = 9;
-                        BaseActivity.CURRENT_TAG = BaseActivity.TAG_HISTORY;
-                        baseActivity.loadHomeFragment(new HistoryFragment(), BaseActivity.CURRENT_TAG);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    ProjectUtils.showToast(baseActivity, msg);
+                    BaseActivity.navItemIndex = 9;
+                    BaseActivity.CURRENT_TAG = BaseActivity.TAG_HISTORY;
+                    baseActivity.loadHomeFragment(new HistoryFragment(), BaseActivity.CURRENT_TAG);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
+
+
         });
     }
 
     public void decline() {
-        paramsDecline = new HashMap<>();
+        HashMap<String, String> paramsDecline = new HashMap<>();
         paramsDecline.put(Consts.USER_ID, userDTO.getUser_id());
         paramsDecline.put(Consts.BOOKING_ID, artistBooking.getId());
         paramsDecline.put(Consts.DECLINE_BY, "1");
         paramsDecline.put(Consts.DECLINE_REASON, "Busy");
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(getActivity(), msg);
-                    getBooking();
+        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(getActivity(), msg);
+                getBooking();
 
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
-
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
     @Override
-    public void onAttach(Context activity) {
+    public void onAttach(@NonNull Context activity) {
         super.onAttach(activity);
         baseActivity = (BaseActivity) activity;
     }
@@ -558,8 +513,7 @@ public class CustomerBooking extends Fragment implements View.OnClickListener {
                 Log.v("asfwqeds", e.getMessage());
             }
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             Log.v("asfwqeds", e.getMessage());
             e.printStackTrace();

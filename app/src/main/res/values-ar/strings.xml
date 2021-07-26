@@ -393,4 +393,5 @@
     <string name="str_en">الإنجليزية</string>
     <string name="str_ar">عربى</string>
     <string name="mobile_no_not">رقم الجوال غير متاح</string>
+    <string name="cancel_msg">هل أنت متأكد أنك تريد إلغاء هذه الوظيفة؟</string>
 </resources>

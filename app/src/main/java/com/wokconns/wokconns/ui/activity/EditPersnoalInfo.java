@@ -1,6 +1,7 @@
 package com.wokconns.wokconns.ui.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -65,7 +66,7 @@ import static com.schibstedspain.leku.LocationPickerActivityKt.LATITUDE;
 import static com.schibstedspain.leku.LocationPickerActivityKt.LONGITUDE;
 
 public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickListener {
-    private String TAG = EditPersnoalInfo.class.getSimpleName();
+    private final String TAG = EditPersnoalInfo.class.getSimpleName();
     ActivityEditPersnoalInfoBinding binding;
     private Context mContext;
 
@@ -76,7 +77,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
     private Place place;
     private double lats = 0;
     private double longs = 0;
-    private HashMap<String, String> paramsUpdate = new HashMap<>();
+    private final HashMap<String, String> paramsUpdate = new HashMap<>();
     private UserDTO userDTO;
     private SharedPrefrence prefrence;
 //    private ImageView ivBanner;
@@ -93,8 +94,8 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
     File file;
     File fileProfile;
     Bitmap bitmap = null;
-    private HashMap<String, File> paramsFile = new HashMap<>();
-    private HashMap<String, File> paramsFileProfile = new HashMap<>();
+    private final HashMap<String, File> paramsFile = new HashMap<>();
+    private final HashMap<String, File> paramsFileProfile = new HashMap<>();
     private HashMap<String, String> params;
     String currencyId = "";
     String type = "";
@@ -114,6 +115,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
         setUiAction();
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void setUiAction() {
 
         binding.etCategoryD.setOnClickListener(this);
@@ -137,7 +139,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                binding.bioLength.setText(String.valueOf(s.length()) + "/40");
+                binding.bioLength.setText(String.format("%s/40", s.length()));
 
             }
         });
@@ -155,92 +157,79 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                binding.aboutLength.setText(String.valueOf(s.length()) + "/200");
+                binding.aboutLength.setText(String.format(Locale.getDefault(), "%d/200", s.length()));
 
             }
         });
 
         builder = new BottomSheet.Builder(EditPersnoalInfo.this).sheet(R.menu.menu_cards);
         builder.title(getResources().getString(R.string.select_img));
-        builder.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case R.id.camera_cards:
-                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                try {
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    File file = getOutputMediaFile(1);
-                                    if (!file.exists()) {
-                                        try {
-                                            ProjectUtils.pauseProgressDialog();
-                                            file.createNewFile();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
-                                        picUri = FileProvider.getUriForFile(mContext.getApplicationContext(), mContext.getApplicationContext().getPackageName() + ".fileprovider", file);
-                                    } else {
-                                        picUri = Uri.fromFile(file); // create
-                                    }
-
-                                    prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
-                                    startActivityForResult(intent, PICK_FROM_CAMERA);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
-                        break;
-                    case R.id.gallery_cards:
-                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
+        builder.listener((dialog, which) -> {
+            switch (which) {
+                case R.id.camera_cards:
+                    if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            try {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 File file = getOutputMediaFile(1);
                                 if (!file.exists()) {
                                     try {
+                                        ProjectUtils.pauseProgressDialog();
                                         file.createNewFile();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
                                 }
-                                picUri = Uri.fromFile(file);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
+                                    picUri = FileProvider.getUriForFile(mContext.getApplicationContext(), mContext.getApplicationContext().getPackageName() + ".fileprovider", file);
+                                } else {
+                                    picUri = Uri.fromFile(file); // create
+                                }
 
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
-
+                                prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
+                                startActivityForResult(intent, PICK_FROM_CAMERA);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
-                        break;
-                    case R.id.cancel_cards:
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                dialog.dismiss();
+                    }
+
+                    break;
+                case R.id.gallery_cards:
+                    if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                            File file = getOutputMediaFile(1);
+                            if (!file.exists()) {
+                                try {
+                                    file.createNewFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                        break;
-                }
+                            picUri = Uri.fromFile(file);
+
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
+
+                        }
+                    }
+                    break;
+                case R.id.cancel_cards:
+                    builder.setOnDismissListener(dialog1 -> dialog1.dismiss());
+                    break;
             }
         });
 
         spinnerDialogCate = new SpinnerDialog((Activity) mContext, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
-        spinnerDialogCate.bindOnSpinerListener(new OnSpinerItemClick() {
-            @Override
-            public void onClick(String item, String id, int position) {
-                binding.etCategoryD.setText(item);
-                paramsUpdate.put(Consts.CATEGORY_ID, id);
-                binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
-
-
-            }
+        spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
+            binding.etCategoryD.setText(item);
+            paramsUpdate.put(Consts.CATEGORY_ID, id);
+            binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
         });
 
         if (artistDetailsDTO != null) {
@@ -266,23 +255,15 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        binding.etCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.etCurrency.showDropDown();
-            }
-        });
+        binding.etCurrency.setOnClickListener(v -> binding.etCurrency.showDropDown());
 
-        binding.etCurrency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                binding.etCurrency.showDropDown();
-                CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
-                Log.e(TAG, "onItemClick: " + currencyDTO.getCurrency_symbol());
+        binding.etCurrency.setOnItemClickListener((parent, view, position, id) -> {
+            binding.etCurrency.showDropDown();
+            CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
+            Log.e(TAG, "onItemClick: " + currencyDTO.getCurrency_symbol());
 
-                currencyId = currencyDTO.getId();
-                paramsUpdate.put(Consts.ID, currencyId);
-            }
+            currencyId = currencyDTO.getId();
+            paramsUpdate.put(Consts.ID, currencyId);
         });
 
         try {
@@ -303,7 +284,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
         }
 
         /**Create a media file name*/
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
         if (type == 1) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
@@ -328,15 +309,12 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
         }
 
         spinnerDialogCate = new SpinnerDialog((Activity) mContext, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
-        spinnerDialogCate.bindOnSpinerListener(new OnSpinerItemClick() {
-            @Override
-            public void onClick(String item, String id, int position) {
-                binding.etCategoryD.setText(item);
-                paramsUpdate.put(Consts.CATEGORY_ID, id);
-                binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
+        spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
+            binding.etCategoryD.setText(item);
+            paramsUpdate.put(Consts.CATEGORY_ID, id);
+            binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
 
 
-            }
         });
         binding.etCategoryD.setText(artistDetailsDTO.getCategory_name());
         binding.etNameD.setText(artistDetailsDTO.getName());
@@ -371,32 +349,29 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
 
     public void setCurrencyValue() {
 
-        new HttpsRequest(Consts.GET_CURRENCY_API, mContext).stringGet(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
+        new HttpsRequest(Consts.GET_CURRENCY_API, mContext).stringGet(TAG, (flag, msg, response) -> {
+            if (flag) {
 //                    ProjectUtils.showToast(mContext, msg);
+                try {
+                    currencyDTOArrayList = new ArrayList<>();
+                    Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
+                    }.getType();
+                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+
                     try {
-                        currencyDTOArrayList = new ArrayList<>();
-                        Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
-                        }.getType();
-                        currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
-
-                        try {
-                            ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<CurrencyDTO>(mContext, android.R.layout.simple_list_item_1, currencyDTOArrayList);
-                            binding.etCurrency.setAdapter(currencyAdapter);
-                            binding.etCurrency.setCursorVisible(false);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
+                        ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, currencyDTOArrayList);
+                        binding.etCurrency.setAdapter(currencyAdapter);
+                        binding.etCurrency.setCursorVisible(false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }
@@ -460,45 +435,42 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(EditPersnoalInfo.this);
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            try {
-                                // bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        try {
+                            // bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
 
-                                if (type.equalsIgnoreCase("profile")) {
-                                    fileProfile = new File(imagePath);
-                                    Glide.with(mContext).load("file://" + imagePath)
-                                            .thumbnail(0.5f)
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(binding.civProfile);
+                            if (type.equalsIgnoreCase("profile")) {
+                                fileProfile = new File(imagePath);
+                                Glide.with(mContext).load("file://" + imagePath)
+                                        .thumbnail(0.5f)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(binding.civProfile);
 
-                                    Log.e("image", imagePath);
+                                Log.e("image", imagePath);
 
-                                    params = new HashMap<>();
-                                    params.put(Consts.USER_ID, userDTO.getUser_id());
+                                params = new HashMap<>();
+                                params.put(Consts.USER_ID, userDTO.getUser_id());
 
-                                    paramsFileProfile.put(Consts.IMAGE, fileProfile);
+                                paramsFileProfile.put(Consts.IMAGE, fileProfile);
 
-                                    if (NetworkManager.isConnectToInternet(mContext)) {
-                                        updateProfileSelf();
-                                    } else {
-                                        ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
-                                    }
-
-                                } else if (type.equalsIgnoreCase("banner")) {
-                                    file = new File(imagePath);
-                                    Glide.with(mContext).load("file://" + imagePath)
-                                            .thumbnail(0.5f)
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(binding.ivBanner);
-
-                                    Log.e("image", imagePath);
+                                if (NetworkManager.isConnectToInternet(mContext)) {
+                                    updateProfileSelf();
+                                } else {
+                                    ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
                                 }
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } else if (type.equalsIgnoreCase("banner")) {
+                                file = new File(imagePath);
+                                Glide.with(mContext).load("file://" + imagePath)
+                                        .thumbnail(0.5f)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(binding.ivBanner);
+
+                                Log.e("image", imagePath);
                             }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -514,42 +486,39 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(EditPersnoalInfo.this);
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            Log.e("image", imagePath);
-                            try {
-                                if (type.equalsIgnoreCase("profile")) {
-                                    fileProfile = new File(imagePath);
-                                    Glide.with(mContext).load("file://" + imagePath)
-                                            .thumbnail(0.5f)
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(binding.civProfile);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        Log.e("image", imagePath);
+                        try {
+                            if (type.equalsIgnoreCase("profile")) {
+                                fileProfile = new File(imagePath);
+                                Glide.with(mContext).load("file://" + imagePath)
+                                        .thumbnail(0.5f)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(binding.civProfile);
 
-                                    Log.e("image", imagePath);
+                                Log.e("image", imagePath);
 
-                                    params = new HashMap<>();
-                                    params.put(Consts.USER_ID, userDTO.getUser_id());
+                                params = new HashMap<>();
+                                params.put(Consts.USER_ID, userDTO.getUser_id());
 
-                                    paramsFileProfile.put(Consts.IMAGE, fileProfile);
+                                paramsFileProfile.put(Consts.IMAGE, fileProfile);
 
-                                    if (NetworkManager.isConnectToInternet(mContext)) {
-                                        updateProfileSelf();
-                                    } else {
-                                        ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
-                                    }
-                                } else if (type.equalsIgnoreCase("banner")) {
-                                    file = new File(imagePath);
-                                    Glide.with(mContext).load("file://" + imagePath)
-                                            .thumbnail(0.5f)
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(binding.ivBanner);
-
-                                    Log.e("image", imagePath);
+                                if (NetworkManager.isConnectToInternet(mContext)) {
+                                    updateProfileSelf();
+                                } else {
+                                    ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } else if (type.equalsIgnoreCase("banner")) {
+                                file = new File(imagePath);
+                                Glide.with(mContext).load("file://" + imagePath)
+                                        .thumbnail(0.5f)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(binding.ivBanner);
+
+                                Log.e("image", imagePath);
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -715,35 +684,32 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
     }
 
     public void updateProfileSelf() {
-        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(mContext, msg);
-                        int temp = 0;
-                        if (userDTO.getIs_profile() == 1) {
-                            temp = 1;
-                        }
-                        userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                        userDTO.setIs_profile(temp);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
+        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    ProjectUtils.showToast(mContext, msg);
+                    int temp = 0;
+                    if (userDTO.getIs_profile() == 1) {
+                        temp = 1;
+                    }
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    userDTO.setIs_profile(temp);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
 //                        baseActivity.showImage();
 
-                        Glide.with(mContext).
-                                load(userDTO.getImage())
-                                .placeholder(R.drawable.dummyuser_image)
-                                .dontAnimate()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(binding.civProfile);
+                    Glide.with(mContext).
+                            load(userDTO.getImage())
+                            .placeholder(R.drawable.dummyuser_image)
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(binding.civProfile);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
         });
     }

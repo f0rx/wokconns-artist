@@ -66,7 +66,7 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.allJobsFrag = allJobsFrag;
         this.mContext = allJobsFrag.getActivity();
         this.objects = objects;
-        this.allJobsDTOList = new ArrayList<AllJobsDTO>();
+        this.allJobsDTOList = new ArrayList<>();
         this.allJobsDTOList.addAll(objects);
         this.userDTO = userDTO;
         this.inflater = inflater;
@@ -110,15 +110,12 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.allJobsBinding.ivImage);
-            holder.allJobsBinding.llApply.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            holder.allJobsBinding.llApply.setOnClickListener(v -> {
 
-                    params.put(Consts.USER_ID, objects.get(position).getUser_id());
-                    params.put(Consts.JOB_ID, objects.get(position).getJob_id());
-                    params.put(Consts.ARTIST_ID, userDTO.getUser_id());
-                    dialogAbout(objects.get(position).getCurrency_symbol());
-                }
+                params.put(Consts.USER_ID, objects.get(position).getUser_id());
+                params.put(Consts.JOB_ID, objects.get(position).getJob_id());
+                params.put(Consts.ARTIST_ID, userDTO.getUser_id());
+                dialogAbout(objects.get(position).getCurrency_symbol());
             });
 
         } else {
@@ -189,41 +186,29 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         dialogApplyJob.show();
         dialogApplyJob.setCancelable(false);
 
-        dailogApplyJobBinding.ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogApplyJob.dismiss();
-
-            }
-        });
+        dailogApplyJobBinding.ivClose.setOnClickListener(v -> dialogApplyJob.dismiss());
         dailogApplyJobBinding.tvSubmit.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        params.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etAboutD));
-                        params.put(Consts.PRICE, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etPriceD));
-                        submitPersonalProfile();
+                v -> {
+                    params.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etAboutD));
+                    params.put(Consts.PRICE, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etPriceD));
+                    submitPersonalProfile();
 
-                    }
                 });
     }
 
     public void applyJob() {
 
-        new HttpsRequest(Consts.APPLIED_JOB_API, params, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                dialogApplyJob.dismiss();
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
+        new HttpsRequest(Consts.APPLIED_JOB_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+            dialogApplyJob.dismiss();
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
 
-                    allJobsFrag.getjobs();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
-
-
+                allJobsFrag.getjobs();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
+
+
         });
     }
 

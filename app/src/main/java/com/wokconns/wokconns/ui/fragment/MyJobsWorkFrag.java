@@ -60,16 +60,13 @@ public class MyJobsWorkFrag extends Fragment implements SwipeRefreshLayout.OnRef
 
         binding.swipeRefreshLayout.setOnRefreshListener(this);
         binding.swipeRefreshLayout.setRefreshing(false);
-        binding.swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                                        } else {
-                                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
+        binding.swipeRefreshLayout.post(() -> {
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
     }
 

@@ -154,12 +154,7 @@ public class HttpsRequest {
                 .setTag("uploadTest")
                 .setPriority(Priority.IMMEDIATE)
                 .build()
-                .setUploadProgressListener(new UploadProgressListener() {
-                    @Override
-                    public void onProgress(long bytesUploaded, long totalBytes) {
-                        Log.e("Byte", bytesUploaded + "  !!! " + totalBytes);
-                    }
-                })
+                .setUploadProgressListener((bytesUploaded, totalBytes) -> Log.e("Byte", bytesUploaded + "  !!! " + totalBytes))
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -168,7 +163,6 @@ public class HttpsRequest {
                         JSONParser jsonParser = new JSONParser(ctx, response);
 
                         if (jsonParser.RESULT) {
-
                             h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
                         } else {
                             h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, null);

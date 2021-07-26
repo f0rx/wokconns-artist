@@ -42,16 +42,13 @@ public class AppIntroPagerAdapter extends PagerAdapter {
 
 
         container.addView(itemView);
-        ctvText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        ctvText.setOnClickListener(v -> {
 
 
-                int pos = position + 1;
-                activity.scrollPage(pos);
+            int pos = position + 1;
+            activity.scrollPage(pos);
 
 
-            }
         });
         return itemView;
     }

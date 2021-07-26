@@ -92,23 +92,15 @@ public class Wallet extends Fragment implements View.OnClickListener, SwipeRefre
 
         binding.swipeRefreshLayout.setOnRefreshListener(this);
 
-        binding.etCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.etCurrency.showDropDown();
-            }
-        });
+        binding.etCurrency.setOnClickListener(v -> binding.etCurrency.showDropDown());
 
-        binding.etCurrency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                binding.etCurrency.showDropDown();
-                walletCurrencyDTO = (WalletCurrencyDTO) parent.getItemAtPosition(position);
-                Log.e(TAG, "onItemClick: " + walletCurrencyDTO.getCurrency_code());
+        binding.etCurrency.setOnItemClickListener((parent, view, position, id) -> {
+            binding.etCurrency.showDropDown();
+            walletCurrencyDTO = (WalletCurrencyDTO) parent.getItemAtPosition(position);
+            Log.e(TAG, "onItemClick: " + walletCurrencyDTO.getCurrency_code());
 
-                setWalletData(position);
-                filter(walletCurrencyDTO);
-            }
+            setWalletData(position);
+            filter(walletCurrencyDTO);
         });
     }
 
@@ -167,37 +159,34 @@ public class Wallet extends Fragment implements View.OnClickListener, SwipeRefre
 
     public void getHistroy() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_WALLET_HISTORY_NEW_API, parms, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                binding.swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    binding.tvNo.setVisibility(View.GONE);
-                    binding.RVhistorylist.setVisibility(View.VISIBLE);
-                    try {
-                        walletCurrencyList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<WalletCurrencyDTO>>() {
-                        }.getType();
-                        walletCurrencyList = (ArrayList<WalletCurrencyDTO>) new Gson().fromJson(response.getJSONObject("data").getJSONArray("currency").toString(), getpetDTO);
-                        if (walletCurrencyList.size() > 0) {
+        new HttpsRequest(Consts.GET_WALLET_HISTORY_NEW_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            binding.swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                binding.tvNo.setVisibility(View.GONE);
+                binding.RVhistorylist.setVisibility(View.VISIBLE);
+                try {
+                    walletCurrencyList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<WalletCurrencyDTO>>() {
+                    }.getType();
+                    walletCurrencyList = (ArrayList<WalletCurrencyDTO>) new Gson().fromJson(response.getJSONObject("data").getJSONArray("currency").toString(), getpetDTO);
+                    if (walletCurrencyList.size() > 0) {
 
-                            ArrayAdapter<WalletCurrencyDTO> currencyAdapter = new ArrayAdapter<WalletCurrencyDTO>(baseActivity, android.R.layout.simple_list_item_1, walletCurrencyList);
-                            binding.etCurrency.setAdapter(currencyAdapter);
-                            binding.etCurrency.setCursorVisible(false);
-                            binding.etCurrency.setText(binding.etCurrency.getAdapter().getItem(0).toString(), false);
+                        ArrayAdapter<WalletCurrencyDTO> currencyAdapter = new ArrayAdapter<>(baseActivity, android.R.layout.simple_list_item_1, walletCurrencyList);
+                        binding.etCurrency.setAdapter(currencyAdapter);
+                        binding.etCurrency.setCursorVisible(false);
+                        binding.etCurrency.setText(binding.etCurrency.getAdapter().getItem(0).toString(), false);
 
-                            setWalletData(0);
-                        }
-                        showData();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        setWalletData(0);
                     }
-                } else {
-                    binding.tvNo.setVisibility(View.VISIBLE);
-                    binding.RVhistorylist.setVisibility(View.GONE);
+                    showData();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                binding.tvNo.setVisibility(View.VISIBLE);
+                binding.RVhistorylist.setVisibility(View.GONE);
             }
         });
     }
@@ -213,41 +202,35 @@ public class Wallet extends Fragment implements View.OnClickListener, SwipeRefre
     public void onResume() {
         super.onResume();
 //        getWallet();
-        binding.swipeRefreshLayout.post(new Runnable() {
-                                            @Override
-                                            public void run() {
+        binding.swipeRefreshLayout.post(() -> {
 
-                                                Log.e("Runnable", "FIRST");
-                                                if (NetworkManager.isConnectToInternet(getActivity())) {
-                                                    binding.swipeRefreshLayout.setRefreshing(true);
-                                                    getHistroy();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                binding.swipeRefreshLayout.setRefreshing(true);
+                getHistroy();
 
-                                                } else {
-                                                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                                }
-                                            }
-                                        }
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+            }
+        }
         );
 
     }
 
     public void getWallet() {
-        new HttpsRequest(Consts.GET_WALLET_API, parmsGetWallet, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        amt = response.getJSONObject("data").getString("amount");
-                        currency = response.getJSONObject("data").getString("currency_type");
-                        binding.tvWallet.setText(currency + " " + amt);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-
+        new HttpsRequest(Consts.GET_WALLET_API, parmsGetWallet, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
+                    amt = response.getJSONObject("data").getString("amount");
+                    currency = response.getJSONObject("data").getString("currency_type");
+                    binding.tvWallet.setText(currency + " " + amt);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+
             }
         });
     }

@@ -52,11 +52,8 @@ public class SplashActivity extends AppCompatActivity {
 
 
         FirebaseMessaging.getInstance().subscribeToTopic(Consts.TOPIC_ARTIST)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                .addOnCompleteListener(task -> {
 
-                    }
                 });
     }
 

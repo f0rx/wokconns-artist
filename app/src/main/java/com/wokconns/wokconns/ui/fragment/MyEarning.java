@@ -59,7 +59,7 @@ public class MyEarning extends Fragment {
     private UserDTO userDTO;
     private BaseActivity baseActivity;
 
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     String[] stringArray;
     private DialogInterface dialog_book;
     FragmentMyEarningBinding binding;
@@ -88,40 +88,29 @@ public class MyEarning extends Fragment {
 
         getCurrencyValue();
 
-        binding.etCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.etCurrency.showDropDown();
+        binding.etCurrency.setOnClickListener(v -> binding.etCurrency.showDropDown());
+
+        binding.etCurrency.setOnItemClickListener((parent, view, position, id) -> {
+            binding.etCurrency.showDropDown();
+            CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
+            Log.e(TAG, "onItemClick: " + currencyDTO.getCode());
+
+            currencyCode = currencyDTO.getCode();
+            params.put(Consts.CURRENCY_CODE, currencyCode);
+
+            try {
+                getEarning();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        binding.etCurrency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                binding.etCurrency.showDropDown();
-                CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
-                Log.e(TAG, "onItemClick: " + currencyDTO.getCode());
-
-                currencyCode = currencyDTO.getCode();
-                params.put(Consts.CURRENCY_CODE, currencyCode);
-
-                try {
-                    getEarning();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        binding.tvPayoutHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (NetworkManager.isConnectToInternet(getActivity())) {
-                    Intent intent = new Intent(baseActivity, PayoutHistory.class);
-                    startActivity(intent);
-                } else {
-                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                }
+        binding.tvPayoutHistory.setOnClickListener(v -> {
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                Intent intent = new Intent(baseActivity, PayoutHistory.class);
+                startActivity(intent);
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
             }
         });
     }
@@ -139,21 +128,18 @@ public class MyEarning extends Fragment {
 
     public void getEarning() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.MY_EARNING1_API, params, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        earningDTO = new Gson().fromJson(response.getJSONObject("data").toString(), EarningDTO.class);
-                        showData();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    ProjectUtils.showLong(getActivity(), msg);
+        new HttpsRequest(Consts.MY_EARNING1_API, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
+                    earningDTO = new Gson().fromJson(response.getJSONObject("data").toString(), EarningDTO.class);
+                    showData();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                ProjectUtils.showLong(getActivity(), msg);
             }
         });
 
@@ -162,47 +148,41 @@ public class MyEarning extends Fragment {
     public void requestPayment() {
 
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.WALLET_REQUEST_API, paramsRequest, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showLong(getActivity(), msg);
-                    dialog_book.dismiss();
-                } else {
-                    ProjectUtils.showLong(getActivity(), msg);
-                }
+        new HttpsRequest(Consts.WALLET_REQUEST_API, paramsRequest, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showLong(getActivity(), msg);
+                dialog_book.dismiss();
+            } else {
+                ProjectUtils.showLong(getActivity(), msg);
             }
         });
 
     }
 
     public void getCurrencyValue() {
-        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
+        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    currencyDTOArrayList = new ArrayList<>();
+                    Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
+                    }.getType();
+                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+
                     try {
-                        currencyDTOArrayList = new ArrayList<>();
-                        Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
-                        }.getType();
-                        currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
-
-                        try {
-                            ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<CurrencyDTO>(baseActivity, android.R.layout.simple_list_item_1, currencyDTOArrayList);
-                            binding.etCurrency.setAdapter(currencyAdapter);
-                            binding.etCurrency.setCursorVisible(false);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
+                        ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<>(baseActivity, android.R.layout.simple_list_item_1, currencyDTOArrayList);
+                        binding.etCurrency.setAdapter(currencyAdapter);
+                        binding.etCurrency.setCursorVisible(false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                } else {
-                    ProjectUtils.showToast(baseActivity, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
         });
     }
@@ -252,12 +232,7 @@ public class MyEarning extends Fragment {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // only intervals of 1 day
         xAxis.setLabelCount(7);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return stringArray[(int) value % stringArray.length];
-            }
-        });
+        xAxis.setValueFormatter((value, axis) -> stringArray[(int) value % stringArray.length]);
 
         YAxis leftAxis = binding.chart1.getAxisLeft();
         leftAxis.setLabelCount(8, false);
@@ -284,7 +259,7 @@ public class MyEarning extends Fragment {
 
     private void setData(ArrayList<EarningDTO.ChartData> charts) {
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
 
         for (int i = 0; i < charts.size(); i++) {
 
@@ -303,7 +278,7 @@ public class MyEarning extends Fragment {
         } else {
             set1 = new BarDataSet(yVals1, getResources().getString(R.string.earning_graph));
 
-            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+            ArrayList<IBarDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
 
             BarData data = new BarData(dataSets);
@@ -322,21 +297,12 @@ public class MyEarning extends Fragment {
                     .setTitle(getResources().getString(R.string.payment))
                     .setMessage(getResources().getString(R.string.process_payment))
                     .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            requestPayment();
+                    .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        requestPayment();
 
-                        }
                     })
-                    .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {

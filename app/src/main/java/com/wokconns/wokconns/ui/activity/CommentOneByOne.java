@@ -93,20 +93,17 @@ public class CommentOneByOne extends AppCompatActivity implements View.OnClickLi
         buttonSendMessage.setOnClickListener(this);
         IVback.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
+        swipeRefreshLayout.post(() -> {
 
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(mContext)) {
-                                            swipeRefreshLayout.setRefreshing(true);
-                                            getComment();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(mContext)) {
+                swipeRefreshLayout.setRefreshing(true);
+                getComment();
 
-                                        } else {
-                                            ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
+            } else {
+                ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
+            }
+        }
         );
 
         emojIcon = new EmojIconActions(this, relative, edittextMessage, emojiButton, "#495C66", "#DCE1E2", "#E6EBEF");
@@ -183,26 +180,23 @@ public class CommentOneByOne extends AppCompatActivity implements View.OnClickLi
 
     public void getComment() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_TICKET_COMMENTS_API, parmsGet, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    try {
-                        ticketCommentDTOSList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<TicketCommentDTO>>() {
-                        }.getType();
-                        ticketCommentDTOSList = (ArrayList<TicketCommentDTO>) new Gson().fromJson(response.getJSONArray("ticket_comment").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_TICKET_COMMENTS_API, parmsGet, mContext).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                try {
+                    ticketCommentDTOSList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<TicketCommentDTO>>() {
+                    }.getType();
+                    ticketCommentDTOSList = (ArrayList<TicketCommentDTO>) new Gson().fromJson(response.getJSONArray("ticket_comment").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
             }
         });
     }
@@ -216,15 +210,12 @@ public class CommentOneByOne extends AppCompatActivity implements View.OnClickLi
 
     public void doComment() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_TICKET_COMMENTS_API, getParamDO(), mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    edittextMessage.setText("");
-                    getComment();
-                } else {
-                }
+        new HttpsRequest(Consts.ADD_TICKET_COMMENTS_API, getParamDO(), mContext).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                edittextMessage.setText("");
+                getComment();
+            } else {
             }
         });
     }

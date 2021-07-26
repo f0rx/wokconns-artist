@@ -121,27 +121,23 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
         mMaxScrollSize = binding.appbar.getTotalScrollRange();
 
 
-        binding.swOnOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (artistDetailsDTO != null) {
-                    if (NetworkManager.isConnectToInternet(getActivity())) {
-                        paramsUpdate = new HashMap<>();
-                        paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
-                        if (artistDetailsDTO.getIs_online().equalsIgnoreCase("1")) {
-                            paramsUpdate.put(Consts.IS_ONLINE, "0");
-                            isOnline();
-                        } else {
-                            paramsUpdate.put(Consts.IS_ONLINE, "1");
-                            isOnline();
-                        }
+        binding.swOnOff.setOnClickListener(v -> {
+            if (artistDetailsDTO != null) {
+                if (NetworkManager.isConnectToInternet(getActivity())) {
+                    paramsUpdate = new HashMap<>();
+                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
+                    if (artistDetailsDTO.getIs_online().equalsIgnoreCase("1")) {
+                        paramsUpdate.put(Consts.IS_ONLINE, "0");
+                        isOnline();
                     } else {
-                        ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
+                        paramsUpdate.put(Consts.IS_ONLINE, "1");
+                        isOnline();
                     }
                 } else {
-                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.incomplete_profile_msg));
+                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                 }
-
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.incomplete_profile_msg));
             }
 
         });
@@ -149,72 +145,64 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
 
         builder = new BottomSheet.Builder(getActivity()).sheet(R.menu.menu_cards);
         builder.title(getResources().getString(R.string.select_img));
-        builder.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case R.id.camera_cards:
-                        if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                try {
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    File file = getOutputMediaFile(1);
-                                    if (!file.exists()) {
-                                        try {
-                                            ProjectUtils.pauseProgressDialog();
-                                            file.createNewFile();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
-                                        picUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".fileprovider", file);
-                                    } else {
-                                        picUri = Uri.fromFile(file); // create
-                                    }
-
-                                    prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
-                                    startActivityForResult(intent, PICK_FROM_CAMERA);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
-                        break;
-                    case R.id.gallery_cards:
-                        if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
+        builder.listener((dialog, which) -> {
+            switch (which) {
+                case R.id.camera_cards:
+                    if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            try {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 File file = getOutputMediaFile(1);
                                 if (!file.exists()) {
                                     try {
+                                        ProjectUtils.pauseProgressDialog();
                                         file.createNewFile();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
                                 }
-                                picUri = Uri.fromFile(file);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
+                                    picUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getApplicationContext().getPackageName() + ".fileprovider", file);
+                                } else {
+                                    picUri = Uri.fromFile(file); // create
+                                }
 
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
-
+                                prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
+                                startActivityForResult(intent, PICK_FROM_CAMERA);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
-                        break;
-                    case R.id.cancel_cards:
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                dialog.dismiss();
+                    }
+
+                    break;
+                case R.id.gallery_cards:
+                    if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(getActivity(), PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                            File file = getOutputMediaFile(1);
+                            if (!file.exists()) {
+                                try {
+                                    file.createNewFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                        break;
-                }
+                            picUri = Uri.fromFile(file);
+
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
+
+                        }
+                    }
+                    break;
+                case R.id.cancel_cards:
+                    builder.setOnDismissListener(dialog1 -> dialog1.dismiss());
+                    break;
             }
         });
 
@@ -236,43 +224,37 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        categoryDTOS = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
-                        }.getType();
-                        categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    categoryDTOS = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
+                    }.getType();
+                    categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
 
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
             }
         });
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
+        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
 
-                        artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                        showData();
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
             }
         });
     }
@@ -430,19 +412,16 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void isOnline() {
-        new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showToast(getActivity(), msg);
-                    getArtist();
+        new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showToast(getActivity(), msg);
+                getArtist();
 
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
-
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
@@ -481,33 +460,30 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(getActivity());
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            try {
-                                file = new File(imagePath);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        try {
+                            file = new File(imagePath);
 
 
-                                Glide.with(getActivity()).load("file://" + imagePath)
-                                        .thumbnail(0.5f)
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .into(binding.ivArtist);
-                                paramsFile = new HashMap<>();
-                                paramsFile.put(Consts.IMAGE, file);
-                                Log.e("image", imagePath);
-                                params = new HashMap<>();
-                                params.put(Consts.USER_ID, userDTO.getUser_id());
-                                if (NetworkManager.isConnectToInternet(getActivity())) {
-                                    updateProfileSelf();
-                                } else {
-                                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                }
-
-
-                                Log.e("image", imagePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            Glide.with(getActivity()).load("file://" + imagePath)
+                                    .thumbnail(0.5f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(binding.ivArtist);
+                            paramsFile = new HashMap<>();
+                            paramsFile.put(Consts.IMAGE, file);
+                            Log.e("image", imagePath);
+                            params = new HashMap<>();
+                            params.put(Consts.USER_ID, userDTO.getUser_id());
+                            if (NetworkManager.isConnectToInternet(getActivity())) {
+                                updateProfileSelf();
+                            } else {
+                                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                             }
+
+
+                            Log.e("image", imagePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -523,34 +499,31 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(getActivity());
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        Log.e("image", imagePath);
+                        try {
+                            file = new File(imagePath);
+
+
+                            Glide.with(getActivity()).load("file://" + imagePath)
+                                    .thumbnail(0.5f)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(binding.ivArtist);
+                            paramsFile = new HashMap<>();
+                            paramsFile.put(Consts.IMAGE, file);
                             Log.e("image", imagePath);
-                            try {
-                                file = new File(imagePath);
-
-
-                                Glide.with(getActivity()).load("file://" + imagePath)
-                                        .thumbnail(0.5f)
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .into(binding.ivArtist);
-                                paramsFile = new HashMap<>();
-                                paramsFile.put(Consts.IMAGE, file);
-                                Log.e("image", imagePath);
-                                params = new HashMap<>();
-                                params.put(Consts.USER_ID, userDTO.getUser_id());
-                                if (NetworkManager.isConnectToInternet(getActivity())) {
-                                    updateProfileSelf();
-                                } else {
-                                    ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                }
-
-
-                                Log.e("image", imagePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            params = new HashMap<>();
+                            params.put(Consts.USER_ID, userDTO.getUser_id());
+                            if (NetworkManager.isConnectToInternet(getActivity())) {
+                                updateProfileSelf();
+                            } else {
+                                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                             }
+
+
+                            Log.e("image", imagePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -592,34 +565,31 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void updateProfileSelf() {
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(getActivity(), msg);
-
-                        userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        baseActivity.showImage();
-
-                        Glide.with(getActivity()).
-                                load(userDTO.getImage())
-                                .placeholder(R.drawable.dummyuser_image)
-                                .dontAnimate()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(binding.ivArtist);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
                     ProjectUtils.showToast(getActivity(), msg);
+
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    baseActivity.showImage();
+
+                    Glide.with(getActivity()).
+                            load(userDTO.getImage())
+                            .placeholder(R.drawable.dummyuser_image)
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(binding.ivArtist);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
@@ -631,20 +601,17 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
 
     public void deleteImage() {
         paramsDeleteImg.put(Consts.USER_ID, userDTO.getUser_id());
-        new HttpsRequest(Consts.DELETE_PROFILE_IMAGE_API, paramsDeleteImg, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    userDTO.setImage("");
-                    artistDetailsDTO.setImage("");
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                    showData();
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
-
-
+        new HttpsRequest(Consts.DELETE_PROFILE_IMAGE_API, paramsDeleteImg, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                userDTO.setImage("");
+                artistDetailsDTO.setImage("");
+                prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                showData();
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 

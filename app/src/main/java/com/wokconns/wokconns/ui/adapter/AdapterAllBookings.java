@@ -152,63 +152,28 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
 
-            holder.binding.llAccept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (NetworkManager.isConnectToInternet(context)) {
+            holder.binding.llAccept.setOnClickListener(v -> {
+                if (NetworkManager.isConnectToInternet(context)) {
 
-                        booking("1", position);
-                    } else {
-                        ProjectUtils.showToast(context, context.getResources().getString(R.string.internet_concation));
-                    }
+                    booking("1", position);
+                } else {
+                    ProjectUtils.showToast(context, context.getResources().getString(R.string.internet_concation));
                 }
             });
-            holder.binding.llDecline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ProjectUtils.showDialog(context, context.getResources().getString(R.string.dec_cpas), context.getResources().getString(R.string.decline_msg), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            decline(position);
+            holder.binding.llDecline.setOnClickListener(v -> ProjectUtils.showDialog(context, context.getResources().getString(R.string.dec_cpas), context.getResources().getString(R.string.decline_msg), (dialog, which) -> decline(position), (dialog, which) -> {
 
-                        }
-                    }, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+            }, false));
+            holder.binding.llStart.setOnClickListener(v -> {
+                if (NetworkManager.isConnectToInternet(context)) {
 
-                        }
-                    }, false);
-
+                    booking("2", position);
+                } else {
+                    ProjectUtils.showToast(context, context.getResources().getString(R.string.internet_concation));
                 }
             });
-            holder.binding.llStart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (NetworkManager.isConnectToInternet(context)) {
+            holder.binding.llCancel.setOnClickListener(v -> ProjectUtils.showDialog(context, context.getResources().getString(R.string.dec_cpas), context.getResources().getString(R.string.decline_msg), (dialog, which) -> decline(position), (dialog, which) -> {
 
-                        booking("2", position);
-                    } else {
-                        ProjectUtils.showToast(context, context.getResources().getString(R.string.internet_concation));
-                    }
-                }
-            });
-            holder.binding.llCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ProjectUtils.showDialog(context, context.getResources().getString(R.string.dec_cpas), context.getResources().getString(R.string.decline_msg), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            decline(position);
-
-                        }
-                    }, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    }, false);
-                }
-            });
+            }, false));
         } else {
             MyViewHolderSection view = (MyViewHolderSection) holderMain;
             view.tvSection.setText(artistBookingsList.get(position).getSection_name());
@@ -242,21 +207,18 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
         paramsBookingOp.put(Consts.REQUEST, req);
         paramsBookingOp.put(Consts.USER_ID, artistBookingsList.get(pos).getUser_id());
         ProjectUtils.showProgressDialog(context, true, context.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
-                    newBookings.getBookings();
+        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, context).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
+                newBookings.getBookings();
 
 
-                } else {
-                    ProjectUtils.showToast(context, msg);
-                }
-
-
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
+
+
         });
     }
 
@@ -267,20 +229,17 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
         paramsDecline.put(Consts.DECLINE_BY, "1");
         paramsDecline.put(Consts.DECLINE_REASON, "Busy");
         ProjectUtils.showProgressDialog(context, true, context.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
-                    newBookings.getBookings();
+        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, context).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
+                newBookings.getBookings();
 
-                } else {
-                    ProjectUtils.showToast(context, msg);
-                }
-
-
+            } else {
+                ProjectUtils.showToast(context, msg);
             }
+
+
         });
     }
 

@@ -122,40 +122,34 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
         });
 
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
+        swipeRefreshLayout.post(() -> {
 
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                                            swipeRefreshLayout.setRefreshing(true);
-                                            getjobs();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                swipeRefreshLayout.setRefreshing(true);
+                getjobs();
 
-                                        } else {
-                                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
-        );
-        baseActivity.ivSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (NetworkManager.isConnectToInternet(getActivity())) {
-                    if (rlSearch.getVisibility() == View.VISIBLE) {
-                        baseActivity.ivSearch.setImageResource(R.drawable.ic_search_white);
-                        rlSearch.setVisibility(View.GONE);
-                    } else {
-
-                        baseActivity.ivSearch.setImageResource(R.drawable.ic_close_circle);
-                        rlSearch.setVisibility(View.VISIBLE);
-
-                    }
-                } else {
-                    ProjectUtils.showToast(getActivity(), getString(R.string.internet_concation));
-                }
-
+            } else {
+                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
             }
+        }
+        );
+        baseActivity.ivSearch.setOnClickListener(v1 -> {
+
+            if (NetworkManager.isConnectToInternet(getActivity())) {
+                if (rlSearch.getVisibility() == View.VISIBLE) {
+                    baseActivity.ivSearch.setImageResource(R.drawable.ic_search_white);
+                    rlSearch.setVisibility(View.GONE);
+                } else {
+
+                    baseActivity.ivSearch.setImageResource(R.drawable.ic_close_circle);
+                    rlSearch.setVisibility(View.VISIBLE);
+
+                }
+            } else {
+                ProjectUtils.showToast(getActivity(), getString(R.string.internet_concation));
+            }
+
         });
 
     }
@@ -168,31 +162,28 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getjobs() {
-        new HttpsRequest(Consts.GET_ALL_JOB_API, parms, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    tvNo.setVisibility(View.GONE);
-                    RVhistorylist.setVisibility(View.VISIBLE);
-                    baseActivity.ivSearch.setVisibility(View.VISIBLE);
-                    try {
-                        allJobsDTOList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<AllJobsDTO>>() {
-                        }.getType();
-                        allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_ALL_JOB_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                tvNo.setVisibility(View.GONE);
+                RVhistorylist.setVisibility(View.VISIBLE);
+                baseActivity.ivSearch.setVisibility(View.VISIBLE);
+                try {
+                    allJobsDTOList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<AllJobsDTO>>() {
+                    }.getType();
+                    allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    RVhistorylist.setVisibility(View.GONE);
-                    baseActivity.ivSearch.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                RVhistorylist.setVisibility(View.GONE);
+                baseActivity.ivSearch.setVisibility(View.GONE);
             }
         });
     }
@@ -254,21 +245,18 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
         dailogFilterJobBinding = DataBindingUtil.inflate(LayoutInflater.from(baseActivity), R.layout.dailog_filter_job, null, false);
         dialogFilterJob.setContentView(dailogFilterJobBinding.getRoot());
 
-        dailogFilterJobBinding.etCategoryD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (NetworkManager.isConnectToInternet(baseActivity)) {
-                    if (categoryDTOS.size() > 0)
-                        spinnerDialogCate.showSpinerDialog();
-                } else {
-                    ProjectUtils.showToast(baseActivity, getResources().getString(R.string.internet_concation));
-                }
+        dailogFilterJobBinding.etCategoryD.setOnClickListener(v -> {
+            if (NetworkManager.isConnectToInternet(baseActivity)) {
+                if (categoryDTOS.size() > 0)
+                    spinnerDialogCate.showSpinerDialog();
+            } else {
+                ProjectUtils.showToast(baseActivity, getResources().getString(R.string.internet_concation));
             }
         });
 
         try {
             if (currencyDTOArrayList.size() > 0) {
-                ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<CurrencyDTO>(baseActivity, android.R.layout.simple_list_item_1, currencyDTOArrayList);
+                ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<>(baseActivity, android.R.layout.simple_list_item_1, currencyDTOArrayList);
                 dailogFilterJobBinding.etCurrencyD.setAdapter(currencyAdapter);
                 dailogFilterJobBinding.etCurrencyD.setCursorVisible(false);
             }
@@ -276,112 +264,83 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
             e.printStackTrace();
         }
 
-        dailogFilterJobBinding.etCurrencyD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dailogFilterJobBinding.etCurrencyD.showDropDown();
-            }
-        });
+        dailogFilterJobBinding.etCurrencyD.setOnClickListener(v -> dailogFilterJobBinding.etCurrencyD.showDropDown());
 
-        dailogFilterJobBinding.etCurrencyD.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                dailogFilterJobBinding.etCurrencyD.showDropDown();
-                CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
-                Log.e(TAG, "onItemClick: " + currencyDTO.getCurrency_symbol());
-                params.put(Consts.CURRENCY, currencyDTO.getCurrency_symbol());
-            }
+        dailogFilterJobBinding.etCurrencyD.setOnItemClickListener((parent, view, position, id) -> {
+            dailogFilterJobBinding.etCurrencyD.showDropDown();
+            CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
+            Log.e(TAG, "onItemClick: " + currencyDTO.getCurrency_symbol());
+            params.put(Consts.CURRENCY, currencyDTO.getCurrency_symbol());
         });
 
         dialogFilterJob.show();
         dialogFilterJob.setCancelable(false);
 
-        dailogFilterJobBinding.tvCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogFilterJob.dismiss();
-
-            }
-        });
+        dailogFilterJobBinding.tvCancel.setOnClickListener(v -> dialogFilterJob.dismiss());
         dailogFilterJobBinding.tvSubmit.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e(TAG, "onClick: "+dailogFilterJobBinding.seekBar.getProgress());
-                        filteredList();
-                    }
+                v -> {
+                    Log.e(TAG, "onClick: "+dailogFilterJobBinding.seekBar.getProgress());
+                    filteredList();
                 });
     }
 
     public void filteredList() {
         params.put(Consts.PRICE, ""+dailogFilterJobBinding.seekBar.getProgress());
-        new HttpsRequest(Consts.JOB_FILTER, params, baseActivity).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                dialogFilterJob.dismiss();
-                if (flag) {
+        new HttpsRequest(Consts.JOB_FILTER, params, baseActivity).imagePost(TAG, (flag, msg, response) -> {
+            dialogFilterJob.dismiss();
+            if (flag) {
 
-                    try {
-                        allJobsDTOList = new ArrayList<>();
-                        Type getJobDTO = new TypeToken<List<AllJobsDTO>>() {
-                        }.getType();
-                        allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getJobDTO);
-                        showData();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    ProjectUtils.showToast(baseActivity, msg);
+                try {
+                    allJobsDTOList = new ArrayList<>();
+                    Type getJobDTO = new TypeToken<List<AllJobsDTO>>() {
+                    }.getType();
+                    allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getJobDTO);
+                    showData();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
         });
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        categoryDTOS = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
-                        }.getType();
-                        categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    categoryDTOS = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
+                    }.getType();
+                    categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
 
-                        spinnerDialogCate = new SpinnerDialog((Activity) baseActivity, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
-                        spinnerDialogCate.bindOnSpinerListener(new OnSpinerItemClick() {
-                            @Override
-                            public void onClick(String item, String id, int position) {
-                                dailogFilterJobBinding.etCategoryD.setText(item);
-                                params.put(Consts.CATEGORY_ID, id);
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                    spinnerDialogCate = new SpinnerDialog((Activity) baseActivity, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
+                    spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
+                        dailogFilterJobBinding.etCategoryD.setText(item);
+                        params.put(Consts.CATEGORY_ID, id);
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
             }
         });
     }
 
     public void getCurrencyValue() {
-        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        currencyDTOArrayList = new ArrayList<>();
-                        Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
-                        }.getType();
-                        currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    currencyDTOArrayList = new ArrayList<>();
+                    Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
+                    }.getType();
+                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    ProjectUtils.showToast(baseActivity, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
         });
     }

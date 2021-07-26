@@ -72,22 +72,16 @@ public class AdapterGallery extends RecyclerView.Adapter<RecyclerView.ViewHolder
             myViewHolder.binding.llDeletePhoto.setVisibility(View.GONE);
         }
 
-        myViewHolder.binding.ivBottomFoster.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (type.equalsIgnoreCase("gallery")) {
-                    ((ImageGallery) context).showImg(gallery.get(position).getImage());
-                }
+        myViewHolder.binding.ivBottomFoster.setOnClickListener(v -> {
+            if (type.equalsIgnoreCase("gallery")) {
+                ((ImageGallery) context).showImg(gallery.get(position).getImage());
             }
         });
 
-        myViewHolder.binding.ivDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parms.put(Consts.ID, gallery.get(position).getId());
-                parms.put(Consts.USER_ID, gallery.get(position).getUser_id());
-                deleteDialog();
-            }
+        myViewHolder.binding.ivDelete.setOnClickListener(v -> {
+            parms.put(Consts.ID, gallery.get(position).getId());
+            parms.put(Consts.USER_ID, gallery.get(position).getUser_id());
+            deleteDialog();
         });
     }
 
@@ -118,21 +112,12 @@ public class AdapterGallery extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .setTitle(context.getResources().getString(R.string.delete_gallery))
                     .setMessage(context.getResources().getString(R.string.delete_gallery_msg))
                     .setCancelable(false)
-                    .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            deleteGallery();
+                    .setPositiveButton(context.getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        deleteGallery();
 
-                        }
                     })
-                    .setNegativeButton(context.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(context.getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {
@@ -141,17 +126,14 @@ public class AdapterGallery extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void deleteGallery() {
-        new HttpsRequest(Consts.DELETE_GALLERY_API, parms, context).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showToast(context, msg);
-                    if (type.equalsIgnoreCase("gallery")) {
-                        ((ImageGallery) context).getParentData();
-                    }
-                } else {
-                    ProjectUtils.showLong(context, msg);
+        new HttpsRequest(Consts.DELETE_GALLERY_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showToast(context, msg);
+                if (type.equalsIgnoreCase("gallery")) {
+                    ((ImageGallery) context).getParentData();
                 }
+            } else {
+                ProjectUtils.showLong(context, msg);
             }
         });
     }

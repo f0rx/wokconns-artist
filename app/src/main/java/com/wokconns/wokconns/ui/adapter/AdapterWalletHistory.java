@@ -1,5 +1,6 @@
 package com.wokconns.wokconns.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ public class AdapterWalletHistory extends RecyclerView.Adapter<AdapterWalletHist
         return new MyViewHolder(itemView);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         if (walletHistoryList.get(position).getStatus().equalsIgnoreCase("0")) {

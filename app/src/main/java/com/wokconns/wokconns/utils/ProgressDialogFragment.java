@@ -55,18 +55,14 @@ ProgressDialogFragment extends DialogFragment {
         dialog.setCancelable(false);
         // ?????????
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode,
-                                 KeyEvent event) {
-                // Disable Back key and Search key
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_BACK:
-                    case KeyEvent.KEYCODE_SEARCH:
-                        return true;
-                    default:
-                        return false;
-                }
+        dialog.setOnKeyListener((dialog1, keyCode, event) -> {
+            // Disable Back key and Search key
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                case KeyEvent.KEYCODE_SEARCH:
+                    return true;
+                default:
+                    return false;
             }
         });
         return dialog;

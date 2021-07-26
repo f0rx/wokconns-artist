@@ -80,28 +80,25 @@ public class ChatList extends Fragment {
 
     public void getChat() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_CHAT_HISTORY_API, getparm(), getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    tvNo.setVisibility(View.GONE);
-                    rvChatList.setVisibility(View.VISIBLE);
-                    try {
-                        chatList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<ChatListDTO>>() {
-                        }.getType();
-                        chatList = (ArrayList<ChatListDTO>) new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_CHAT_HISTORY_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                tvNo.setVisibility(View.GONE);
+                rvChatList.setVisibility(View.VISIBLE);
+                try {
+                    chatList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<ChatListDTO>>() {
+                    }.getType();
+                    chatList = (ArrayList<ChatListDTO>) new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    tvNo.setVisibility(View.VISIBLE);
-                    rvChatList.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                tvNo.setVisibility(View.VISIBLE);
+                rvChatList.setVisibility(View.GONE);
             }
         });
     }

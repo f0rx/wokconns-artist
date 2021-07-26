@@ -210,18 +210,8 @@ public class MainFragment extends FragmentActivity {
 
     private void showRationaleDialog(@StringRes int messageResId, final PermissionRequest request) {
         new AlertDialog.Builder(this)
-                .setPositiveButton(R.string.button_allow, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(@NonNull DialogInterface dialog, int which) {
-                        request.proceed();
-                    }
-                })
-                .setNegativeButton(R.string.button_deny, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(@NonNull DialogInterface dialog, int which) {
-                        request.cancel();
-                    }
-                })
+                .setPositiveButton(R.string.button_allow, (dialog, which) -> request.proceed())
+                .setNegativeButton(R.string.button_deny, (dialog, which) -> request.cancel())
                 .setCancelable(false)
                 .setMessage(messageResId)
                 .show();
@@ -289,7 +279,7 @@ public class MainFragment extends FragmentActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(Throwable e) {
             dismissProgress();
             Log.e("", "error");
         }
@@ -301,7 +291,7 @@ public class MainFragment extends FragmentActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(Throwable e) {
         }
     };
 
@@ -318,7 +308,7 @@ public class MainFragment extends FragmentActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(Throwable e) {
             dismissProgress();
         }
     };

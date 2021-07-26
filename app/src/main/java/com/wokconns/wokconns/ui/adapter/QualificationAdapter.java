@@ -71,19 +71,11 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         holder.CTVtitel.setText(qualificationsDTOList.get(position).getTitle());
         holder.CTVdescription.setText(qualificationsDTOList.get(position).getDescription());
-        holder.tvEditQuali.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogQualification(position);
-            }
-        });
-        holder.tvDeleteQuali.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paramsDelete = new HashMap<>();
-                paramsDelete.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(position).getId());
-                deleteDialog();
-            }
+        holder.tvEditQuali.setOnClickListener(v -> dialogQualification(position));
+        holder.tvDeleteQuali.setOnClickListener(v -> {
+            paramsDelete = new HashMap<>();
+            paramsDelete.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(position).getId());
+            deleteDialog();
         });
     }
 
@@ -130,46 +122,34 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
         dialogEditQualification.show();
         dialogEditQualification.setCancelable(false);
 
-        tvNoQuali.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogEditQualification.dismiss();
-
-            }
-        });
+        tvNoQuali.setOnClickListener(v -> dialogEditQualification.dismiss());
         tvYesQuali.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        paramsUpdate.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(pos).getId());
-                        paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(etQaulTitleD));
-                        paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(etQaulDesD));
+                v -> {
+                    paramsUpdate.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(pos).getId());
+                    paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(etQaulTitleD));
+                    paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(etQaulDesD));
 
-                        if (NetworkManager.isConnectToInternet(mContext)) {
-                            updateQuali();
-                        } else {
-                            ProjectUtils.showToast(mContext, mContext.getResources().getString(R.string.internet_concation));
-                        }
+                    if (NetworkManager.isConnectToInternet(mContext)) {
+                        updateQuali();
+                    } else {
+                        ProjectUtils.showToast(mContext, mContext.getResources().getString(R.string.internet_concation));
                     }
                 });
 
     }
     public void updateQuali() {
         ProjectUtils.showProgressDialog(mContext, true, mContext.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_QUALIFICATION_API, paramsUpdate, mContext).stringPost("TAG", new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
-                    persnoalInfo.getParentData();
-                    dialogEditQualification.dismiss();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
-
-
+        new HttpsRequest(Consts.UPDATE_QUALIFICATION_API, paramsUpdate, mContext).stringPost("TAG", (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
+                persnoalInfo.getParentData();
+                dialogEditQualification.dismiss();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
+
+
         });
     }
 
@@ -181,21 +161,12 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
                     .setTitle(mContext.getResources().getString(R.string.delete_quali))
                     .setMessage(mContext.getResources().getString(R.string.delete_quali_msg))
                     .setCancelable(false)
-                    .setPositiveButton(mContext.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog_book = dialog;
-                            deleteQuali();
+                    .setPositiveButton(mContext.getResources().getString(R.string.yes), (dialog, which) -> {
+                        dialog_book = dialog;
+                        deleteQuali();
 
-                        }
                     })
-                    .setNegativeButton(mContext.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                        }
-                    })
+                    .setNegativeButton(mContext.getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {
@@ -205,20 +176,17 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
 
     public void deleteQuali() {
         ProjectUtils.showProgressDialog(mContext, true, mContext.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DELETE_QUALIFICATION_API, paramsDelete, mContext).stringPost("TAG", new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
-                    persnoalInfo.getParentData();
-                    dialog_book.dismiss();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
-
-
+        new HttpsRequest(Consts.DELETE_QUALIFICATION_API, paramsDelete, mContext).stringPost("TAG", (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
+                persnoalInfo.getParentData();
+                dialog_book.dismiss();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
+
+
         });
     }
 

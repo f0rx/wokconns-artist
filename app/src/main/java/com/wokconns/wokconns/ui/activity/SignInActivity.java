@@ -189,24 +189,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(getString(R.string.app_name))
                 .setMessage(getResources().getString(R.string.close_msg))
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_MAIN);
-                        i.addCategory(Intent.CATEGORY_HOME);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                        finish();
-                    }
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_MAIN);
+                    i.addCategory(Intent.CATEGORY_HOME);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
                 })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 

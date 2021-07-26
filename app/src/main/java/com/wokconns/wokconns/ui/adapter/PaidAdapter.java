@@ -41,7 +41,7 @@ public class PaidAdapter extends RecyclerView.Adapter<PaidAdapter.MyViewHolder> 
     public PaidAdapter(Context mContext, ArrayList<HistoryDTO> objects, LayoutInflater inflater) {
         this.mContext = mContext;
         this.objects = objects;
-        this.historyDTOList = new ArrayList<HistoryDTO>();
+        this.historyDTOList = new ArrayList<>();
         this.historyDTOList.addAll(objects);
         this.inflater = inflater;
         prefrence = SharedPrefrence.getInstance(mContext);
@@ -95,14 +95,11 @@ public class PaidAdapter extends RecyclerView.Adapter<PaidAdapter.MyViewHolder> 
             e.printStackTrace();
         }
 
-        holder.tvView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(mContext, ViewInvoice.class);
-                in.putExtra(Consts.HISTORY_DTO, objects.get(position));
-                mContext.startActivity(in);
+        holder.tvView.setOnClickListener(v -> {
+            Intent in = new Intent(mContext, ViewInvoice.class);
+            in.putExtra(Consts.HISTORY_DTO, objects.get(position));
+            mContext.startActivity(in);
 
-            }
         });
 
     }

@@ -61,12 +61,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
         tvWallet = findViewById(R.id.tvWallet);
         ivBack = findViewById(R.id.ivBack);
 
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ivBack.setOnClickListener(v -> finish());
 
         if (getIntent().hasExtra(Consts.AMOUNT)) {
             amt = getIntent().getStringExtra(Consts.AMOUNT);
@@ -162,15 +157,12 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
 
 
     public void addMoney() {
-        new HttpsRequest(Consts.ADD_MONEY_API, parmas, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    ProjectUtils.showLong(mContext, msg);
-                    finish();
-                } else {
-                    ProjectUtils.showLong(mContext, msg);
-                }
+        new HttpsRequest(Consts.ADD_MONEY_API, parmas, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                ProjectUtils.showLong(mContext, msg);
+                finish();
+            } else {
+                ProjectUtils.showLong(mContext, msg);
             }
         });
     }
@@ -192,33 +184,22 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
 
         dialog.show();
         dialog.setCancelable(false);
-        llCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        llPaypall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = Consts.MAKE_PAYMENT_paypal +"amount=" + ProjectUtils.getEditTextValue(etAddMoney)+"&userId="+ userDTO.getUser_id();
-                Intent in2 = new Intent(mContext, PaymetWeb.class);
-                in2.putExtra(Consts.PAYMENT_URL, url);
-                startActivity(in2);
-                dialog.dismiss();
+        llCancel.setOnClickListener(v -> dialog.dismiss());
+        llPaypall.setOnClickListener(v -> {
+            String url = Consts.MAKE_PAYMENT_paypal +"amount=" + ProjectUtils.getEditTextValue(etAddMoney)+"&userId="+ userDTO.getUser_id();
+            Intent in2 = new Intent(mContext, PaymetWeb.class);
+            in2.putExtra(Consts.PAYMENT_URL, url);
+            startActivity(in2);
+            dialog.dismiss();
 
-            }
         });
-        llStripe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = Consts.MAKE_PAYMENT + userDTO.getUser_id() + "/" + ProjectUtils.getEditTextValue(etAddMoney);
-                Intent in2 = new Intent(mContext, PaymetWeb.class);
-                in2.putExtra(Consts.PAYMENT_URL, url);
-                startActivity(in2);
-                dialog.dismiss();
+        llStripe.setOnClickListener(v -> {
+            String url = Consts.MAKE_PAYMENT + userDTO.getUser_id() + "/" + ProjectUtils.getEditTextValue(etAddMoney);
+            Intent in2 = new Intent(mContext, PaymetWeb.class);
+            in2.putExtra(Consts.PAYMENT_URL, url);
+            startActivity(in2);
+            dialog.dismiss();
 
-            }
         });
 
     }

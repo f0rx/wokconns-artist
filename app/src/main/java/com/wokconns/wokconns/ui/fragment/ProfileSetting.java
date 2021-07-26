@@ -127,80 +127,66 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
         dialog_pass.setCancelable(false);
 
         tvYesPass.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        params = new HashMap<>();
-                        params.put(Consts.USER_ID, userDTO.getUser_id());
-                        params.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(etOldPassD));
-                        params.put(Consts.NEW_PASSWORD, ProjectUtils.getEditTextValue(etNewPassD));
+                v -> {
+                    params = new HashMap<>();
+                    params.put(Consts.USER_ID, userDTO.getUser_id());
+                    params.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(etOldPassD));
+                    params.put(Consts.NEW_PASSWORD, ProjectUtils.getEditTextValue(etNewPassD));
 
-                        if (NetworkManager.isConnectToInternet(getActivity())) {
-                            Submit();
+                    if (NetworkManager.isConnectToInternet(getActivity())) {
+                        Submit();
 
-                        } else {
-                            ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-                        }
+                    } else {
+                        ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                     }
                 });
 
-        ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog_pass.dismiss();
-            }
-        });
+        ivClose.setOnClickListener(v -> dialog_pass.dismiss());
     }
 
 
     public void updateProfile() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    try {
-                        ProjectUtils.showToast(getActivity(), msg);
-
-                        userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        baseActivity.showImage();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
+        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                try {
                     ProjectUtils.showToast(getActivity(), msg);
+
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    baseActivity.showImage();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
     public void logout() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, getActivity()).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(getActivity(), msg);
+        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(getActivity(), msg);
 
-                    dd.dismiss();
-                    prefrence.clearAllPreferences();
-                    Intent intent = new Intent(getActivity(), SignInActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    baseActivity.finish();
-                } else {
-                    ProjectUtils.showToast(getActivity(), msg);
-                }
-
-
+                dd.dismiss();
+                prefrence.clearAllPreferences();
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                baseActivity.finish();
+            } else {
+                ProjectUtils.showToast(getActivity(), msg);
             }
+
+
         });
     }
 
@@ -211,20 +197,12 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
                     .setTitle(getResources().getString(R.string.app_name))
                     .setMessage(getResources().getString(R.string.logout_msg))
                     .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dd = dialog;
-                            logout();
+                    .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                        dd = dialog;
+                        logout();
 
-                        }
                     })
-                    .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {
@@ -236,28 +214,25 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
         if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
             prefrence.setValue(Consts.LANGUAGE_SELECTION, "en");
         }
-        new HttpsRequest(baseURL, baseActivity).stringGet(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
-                            Intent intent1 = new Intent(baseActivity, WebViewCommon.class);
-                            intent1.putExtra(Consts.URL, msg);
-                            intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
-                            startActivity(intent1);
-                        } else if (baseURL.equalsIgnoreCase(Consts.FAQ_URL)) {
-                            Intent intent3 = new Intent(baseActivity, WebViewCommon.class);
-                            intent3.putExtra(Consts.URL, msg);
-                            intent3.putExtra(Consts.HEADER, getResources().getString(R.string.faq));
-                            startActivity(intent3);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        new HttpsRequest(baseURL, baseActivity).stringGet(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
+                        Intent intent1 = new Intent(baseActivity, WebViewCommon.class);
+                        intent1.putExtra(Consts.URL, msg);
+                        intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
+                        startActivity(intent1);
+                    } else if (baseURL.equalsIgnoreCase(Consts.FAQ_URL)) {
+                        Intent intent3 = new Intent(baseActivity, WebViewCommon.class);
+                        intent3.putExtra(Consts.URL, msg);
+                        intent3.putExtra(Consts.HEADER, getResources().getString(R.string.faq));
+                        startActivity(intent3);
                     }
-                } else {
-                    ProjectUtils.showToast(baseActivity, msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                ProjectUtils.showToast(baseActivity, msg);
             }
         });
     }

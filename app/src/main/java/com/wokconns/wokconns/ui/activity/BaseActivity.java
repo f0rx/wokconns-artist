@@ -184,36 +184,20 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         llProfileClick = navHeader.findViewById(R.id.llProfileClick);
 
 
-        tvEnglish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                language("en");
-
-            }
+        tvEnglish.setOnClickListener(v -> language("en"));
+        llProfileClick.setOnClickListener(v -> {
+            ivSearch.setVisibility(View.GONE);
+            rlheader.setVisibility(View.GONE);
+            navItemIndex = 7;
+            CURRENT_TAG = TAG_PROFILE;
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, new ArtistProfileNew());
+            fragmentTransaction.commitAllowingStateLoss();
+            drawer.closeDrawers();
         });
-        llProfileClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ivSearch.setVisibility(View.GONE);
-                rlheader.setVisibility(View.GONE);
-                navItemIndex = 7;
-                CURRENT_TAG = TAG_PROFILE;
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, new ArtistProfileNew());
-                fragmentTransaction.commitAllowingStateLoss();
-                drawer.closeDrawers();
-            }
-        });
-        tvOther.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                language("ar");
-
-            }
-        });
+        tvOther.setOnClickListener(v -> language("ar"));
         Glide.with(mContext).
                 load(userDTO.getImage())
                 .placeholder(R.drawable.dummyuser_image)
@@ -394,16 +378,13 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void loadHomeFragment(final Fragment fragment, final String TAG) {
 
-        Runnable mPendingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, TAG);
-                fragmentTransaction.commitAllowingStateLoss();
+        Runnable mPendingRunnable = () -> {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, fragment, TAG);
+            fragmentTransaction.commitAllowingStateLoss();
 
-            }
         };
 
         if (mPendingRunnable != null) {
@@ -434,158 +415,154 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
     private void setUpNavigationView() {
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
 
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
+            switch (menuItem.getItemId()) {
+                case R.id.nav_home:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.GONE);
 
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_home:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.GONE);
+                    navItemIndex = 0;
+                    CURRENT_TAG = TAG_MAIN;
+                    fragmentTransaction.replace(R.id.frame, new Home());
 
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_MAIN;
-                        fragmentTransaction.replace(R.id.frame, new Home());
+                    break;
+                case R.id.nav_jobs:
+                    ivSearch.setVisibility(View.VISIBLE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        break;
-                    case R.id.nav_jobs:
-                        ivSearch.setVisibility(View.VISIBLE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 1;
+                    CURRENT_TAG = TAG_MAIN;
+                    fragmentTransaction.replace(R.id.frame, new JobsFrag());
 
-                        navItemIndex = 1;
-                        CURRENT_TAG = TAG_MAIN;
-                        fragmentTransaction.replace(R.id.frame, new JobsFrag());
+                    break;
+                case R.id.nav_booking:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        break;
-                    case R.id.nav_booking:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 2;
+                    CURRENT_TAG = TAG_BOOKING;
+                    fragmentTransaction.replace(R.id.frame, new CustomerBooking());
+                    break;
+                case R.id.nav_chat:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_BOOKING;
-                        fragmentTransaction.replace(R.id.frame, new CustomerBooking());
-                        break;
-                    case R.id.nav_chat:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 3;
+                    CURRENT_TAG = TAG_CHAT;
+                    fragmentTransaction.replace(R.id.frame, new ChatList());
+                    break;
+                case R.id.nav_bookings:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_CHAT;
-                        fragmentTransaction.replace(R.id.frame, new ChatList());
-                        break;
-                    case R.id.nav_bookings:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 4;
+                    CURRENT_TAG = TAG_BOOKINGS_ALL;
+                    fragmentTransaction.replace(R.id.frame, new NewBookings());
+                    break;
+                case R.id.nav_appointment:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_BOOKINGS_ALL;
-                        fragmentTransaction.replace(R.id.frame, new NewBookings());
-                        break;
-                    case R.id.nav_appointment:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 5;
+                    CURRENT_TAG = TAG_APPOINTMENT;
+                    fragmentTransaction.replace(R.id.frame, new AppointmentFrag());
+                    break;
+                case R.id.nav_notification:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 5;
-                        CURRENT_TAG = TAG_APPOINTMENT;
-                        fragmentTransaction.replace(R.id.frame, new AppointmentFrag());
-                        break;
-                    case R.id.nav_notification:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 6;
+                    CURRENT_TAG = TAG_NOTIFICATION;
+                    fragmentTransaction.replace(R.id.frame, new Notification());
+                    break;
+                case R.id.nav_profile:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.GONE);
 
-                        navItemIndex = 6;
-                        CURRENT_TAG = TAG_NOTIFICATION;
-                        fragmentTransaction.replace(R.id.frame, new Notification());
-                        break;
-                    case R.id.nav_profile:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.GONE);
+                    navItemIndex = 7;
+                    CURRENT_TAG = TAG_PROFILE;
+                    fragmentTransaction.replace(R.id.frame, new ArtistProfileNew());
+                    break;
+                case R.id.nav_earing:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 7;
-                        CURRENT_TAG = TAG_PROFILE;
-                        fragmentTransaction.replace(R.id.frame, new ArtistProfileNew());
-                        break;
-                    case R.id.nav_earing:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 8;
+                    CURRENT_TAG = TAG_EARN;
+                    fragmentTransaction.replace(R.id.frame, new MyEarning());
+                    break;
+                case R.id.nav_history:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 8;
-                        CURRENT_TAG = TAG_EARN;
-                        fragmentTransaction.replace(R.id.frame, new MyEarning());
-                        break;
-                    case R.id.nav_history:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 9;
+                    CURRENT_TAG = TAG_HISTORY;
+                    fragmentTransaction.replace(R.id.frame, new HistoryFragment());
+                    break;
+                case R.id.nav_wallet:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 9;
-                        CURRENT_TAG = TAG_HISTORY;
-                        fragmentTransaction.replace(R.id.frame, new HistoryFragment());
-                        break;
-                    case R.id.nav_wallet:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 10;
+                    CURRENT_TAG = TAG_WALLET;
+                    fragmentTransaction.replace(R.id.frame, new Wallet());
+                    break;
+                case R.id.nav_bank:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.GONE);
 
-                        navItemIndex = 10;
-                        CURRENT_TAG = TAG_WALLET;
-                        fragmentTransaction.replace(R.id.frame, new Wallet());
-                        break;
-                    case R.id.nav_bank:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.GONE);
+                    navItemIndex = 11;
+                    CURRENT_TAG = TAG_ADD_BANK;
+                    fragmentTransaction.replace(R.id.frame, new AddBank());
+                    break;
+                case R.id.nav_profilesetting:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 11;
-                        CURRENT_TAG = TAG_ADD_BANK;
-                        fragmentTransaction.replace(R.id.frame, new AddBank());
-                        break;
-                    case R.id.nav_profilesetting:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 12;
+                    CURRENT_TAG = TAG_PROFILE_SETINGS;
+                    fragmentTransaction.replace(R.id.frame, new ProfileSetting());
+                    break;
+                case R.id.nav_tickets:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 12;
-                        CURRENT_TAG = TAG_PROFILE_SETINGS;
-                        fragmentTransaction.replace(R.id.frame, new ProfileSetting());
-                        break;
-                    case R.id.nav_tickets:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    navItemIndex = 13;
+                    CURRENT_TAG = TAG_TICKETS;
+                    fragmentTransaction.replace(R.id.frame, new Tickets());
+                    break;
+                case R.id.nav_sign_out:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.VISIBLE);
 
-                        navItemIndex = 13;
-                        CURRENT_TAG = TAG_TICKETS;
-                        fragmentTransaction.replace(R.id.frame, new Tickets());
-                        break;
-                    case R.id.nav_sign_out:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.VISIBLE);
+                    confirmLogout();
+                    break;
 
-                        confirmLogout();
-                        break;
+                default:
+                    ivSearch.setVisibility(View.GONE);
+                    rlheader.setVisibility(View.GONE);
 
-                    default:
-                        ivSearch.setVisibility(View.GONE);
-                        rlheader.setVisibility(View.GONE);
+                    navItemIndex = 0;
+                    CURRENT_TAG = TAG_MAIN;
+                    fragmentTransaction.replace(R.id.frame, new Home());
+                    break;
 
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_MAIN;
-                        fragmentTransaction.replace(R.id.frame, new Home());
-                        break;
-
-                }
-                fragmentTransaction.commitAllowingStateLoss();
-                drawer.closeDrawers();
-                if (menuItem.isChecked()) {
-                    menuItem.setChecked(false);
-                } else {
-                    menuItem.setChecked(true);
-                }
-                menuItem.setChecked(true);
-
-
-                return true;
             }
+            fragmentTransaction.commitAllowingStateLoss();
+            drawer.closeDrawers();
+            if (menuItem.isChecked()) {
+                menuItem.setChecked(false);
+            } else {
+                menuItem.setChecked(true);
+            }
+            menuItem.setChecked(true);
+
+
+            return true;
         });
 
     }
@@ -617,24 +594,16 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(getResources().getString(R.string.app_name))
                 .setMessage(getResources().getString(R.string.close_msg))
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_MAIN);
-                        i.addCategory(Intent.CATEGORY_HOME);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                        finish();
-                    }
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_MAIN);
+                    i.addCategory(Intent.CATEGORY_HOME);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
                 })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -643,28 +612,20 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(getResources().getString(R.string.incomplete_profile))
                 .setMessage(getResources().getString(R.string.incomplete_profile_msg))
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (NetworkManager.isConnectToInternet(mContext)) {
-                            Intent intent = new Intent(mContext, EditPersnoalInfo.class);
-                            intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_up, R.anim.stay);
-                        } else {
-                            ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
-                        }
-
-                        dialog.dismiss();
-
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                    if (NetworkManager.isConnectToInternet(mContext)) {
+                        Intent intent = new Intent(mContext, EditPersnoalInfo.class);
+                        intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_up, R.anim.stay);
+                    } else {
+                        ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
                     }
+
+                    dialog.dismiss();
+
                 })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .setCancelable(false)
                 .show();
     }
@@ -688,46 +649,40 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                     PendingResult result =
                             LocationServices.SettingsApi
                                     .checkLocationSettings(googleApiClient, builder.build());
-                    result.setResultCallback(new ResultCallback() {
+                    result.setResultCallback(result1 -> {
+                        final Status status = result1.getStatus();
+                        switch (status.getStatusCode()) {
+                            case LocationSettingsStatusCodes.SUCCESS:
+                                // All location settings are satisfied.
+                                // You can initialize location requests here.
+                                int permissionLocation1 = ContextCompat
+                                        .checkSelfPermission(BaseActivity.this,
+                                                Manifest.permission.ACCESS_FINE_LOCATION);
+                                if (permissionLocation1 == PackageManager.PERMISSION_GRANTED) {
+                                    mylocation = LocationServices.FusedLocationApi
+                                            .getLastLocation(googleApiClient);
 
-                        @Override
-                        public void onResult(@NonNull Result result) {
-                            final Status status = result.getStatus();
-                            switch (status.getStatusCode()) {
-                                case LocationSettingsStatusCodes.SUCCESS:
-                                    // All location settings are satisfied.
-                                    // You can initialize location requests here.
-                                    int permissionLocation = ContextCompat
-                                            .checkSelfPermission(BaseActivity.this,
-                                                    Manifest.permission.ACCESS_FINE_LOCATION);
-                                    if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-                                        mylocation = LocationServices.FusedLocationApi
-                                                .getLastLocation(googleApiClient);
-
-                                    }
-                                    break;
-                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                    // Location settings are not satisfied.
-                                    // But could be fixed by showing the user a dialog.
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(),
-                                        // and check the result in onActivityResult().
-                                        // Ask to turn on GPS automatically
-                                        status.startResolutionForResult(BaseActivity.this,
-                                                REQUEST_CHECK_SETTINGS_GPS);
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignore the error.
-                                    }
-                                    break;
-                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                    // Location settings are not satisfied. However, we have no way to fix the
-                                    // settings so we won't show the dialog.
-                                    //finish();
-                                    break;
-                            }
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                // Location settings are not satisfied.
+                                // But could be fixed by showing the user a dialog.
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(),
+                                    // and check the result in onActivityResult().
+                                    // Ask to turn on GPS automatically
+                                    status.startResolutionForResult(BaseActivity.this,
+                                            REQUEST_CHECK_SETTINGS_GPS);
+                                } catch (IntentSender.SendIntentException e) {
+                                    // Ignore the error.
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                // Location settings are not satisfied. However, we have no way to fix the
+                                // settings so we won't show the dialog.
+                                //finish();
+                                break;
                         }
-
-
                     });
                 }
             }
@@ -823,15 +778,12 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void updateLocation() {
         //ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_LOCATION_API, parms, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
+        new HttpsRequest(Consts.UPDATE_LOCATION_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
 
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
+            } else {
+                ProjectUtils.showToast(mContext, msg);
 
-                }
             }
         });
     }
@@ -858,50 +810,44 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        categoryDTOS = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
-                        }.getType();
-                        categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
-                        clickProfile();
+        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    categoryDTOS = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
+                    }.getType();
+                    categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    clickProfile();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+
             }
         });
     }
 
     public void getApproveStatus() {
-        new HttpsRequest(Consts.GET_APPROVAL_STATUS_API, parmsApprove, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    try {
-                        int approval_status = response.getInt("approval_status");
-                        userDTO.setApproval_status(approval_status);
-                        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                        if (approval_status == 0) {
-                            approveDailog();
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        new HttpsRequest(Consts.GET_APPROVAL_STATUS_API, parmsApprove, mContext).stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    int approval_status = response.getInt("approval_status");
+                    userDTO.setApproval_status(approval_status);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    if (approval_status == 0) {
+                        approveDailog();
                     }
 
-
-                } else {
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
+
             }
         });
     }
@@ -911,44 +857,30 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(getResources().getString(R.string.approved_profile))
                 .setMessage(getResources().getString(R.string.approved_profile_msg))
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .setCancelable(false)
                 .show();
     }
 
     public void logout() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                ProjectUtils.pauseProgressDialog();
-                if (flag) {
-                    ProjectUtils.showToast(mContext, msg);
+        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, mContext).stringPost(TAG, (flag, msg, response) -> {
+            ProjectUtils.pauseProgressDialog();
+            if (flag) {
+                ProjectUtils.showToast(mContext, msg);
 
-                    dd.dismiss();
-                    prefrence.clearAllPreferences();
-                    Intent intent = new Intent(mContext, SignInActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    ProjectUtils.showToast(mContext, msg);
-                }
-
-
+                dd.dismiss();
+                prefrence.clearAllPreferences();
+                Intent intent = new Intent(mContext, SignInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                ProjectUtils.showToast(mContext, msg);
             }
+
+
         });
     }
 
@@ -959,20 +891,12 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                     .setTitle(getResources().getString(R.string.app_name))
                     .setMessage(getResources().getString(R.string.logout_msg))
                     .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dd = dialog;
-                            logout();
+                    .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                        dd = dialog;
+                        logout();
 
-                        }
                     })
-                    .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                     .show();
 
         } catch (Exception e) {

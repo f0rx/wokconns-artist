@@ -32,12 +32,7 @@ public class ViewInvoice extends AppCompatActivity {
 
     public void setUiAction() {
 
-        binding.ivCross.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        binding.ivCross.setOnClickListener(v -> onBackPressed());
 
         Glide.with(mContext).
                 load(historyDTO.getArtistImage())

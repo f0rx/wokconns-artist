@@ -73,13 +73,10 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.MyViewHold
             holder.llStatus.setBackground(mContext.getResources().getDrawable(R.drawable.rectangle_green));
         }
 
-        holder.rlClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(mContext, CommentOneByOne.class);
-                in.putExtra(Consts.TICKET_ID, ticketDTOSList.get(position).getId());
-                mContext.startActivity(in);
-            }
+        holder.rlClick.setOnClickListener(v -> {
+            Intent in = new Intent(mContext, CommentOneByOne.class);
+            in.putExtra(Consts.TICKET_ID, ticketDTOSList.get(position).getId());
+            mContext.startActivity(in);
         });
     }
 

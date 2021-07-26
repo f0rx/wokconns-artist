@@ -23,12 +23,7 @@ public class WebViewCommon extends AppCompatActivity {
        // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_web_view_common);
 
-        binding.rlclose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        binding.rlclose.setOnClickListener(v -> finish());
 
         if (getIntent().hasExtra(Consts.URL)) {
             url = getIntent().getStringExtra(Consts.URL);

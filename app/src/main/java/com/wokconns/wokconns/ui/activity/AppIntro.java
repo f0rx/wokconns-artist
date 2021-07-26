@@ -1,5 +1,6 @@
 package com.wokconns.wokconns.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,6 +56,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
         setPageViewIndicator();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setPageViewIndicator() {
 
         Log.d("###setPageViewIndicator", " : called");
@@ -73,14 +75,9 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
             params.setMargins(4, 0, 4, 0);
 
             final int presentPosition = i;
-            dots[presentPosition].setOnTouchListener(new View.OnTouchListener() {
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    binding.mViewPager.setCurrentItem(presentPosition);
-                    return true;
-                }
-
+            dots[presentPosition].setOnTouchListener((v, event) -> {
+                binding.mViewPager.setCurrentItem(presentPosition);
+                return true;
             });
 
 
@@ -95,6 +92,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
 
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onPageSelected(int position) {
         Log.e("###onPageSelected, pos ", String.valueOf(position));
@@ -132,24 +130,16 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(getString(R.string.app_name))
                 .setMessage(getResources().getString(R.string.close_msg))
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_MAIN);
-                        i.addCategory(Intent.CATEGORY_HOME);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                        finish();
-                    }
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_MAIN);
+                    i.addCategory(Intent.CATEGORY_HOME);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
                 })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 

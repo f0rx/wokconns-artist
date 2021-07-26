@@ -149,20 +149,17 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
         buttonSendMessage.setOnClickListener(this);
         IVback.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
+        swipeRefreshLayout.post(() -> {
 
-                                        Log.e("Runnable", "FIRST");
-                                        if (NetworkManager.isConnectToInternet(mContext)) {
-                                            swipeRefreshLayout.setRefreshing(true);
-                                            getComment();
+            Log.e("Runnable", "FIRST");
+            if (NetworkManager.isConnectToInternet(mContext)) {
+                swipeRefreshLayout.setRefreshing(true);
+                getComment();
 
-                                        } else {
-                                            ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
-                                        }
-                                    }
-                                }
+            } else {
+                ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
+            }
+        }
         );
 
         emojIcon = new EmojIconActions(this, relative, edittextMessage, emojiButton, "#495C66", "#DCE1E2", "#E6EBEF");
@@ -194,101 +191,84 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
             showImageContainer();
         }
 */
-        mDeleteImg.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                picUri = null;
-                pathOfImage = "";
+        mDeleteImg.setOnClickListener(v -> {
+            picUri = null;
+            pathOfImage = "";
 
-                hideImageContainer();
-            }
+            hideImageContainer();
         });
 
-        mActionContainerImg.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+        mActionContainerImg.setOnClickListener(v -> {
+            if (actions_container_visible)
             {
-                if (actions_container_visible)
-                {
-                    hideActionsContainer();
-                    return;
-                }
-
-                showActionsContainer();
+                hideActionsContainer();
+                return;
             }
+
+            showActionsContainer();
         });
 
 
         builder = new BottomSheet.Builder(OneTwoOneChat.this).sheet(R.menu.menu_cards);
         builder.title(getResources().getString(R.string.select_img));
-        builder.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case R.id.camera_cards:
-                        if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                try {
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    File file = getOutputMediaFile(1);
-                                    if (!file.exists()) {
-                                        try {
-                                            ProjectUtils.pauseProgressDialog();
-                                            file.createNewFile();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
-                                        picUri = FileProvider.getUriForFile(OneTwoOneChat.this.getApplicationContext(), OneTwoOneChat.this.getApplicationContext().getPackageName() + ".fileprovider", file);
-                                    } else {
-                                        picUri = Uri.fromFile(file); // create
-                                    }
-
-                                    prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
-                                    startActivityForResult(intent, PICK_FROM_CAMERA);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
-                        break;
-                    case R.id.gallery_cards:
-                        if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                            if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
+        builder.listener((dialog, which) -> {
+            switch (which) {
+                case R.id.camera_cards:
+                    if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            try {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 File file = getOutputMediaFile(1);
                                 if (!file.exists()) {
                                     try {
+                                        ProjectUtils.pauseProgressDialog();
                                         file.createNewFile();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
                                 }
-                                picUri = Uri.fromFile(file);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    //Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.asd", newFile);
+                                    picUri = FileProvider.getUriForFile(OneTwoOneChat.this.getApplicationContext(), OneTwoOneChat.this.getApplicationContext().getPackageName() + ".fileprovider", file);
+                                } else {
+                                    picUri = Uri.fromFile(file); // create
+                                }
 
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
-
+                                prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
+                                startActivityForResult(intent, PICK_FROM_CAMERA);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
-                        break;
-                    case R.id.cancel_cards:
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                dialog.dismiss();
+                    }
+
+                    break;
+                case R.id.gallery_cards:
+                    if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(OneTwoOneChat.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                            File file = getOutputMediaFile(1);
+                            if (!file.exists()) {
+                                try {
+                                    file.createNewFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                        break;
-                }
+                            picUri = Uri.fromFile(file);
+
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_pic)), PICK_FROM_GALLERY);
+
+                        }
+                    }
+                    break;
+                case R.id.cancel_cards:
+                    builder.setOnDismissListener(dialog1 -> dialog1.dismiss());
+                    break;
             }
         });
     }
@@ -329,23 +309,20 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(OneTwoOneChat.this);
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            showImageContainer();
-                            Glide.with(OneTwoOneChat.this).load("file://" + imagePath)
-                                    .thumbnail(0.5f)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .into(mPreviewImg);
-                            try {
-                                // bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
-                                file = new File(imagePath);
-                                paramsFile.put(Consts.IMAGE,file);
-                                Log.e("image", imagePath);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        showImageContainer();
+                        Glide.with(OneTwoOneChat.this).load("file://" + imagePath)
+                                .thumbnail(0.5f)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(mPreviewImg);
+                        try {
+                            // bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
+                            file = new File(imagePath);
+                            paramsFile.put(Consts.IMAGE,file);
+                            Log.e("image", imagePath);
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -361,22 +338,19 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
                     pathOfImage = picUri.getPath();
                     imageCompression = new ImageCompression(OneTwoOneChat.this);
                     imageCompression.execute(pathOfImage);
-                    imageCompression.setOnTaskFinishedEvent(new ImageCompression.AsyncResponse() {
-                        @Override
-                        public void processFinish(String imagePath) {
-                            showImageContainer();
-                            Glide.with(OneTwoOneChat.this).load("file://" + imagePath)
-                                    .thumbnail(0.5f)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .into(mPreviewImg);
+                    imageCompression.setOnTaskFinishedEvent(imagePath -> {
+                        showImageContainer();
+                        Glide.with(OneTwoOneChat.this).load("file://" + imagePath)
+                                .thumbnail(0.5f)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(mPreviewImg);
+                        Log.e("image", imagePath);
+                        try {
+                            file = new File(imagePath);
+                            paramsFile.put(Consts.IMAGE,file);
                             Log.e("image", imagePath);
-                            try {
-                                file = new File(imagePath);
-                                paramsFile.put(Consts.IMAGE,file);
-                                Log.e("image", imagePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } catch (Exception e) {
@@ -505,25 +479,22 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
     }
 
     public void getComment() {
-        new HttpsRequest(Consts.GET_CHAT_API, parmsGet, mContext).stringPost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (flag) {
-                    try {
-                        getCommentDTOList = new ArrayList<>();
-                        Type getpetDTO = new TypeToken<List<GetCommentDTO>>() {
-                        }.getType();
-                        getCommentDTOList = (ArrayList<GetCommentDTO>) new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
-                        showData();
+        new HttpsRequest(Consts.GET_CHAT_API, parmsGet, mContext).stringPost(TAG, (flag, msg, response) -> {
+            swipeRefreshLayout.setRefreshing(false);
+            if (flag) {
+                try {
+                    getCommentDTOList = new ArrayList<>();
+                    Type getpetDTO = new TypeToken<List<GetCommentDTO>>() {
+                    }.getType();
+                    getCommentDTOList = (ArrayList<GetCommentDTO>) new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
+                    showData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
+            } else {
             }
         });
     }
@@ -548,17 +519,14 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
         }else {
             values.put(Consts.CHAT_TYPE,"1");
         }
-        new HttpsRequest(Consts.SEND_CHAT_API, values,paramsFile, mContext).imagePost(TAG, new Helper() {
-            @Override
-            public void backResponse(boolean flag, String msg, JSONObject response) {
-                if (flag) {
-                    edittextMessage.setText("");
-                    hideImageContainer();
-                    getComment();
-                    file = null;
-                    pathOfImage = "";
-                } else {
-                }
+        new HttpsRequest(Consts.SEND_CHAT_API, values,paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                edittextMessage.setText("");
+                hideImageContainer();
+                getComment();
+                file = null;
+                pathOfImage = "";
+            } else {
             }
         });
     }

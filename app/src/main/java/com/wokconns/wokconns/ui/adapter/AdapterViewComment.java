@@ -91,12 +91,7 @@ AdapterViewComment extends BaseAdapter {
         textViewMessage.setText(getCommentDTOList.get(position).getMessage());
         tvName.setText(getCommentDTOList.get(position).getSender_name());
 
-        ivView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogshare(position);
-            }
-        });
+        ivView.setOnClickListener(v -> dialogshare(position));
         try {
 
             textViewTime.setText(ProjectUtils.convertTimestampDateToTime(ProjectUtils.correctTimestamp(Long.parseLong(getCommentDTOList.get(position).getDate()))));
@@ -129,13 +124,7 @@ AdapterViewComment extends BaseAdapter {
                 .into(ivImageD);
 
         tvNameD.setText(getCommentDTOList.get(pos).getSender_name());
-        tvCloseD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogImg.dismiss();
-
-            }
-        });
+        tvCloseD.setOnClickListener(v -> dialogImg.dismiss());
 
     }
 

@@ -64,13 +64,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.binding.IVprofile);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(mContext, OneTwoOneChat.class);
-                in.putExtra(Consts.CHAT_LIST_DTO, chatList.get(position));
-                mContext.startActivity(in);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent in = new Intent(mContext, OneTwoOneChat.class);
+            in.putExtra(Consts.CHAT_LIST_DTO, chatList.get(position));
+            mContext.startActivity(in);
         });
 
     }

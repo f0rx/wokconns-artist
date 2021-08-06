@@ -269,7 +269,7 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 // Update price here
                 paramsPricing = new HashMap<>();
-                paramsPricing.put(Consts.ARTIST_ID, artistDetails.getId());
+                paramsPricing.put(Consts.BOOKING_ID, artistBookingsList.get(pos).getId());
                 paramsPricing.put(Consts.PRICE, binding1.CETEditPrice.getText().toString());
                 updateArtisanRate(successful -> {
                     if (successful) sendBookingRequest(req, pos);
@@ -348,7 +348,7 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
                     chatHistory = new ArrayList<>();
                     Type getpetDTO = new TypeToken<List<ChatListDTO>>() {
                     }.getType();
-                    chatHistory = (ArrayList<ChatListDTO>) new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
+                    chatHistory = new Gson().fromJson(response.getJSONArray("my_chat").toString(), getpetDTO);
 
                     callback.onDone(!chatHistory.isEmpty());
                 } catch (Exception e) {

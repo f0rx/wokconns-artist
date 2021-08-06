@@ -50,6 +50,7 @@ public interface Consts {
     String APPOINTMENT_OPERATION_API = "appointment_operation";
     String GET_ALL_JOB_API = "get_all_job";
     String VERIFY_PHONE = "verifyMobile";
+    String RESEND_VERIFY_OTP_CODE = "resendMobileOtp";
     String APPLIED_JOB_API = "applied_job";
     String JOB_STATUS_ARTIST_API = "job_status_artist";
     String GET_APPLIED_JOB_ARTIST_API = "get_applied_job_artist";

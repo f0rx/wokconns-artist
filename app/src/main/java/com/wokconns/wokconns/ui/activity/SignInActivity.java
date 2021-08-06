@@ -50,10 +50,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         ProjectUtils.Fullscreen(SignInActivity.this);
         setContentView(R.layout.activity_sign_in);
+
         mContext = SignInActivity.this;
         prefrence = SharedPrefrence.getInstance(mContext);
         firebase = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        Log.e("tokensss", Objects.requireNonNull(firebase.getString(Consts.DEVICE_TOKEN, "")));
+
         setUiAction();
     }
 

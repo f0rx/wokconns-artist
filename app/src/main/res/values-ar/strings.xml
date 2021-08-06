@@ -418,4 +418,7 @@
     <string name="card_expiry_hint">MM/YY</string>
     <string name="card_cvv">CVV</string>
     <string name="pay_now">ادفع الآن</string>
+    <string name="verification_resent">تم إعادة إرسال رمز OTP إلى رقم هاتفك!</string>
+    <string name="resend_otp_txt_1">لم تستلم رمز OTP؟</string>
+    <string name="resend_otp_txt_2">اعد ارسالها!</string>
 </resources>

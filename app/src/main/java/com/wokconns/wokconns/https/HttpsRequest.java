@@ -76,8 +76,13 @@ public class HttpsRequest {
                         try {
                             JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = jsonParser.jObj.get("status");
-                            Object message = jsonParser.jObj.get("message");
+                            Object status = "";
+                            if (jsonParser.jObj.has("status"))
+                                status = jsonParser.jObj.get("status");
+
+                            Object message = "";
+                            if (jsonParser.jObj.has("message"))
+                                message = jsonParser.jObj.get("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
                                     || status.equals("error")) {
@@ -134,8 +139,13 @@ public class HttpsRequest {
                         try {
                             JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = jsonParser.jObj.get("status");
-                            Object message = jsonParser.jObj.get("message");
+                            Object status = "";
+                            if (jsonParser.jObj.has("status"))
+                                status = jsonParser.jObj.get("status");
+
+                            Object message = "";
+                            if (jsonParser.jObj.has("message"))
+                                message = jsonParser.jObj.get("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
                                     || status.equals("error")) {
@@ -189,9 +199,9 @@ public class HttpsRequest {
                         JSONParser jsonParser = new JSONParser(ctx, response);
                         if (jsonParser.RESULT) {
 
-                            h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
+                            h.backResponse(true, jsonParser.MESSAGE, response);
                         } else {
-                            h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, null);
+                            h.backResponse(false, jsonParser.MESSAGE, null);
                         }
                     }
 
@@ -221,8 +231,13 @@ public class HttpsRequest {
                         try {
                             JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = jsonParser.jObj.get("status");
-                            Object message = jsonParser.jObj.get("message");
+                            Object status = "";
+                            if (jsonParser.jObj.has("status"))
+                                status = jsonParser.jObj.get("status");
+
+                            Object message = "";
+                            if (jsonParser.jObj.has("message"))
+                                message = jsonParser.jObj.get("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
                                     || status.equals("error")) {

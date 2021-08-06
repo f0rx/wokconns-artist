@@ -71,7 +71,7 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
         binding.tvStatus.setText(getResources().getString(R.string.pending));
         setupFab();
         baseActivity.headerNameTV.setText(getResources().getString(R.string.bookings));
-        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(requireActivity().getApplicationContext());
         binding.rvBooking.setLayoutManager(mLayoutManager);
 
         binding.svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

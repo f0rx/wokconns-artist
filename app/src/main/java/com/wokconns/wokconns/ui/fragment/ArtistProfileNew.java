@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.FileProvider;
@@ -34,15 +32,14 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.wokconns.wokconns.dto.ArtistDetailsDTO;
-import com.wokconns.wokconns.dto.CategoryDTO;
-import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.DialogDetailsInfoBinding;
 import com.wokconns.wokconns.databinding.FragmentArtistProfileNewBinding;
+import com.wokconns.wokconns.dto.ArtistDetailsDTO;
+import com.wokconns.wokconns.dto.CategoryDTO;
+import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
@@ -54,8 +51,6 @@ import com.wokconns.wokconns.ui.activity.Services;
 import com.wokconns.wokconns.utils.ImageCompression;
 import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -533,16 +528,16 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
     public void isOnline() {
         new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG,
                 (flag, msg, response) -> {
-            if (flag) {
-                ProjectUtils.showToast(getActivity(), msg);
-                getArtist();
+                    if (flag) {
+                        ProjectUtils.showToast(getActivity(), msg);
+                        getArtist();
 
-            } else {
-                ProjectUtils.showToast(getActivity(), msg);
-            }
+                    } else {
+                        ProjectUtils.showToast(getActivity(), msg);
+                    }
 
 
-        });
+                });
     }
 
     private File getOutputMediaFile(int type) {
@@ -676,24 +671,24 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
     public void updateProfileSelf() {
         new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG,
                 (flag, msg, response) -> {
-            if (flag) {
-                try {
-                    ProjectUtils.showToast(getActivity(), msg);
+                    if (flag) {
+                        try {
+                            ProjectUtils.showToast(getActivity(), msg);
 
-                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                    baseActivity.showImage();
+                            userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                            prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                            baseActivity.showImage();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-            } else {
-                ProjectUtils.showToast(getActivity(), msg);
-            }
+                    } else {
+                        ProjectUtils.showToast(getActivity(), msg);
+                    }
 
 
-        });
+                });
     }
 
     @Override
@@ -726,27 +721,27 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
         paramsUpdate.put(Consts.MOBILE, dialogBinding.etMobileD.getText().toString());
         paramsUpdate.put(Consts.GENDER, genderString);
         paramsUpdate.put(Consts.COUNTRY_CODE, dialogBinding.ccp.getSelectedCountryCode());
-        paramsUpdate.put(Consts.ID, artistDetailsDTO.getCurrency_id());
+        if (artistDetailsDTO != null)
+            paramsUpdate.put(Consts.ID, artistDetailsDTO.getCurrency_id());
 
         ProjectUtils.showProgressDialog(baseActivity, true, getResources().getString(R.string.please_wait));
         new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, baseActivity).imagePost(TAG,
                 (flag, msg, response) -> {
-            ProjectUtils.pauseProgressDialog();
-            dialog.dismiss();
-            if (flag) {
-                try {
-                    ProjectUtils.showToast(baseActivity, msg);
-                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                    userDTO.setMobile(dialogBinding.etMobileD.getText().toString());
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                ProjectUtils.showToast(baseActivity, msg);
-            }
-        });
+                    ProjectUtils.pauseProgressDialog();
+                    dialog.dismiss();
+                    if (flag) {
+                        try {
+                            ProjectUtils.showToast(baseActivity, msg);
+                            artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                            userDTO.setMobile(dialogBinding.etMobileD.getText().toString());
+                            prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        ProjectUtils.showToast(baseActivity, msg);
+                    }
+                });
     }
 
 }

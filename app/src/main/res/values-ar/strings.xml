@@ -394,4 +394,28 @@
     <string name="str_ar">عربى</string>
     <string name="mobile_no_not">رقم الجوال غير متاح</string>
     <string name="cancel_msg">هل أنت متأكد أنك تريد إلغاء هذه الوظيفة؟</string>
+    <string name="disclaimer_title">تنصل</string>
+    <string name="disclaimer_message">Wokconns ليست مسؤولة أو موثوقة عن المعاملات التي تتم خارج هذه المنصة دون موافقة فريق Wokconns. \\ n \\ n يحق لـ Wokconns اتخاذ إجراءات قانونية ضد أي حرفي أو عميل يتعامل خارج التطبيق.</string>
+    <string name="i_understand">أفهم</string>
+    <string name="rlOr">" أو "</string>
+    <string name="update_price_string">أدخل السعر الجديد الذي ناقشته مع العميل أدناه.</string>
+    <string name="continue_with_original">تواصل مع</string>
+    <string name="proceed">يتابع</string>
+    <string name="discuss_price">ناقش السعر</string>
+    <string name="valid_mobile_number">الرجاء إدخال رقم جوال صحيح</string>
+    <string name="otp_verification_title">التحقق من OTP</string>
+    <string name="otp_verification_msg_1">أدخل رمز OTP المرسل إلى</string>
+    <string name="btn_verify_txt">تحقق من رقم الهاتف</string>
+    <string name="valid_otp_msg">الرجاء إدخال رمز OTP صالح</string>
+    <string name="invalid_otp_str">الرجاء إدخال OTP صالح!</string>
+    <string name="verification_done">تم التحقق من رقم الهاتف بنجاح!</string>
+    <string name="registration_success_msg">تم التسجيل بنجاح!</string>
+
+    <string name="payment_prompt">معلومات البطاقة</string>
+    <string name="card_number">رقم البطاقة المكون من 16 رقمًا</string>
+    <string name="card_number_hint">0000 1111 2222 3333 4444 555</string>
+    <string name="card_expiry">تاريخ انتهاء صلاحية البطاقة</string>
+    <string name="card_expiry_hint">MM/YY</string>
+    <string name="card_cvv">CVV</string>
+    <string name="pay_now">ادفع الآن</string>
 </resources>

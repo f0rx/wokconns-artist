@@ -24,7 +24,6 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.databinding.FragmentProfileSettingBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
@@ -35,8 +34,6 @@ import com.wokconns.wokconns.ui.activity.WebViewCommon;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;

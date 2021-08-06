@@ -32,7 +32,7 @@
         android:xlargeScreens="true" />
 
     <application
-        android:name="com.wokconns.wokconns.application.GlobalState"
+        android:name=".application.GlobalState"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -42,47 +42,47 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-
-        <activity android:name="com.wokconns.wokconns.ui.activity.PayoutHistory" />
+        <activity android:name=".ui.activity.OTPVerificationActivity"></activity>
+        <activity android:name=".ui.activity.PayoutHistory" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.LanguageSelection"
+            android:name=".ui.activity.LanguageSelection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.ViewInvoice"
+            android:name=".ui.activity.ViewInvoice"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.PersnoalInfo"
+            android:name=".ui.activity.PersnoalInfo"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.AddServiceActivity"
+            android:name=".ui.activity.AddServiceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.PreviousWork"
+            android:name=".ui.activity.PreviousWork"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.ImageGallery"
+            android:name=".ui.activity.ImageGallery"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.Services"
+            android:name=".ui.activity.Services"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.Reviews"
+            android:name=".ui.activity.Reviews"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.WebViewCommon"
+            android:name=".ui.activity.WebViewCommon"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.Terms"
+            android:name=".ui.activity.Terms"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.EditPersnoalInfo"
+            android:name=".ui.activity.EditPersnoalInfo"
             android:screenOrientation="portrait" />
 
         <provider
@@ -98,7 +98,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />
@@ -109,7 +108,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="com.wokconns.wokconns.SplashActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -117,47 +116,47 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.SignUpActivity"
+            android:name=".ui.activity.SignUpActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.AppIntro"
+            android:name=".ui.activity.AppIntro"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.SignInActivity"
+            android:name=".ui.activity.SignInActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.BaseActivity"
+            android:name=".ui.activity.BaseActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.utils.MainFragment"
+            android:name=".utils.MainFragment"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.OneTwoOneChat"
+            android:name=".ui.activity.OneTwoOneChat"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.CommentOneByOne"
+            android:name=".ui.activity.CommentOneByOne"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.ForgotPass"
+            android:name=".ui.activity.ForgotPass"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.AddMoney"
+            android:name=".ui.activity.AddMoney"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.wokconns.wokconns.ui.activity.PaymetWeb"
+            android:name=".ui.activity.PaymentWeb"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.schibstedspain.leku.LocationPickerActivity"
             android:label="@string/leku_title_activity_location_picker"
-            android:parentActivityName="com.wokconns.wokconns.ui.activity.BaseActivity"
+            android:parentActivityName=".ui.activity.BaseActivity"
             android:theme="@style/AppTheme.Map"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -171,7 +170,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wokconns.wokconns.ui.activity.BaseActivity" />
         </activity> <!-- [START firebase_service] -->
-        <service android:name="com.wokconns.wokconns.MyFirebaseMessagingService">
+        <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

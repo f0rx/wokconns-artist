@@ -97,6 +97,8 @@ android {
         implementation 'com.github.bumptech.glide:glide:4.11.0'
         annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
         implementation 'com.github.florent37:singledateandtimepicker:1.2.2'
+        implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+        implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
         implementation 'de.hdodenhof:circleimageview:3.1.0'
         implementation 'androidx.multidex:multidex:2.0.1'
         implementation 'com.amitshekhar.android:android-networking:1.0.2'
@@ -111,6 +113,8 @@ android {
         implementation 'com.google.android.gms:play-services-maps:17.0.1'
         implementation 'com.google.android.gms:play-services-location:18.0.0'
         implementation 'com.kyleduo.switchbutton:library:1.4.5'
+        // implementation 'co.paystack.android.design.widget:pinpad:1.0.1'
+        implementation 'co.paystack.android:paystack:3.1.2'
         implementation 'com.github.PhilJay:MPAndroidChart:v3.0.1'
         implementation("com.google.android.libraries.places:places-compat:2.4.0")
         implementation("com.schibstedspain.android:leku:5.0.0") {

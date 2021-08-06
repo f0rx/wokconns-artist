@@ -18,11 +18,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 
@@ -39,18 +37,16 @@ import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.CategoryDTO;
 import com.wokconns.wokconns.dto.CurrencyDTO;
 import com.wokconns.wokconns.dto.UserDTO;
+import com.wokconns.wokconns.https.ApiClientImpl;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
-import com.wokconns.wokconns.interfacess.OnSpinerItemClick;
+import com.wokconns.wokconns.interfacess.LocationActivityManager;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.utils.ImageCompression;
 import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
 import com.wokconns.wokconns.utils.SpinnerDialog;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,13 +57,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.schibstedspain.leku.LocationPickerActivityKt.LATITUDE;
 import static com.schibstedspain.leku.LocationPickerActivityKt.LONGITUDE;
 
-public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickListener {
+public class EditPersnoalInfo extends LocationActivityManager implements View.OnClickListener {
     private final String TAG = EditPersnoalInfo.class.getSimpleName();
-    ActivityEditPersnoalInfoBinding binding;
+    private ActivityEditPersnoalInfoBinding binding;
     private Context mContext;
 
     private ArrayList<CategoryDTO> categoryDTOS = new ArrayList<>();
@@ -220,7 +217,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
                     }
                     break;
                 case R.id.cancel_cards:
-                    builder.setOnDismissListener(dialog1 -> dialog1.dismiss());
+                    builder.setOnDismissListener(DialogInterface::dismiss);
                     break;
             }
         });
@@ -229,7 +226,8 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
         spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
             binding.etCategoryD.setText(item);
             paramsUpdate.put(Consts.CATEGORY_ID, id);
-            binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
+            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
         });
 
         if (artistDetailsDTO != null) {
@@ -302,7 +300,8 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
             if (categoryDTOS.get(j).getId().equalsIgnoreCase(artistDetailsDTO.getCategory_id())) {
                 categoryDTOS.get(j).setSelected(true);
                 binding.etCategoryD.setText(categoryDTOS.get(j).getCat_name());
-                binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(j).getCurrency_type() + categoryDTOS.get(j).getPrice());
+                binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+                        categoryDTOS.get(j).getCurrency_type(), categoryDTOS.get(j).getPrice()));
 
 
             }
@@ -312,7 +311,8 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
         spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
             binding.etCategoryD.setText(item);
             paramsUpdate.put(Consts.CATEGORY_ID, id);
-            binding.tvText.setText(getResources().getString(R.string.commis_msg) + categoryDTOS.get(position).getCurrency_type() + categoryDTOS.get(position).getPrice());
+            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
 
 
         });
@@ -340,7 +340,7 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(binding.civProfile);
 
-        binding.etCurrency.setText("(" + artistDetailsDTO.getCurrency_symbol() + ")" + artistDetailsDTO.getCurrency_name());
+        binding.etCurrency.setText(String.format("(%s)%s", artistDetailsDTO.getCurrency_symbol(), artistDetailsDTO.getCurrency_name()));
 
         currencyId = artistDetailsDTO.getCurrency_id();
         paramsUpdate.put(Consts.ID, currencyId);
@@ -356,11 +356,21 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
                     currencyDTOArrayList = new ArrayList<>();
                     Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
                     }.getType();
-                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+                    currencyDTOArrayList = new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
 
                     try {
                         ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, currencyDTOArrayList);
                         binding.etCurrency.setAdapter(currencyAdapter);
+                        binding.etCurrency.postDelayed(() -> {
+                            // Initalize value with a default
+                            CurrencyDTO naira = null;
+                            // Loop thru then find Naira (NGN)
+                            for (CurrencyDTO el : currencyDTOArrayList)
+                                if (Objects.equals(el.getCode(), "NGN")) naira = el;
+                            if (naira != null)
+                                binding.etCurrency.setText(naira.toString(), false);
+                        }, 200);
+
                         binding.etCurrency.setCursorVisible(false);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -389,6 +399,10 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.etLocationD:
+                requestLocationPermissions(isGranted -> {
+                    if (isGranted) showGPSRationale();
+                });
+
                 if (NetworkManager.isConnectToInternet(mContext)) {
                     findPlace();
                 } else {
@@ -628,9 +642,12 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
             return;
         } else if (!validation(binding.etRateD, getResources().getString(R.string.val_rate))) {
             return;
-        } else {
+        }
+//        else if (paramsFile == null || paramsFile.size() == 0) {
+//            ProjectUtils.showToast(mContext, getResources().getString(R.string.select_image));
+//        }
+        else {
             if (NetworkManager.isConnectToInternet(mContext)) {
-
                 paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
                 paramsUpdate.put(Consts.NAME, ProjectUtils.getEditTextValue(binding.etNameD));
                 paramsUpdate.put(Consts.BIO, ProjectUtils.getEditTextValue(binding.etBioD));
@@ -664,54 +681,75 @@ public class EditPersnoalInfo extends AppCompatActivity implements View.OnClickL
 
     public void updateProfile() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
+
+        new ApiClientImpl(paramsUpdate).updateArtisanProfile((isSuccessful, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
-            if (flag) {
-                try {
-                    ProjectUtils.showToast(mContext, msg);
-                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-                    userDTO.setIs_profile(1);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                    finish();
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+            if (isSuccessful) {
+                ProjectUtils.showToast(mContext, msg);
+                Log.i(TAG, msg);
+                Log.i(TAG, "Some response " + response.getName());
             } else {
                 ProjectUtils.showToast(mContext, msg);
             }
         });
+
+//        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
+//            ProjectUtils.pauseProgressDialog();
+//            if (flag) {
+//                try {
+//                    ProjectUtils.showToast(mContext, msg);
+//                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+//                    userDTO.setIs_profile(1);
+//                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+//                    finish();
+//                    overridePendingTransition(R.anim.stay, R.anim.slide_down);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                ProjectUtils.showToast(mContext, msg);
+//            }
+//        });
     }
 
     public void updateProfileSelf() {
-        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, (flag, msg, response) -> {
-            if (flag) {
-                try {
-                    ProjectUtils.showToast(mContext, msg);
-                    int temp = 0;
-                    if (userDTO.getIs_profile() == 1) {
-                        temp = 1;
-                    }
-                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                    userDTO.setIs_profile(temp);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-//                        baseActivity.showImage();
+//        RequestBody reqBody = RequestBody.create(MediaType.parse("multipart/form-data"), fileProfile);
+//        MultipartBody.Part partImage = MultipartBody.Part.createFormData(Consts.IMAGE, fileProfile.getName(), reqBody);
+//        MultipartBody.Part partUserId = MultipartBody.Part.createFormData(Consts.USER_ID, userDTO.getUser_id());
+//        ApiClientFacade api = RetrofitClient.getInstance().facade();
+//        Call<okhttp3.Response> response = api.uploadProfileImage(partImage, partUserId);
 
-                    Glide.with(mContext).
-                            load(userDTO.getImage())
-                            .placeholder(R.drawable.dummyuser_image)
-                            .dontAnimate()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(binding.civProfile);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-            } else {
-                ProjectUtils.showToast(mContext, msg);
-            }
-        });
+//        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, (flag, msg, response) -> {
+//            if (flag) {
+//                try {
+//                    ProjectUtils.showToast(mContext, msg);
+//                    int temp = 0;
+//                    if (userDTO.getIs_profile() == 1) {
+//                        temp = 1;
+//                    }
+//                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+//                    userDTO.setIs_profile(temp);
+//                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+////                        baseActivity.showImage();
+//
+//                    Glide.with(mContext).
+//                            load(userDTO.getImage())
+//                            .placeholder(R.drawable.dummyuser_image)
+//                            .dontAnimate()
+//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                            .into(binding.civProfile);
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            } else {
+//                ProjectUtils.showToast(mContext, msg);
+//            }
+//        });
     }
 
 }

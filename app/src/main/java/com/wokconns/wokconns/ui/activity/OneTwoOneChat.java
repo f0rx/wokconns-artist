@@ -3,7 +3,6 @@ package com.wokconns.wokconns.ui.activity;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -35,7 +34,6 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.adapter.AdapterViewComment;
@@ -43,8 +41,6 @@ import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ImageCompression;
 import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,8 +109,8 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
             parmsGet.put(Consts.ARTIST_ID, userDTO.getUser_id());
             parmsGet.put(Consts.USER_ID, chatListDTO.getUser_id());
         }
-        setUiAction();
 
+        setUiAction();
     }
 
     @Override

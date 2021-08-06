@@ -2,7 +2,6 @@ package com.wokconns.wokconns.ui.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -31,7 +30,6 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentArtistProfileBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
@@ -46,8 +44,6 @@ import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;

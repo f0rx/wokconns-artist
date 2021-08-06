@@ -72,8 +72,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvBookingTitle"
-                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:gravity="center">
 
                     <ImageView
@@ -95,8 +95,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/llDate"
-                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:gravity="center">
 
                     <ImageView
@@ -119,8 +119,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/llLocation"
-                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:gravity="center">
 
                     <ImageView
@@ -137,12 +137,33 @@
                         android:textSize="@dimen/_11sdp" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/discussBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/llDescription"
+                    android:layout_margin="5dp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:background="@drawable/button_selector_gray"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.wokconns.wokconns.utils.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_chat"
+                        android:drawablePadding="8dp"
+                        android:text="@string/discuss_price"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13sdp" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/llACDE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/llDescription"
+                    android:layout_below="@+id/discussBtn"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal">
 

@@ -16,15 +16,12 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.utils.CustomButton;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -45,7 +42,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
     private CustomTextView tvWallet;
     private ImageView ivBack;
     private Dialog dialog;
-    private LinearLayout llPaypall, llStripe, llCancel;
+    private LinearLayout paystackButton, flutterwaveButton, llCancel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +64,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
             amt = getIntent().getStringExtra(Consts.AMOUNT);
             currency = getIntent().getStringExtra(Consts.CURRENCY);
 
-            tvWallet.setText(currency + " " + amt);
+            tvWallet.setText(String.format("%s %s", currency, amt));
         }
 
         cbAdd = findViewById(R.id.cbAdd);
@@ -85,9 +82,9 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
         tv2000 = findViewById(R.id.tv2000);
         tv2000.setOnClickListener(this);
 
-        tv1000.setText("+ " + currency + " 1000");
-        tv1500.setText("+ " + currency + " 1500");
-        tv2000.setText("+ " + currency + " 2000");
+        tv1000.setText(String.format("+ %s 1000", currency));
+        tv1500.setText(String.format("+ %s 1500", currency));
+        tv2000.setText(String.format("+ %s 2000", currency));
     }
 
     @Override
@@ -178,28 +175,28 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
 
 
         ///dialog.getWindow().setBackgroundDrawableResource(R.color.black);
-        llPaypall = (LinearLayout) dialog.findViewById(R.id.llPaypall);
-        llStripe = (LinearLayout) dialog.findViewById(R.id.llStripe);
+        paystackButton = (LinearLayout) dialog.findViewById(R.id.paystackButton);
+        flutterwaveButton = (LinearLayout) dialog.findViewById(R.id.flutterwaveButton);
         llCancel = (LinearLayout) dialog.findViewById(R.id.llCancel);
 
         dialog.show();
         dialog.setCancelable(false);
         llCancel.setOnClickListener(v -> dialog.dismiss());
-        llPaypall.setOnClickListener(v -> {
-            String url = Consts.MAKE_PAYMENT_paypal +"amount=" + ProjectUtils.getEditTextValue(etAddMoney)+"&userId="+ userDTO.getUser_id();
-            Intent in2 = new Intent(mContext, PaymetWeb.class);
-            in2.putExtra(Consts.PAYMENT_URL, url);
-            startActivity(in2);
+        paystackButton.setOnClickListener(v -> {
+            Intent in2 = new Intent(mContext, PaymentWeb.class);
+            in2.putExtra(Consts.USER_DTO, userDTO);
+            in2.putExtra(Consts.AMOUNT, amt);
+            in2.putExtra(Consts.CURRENCY, currency);
+            AddMoney.this.startActivity(in2);
             dialog.dismiss();
-
         });
-        llStripe.setOnClickListener(v -> {
-            String url = Consts.MAKE_PAYMENT + userDTO.getUser_id() + "/" + ProjectUtils.getEditTextValue(etAddMoney);
-            Intent in2 = new Intent(mContext, PaymetWeb.class);
-            in2.putExtra(Consts.PAYMENT_URL, url);
-            startActivity(in2);
+        flutterwaveButton.setOnClickListener(v -> {
+            Intent in2 = new Intent(mContext, PaymentWeb.class);
+            in2.putExtra(Consts.USER_DTO, userDTO);
+            in2.putExtra(Consts.AMOUNT, amt);
+            in2.putExtra(Consts.CURRENCY, currency);
+            AddMoney.this.startActivity(in2);
             dialog.dismiss();
-
         });
 
     }

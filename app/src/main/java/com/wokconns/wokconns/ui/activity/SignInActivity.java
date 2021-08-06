@@ -1,7 +1,7 @@
 package com.wokconns.wokconns.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     private Context mContext;
-    private CustomEditText CETemailadd, CETenterpassword;
+    private CustomEditText CETMobileNumber, CETenterpassword;
     private CustomButton CBsignIn;
     private CustomTextViewBold CTVBforgot;
     private CustomTextView CTVsignup;
@@ -59,7 +59,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     public void setUiAction() {
         RRsncbar = findViewById(R.id.RRsncbar);
-        CETemailadd = findViewById(R.id.CETemailadd);
+        CETMobileNumber = findViewById(R.id.CETMobileNumber);
         CETenterpassword = findViewById(R.id.CETenterpassword);
         CBsignIn = findViewById(R.id.CBsignIn);
         CTVsignup = findViewById(R.id.CTVsignup);
@@ -73,6 +73,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         ivEnterShow.setOnClickListener(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -108,8 +109,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
 
-//        _mockSignIn();
-
         new HttpsRequest(Consts.LOGIN_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
@@ -125,18 +124,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
                     ProjectUtils.showToast(mContext, msg);
 
-                    Intent in = new Intent(mContext, BaseActivity.class);
-
                     finish();
 
-                    startActivity(in);
+                    startActivity(new Intent(mContext, BaseActivity.class));
 
                     overridePendingTransition(R.anim.anim_slide_in_left,
                             R.anim.anim_slide_out_left);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             } else {
                 ProjectUtils.showToast(mContext, msg);
             }
@@ -144,8 +140,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void clickForSubmit() {
-        if (!ProjectUtils.isEmailValid(CETemailadd.getText().toString().trim())) {
-            showSickbar(getResources().getString(R.string.val_email));
+        if (!ProjectUtils.isPhoneNumberValid(CETMobileNumber.getText().toString().trim())) {
+            showSickbar(getResources().getString(R.string.valid_mobile_number));
         } else if (!ProjectUtils.isPasswordValid(CETenterpassword.getText().toString().trim())) {
             showSickbar(getResources().getString(R.string.val_pass));
         } else {
@@ -155,13 +151,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
             }
         }
-
-
     }
 
     public HashMap<String, String> getparm() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));
+        parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
         parms.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
         parms.put(Consts.DEVICE_TYPE, "ANDROID");
         parms.put(Consts.DEVICE_TOKEN, firebase.getString(Consts.DEVICE_TOKEN, ""));
@@ -200,29 +194,5 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 })
                 .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .show();
-    }
-
-    private void _mockSignIn() {
-        userDTO = new UserDTO("123456", "User 402",
-                "user@admin.com", "passworD12", "https://firebasestorage.googleapis.com/v0/b/smartlets-x.appspot.com/o/assets%2Fdefault-user.png?alt=media&token=82e08454-1786-4f0f-989a-03605e489a64",
-                "72 Congress Road", "Lekki Phase 1", "",
-                "", "1", "", "", "",
-                "", "User_Ref341", "Male", "Lagos",
-                "Nigeria", "", "", "", "",
-                "", "",
-                "", "NG", "",
-                "Access Bank (Diamond)", "0182928122", "",
-                "Ben Joe Cherish", 1, 1);
-        prefrence.setParentUser(userDTO, Consts.USER_DTO);
-
-        prefrence.setBooleanValue(Consts.IS_REGISTERED, true);
-
-        ProjectUtils.showToast(mContext, "Login Success!!");
-
-        Intent in = new Intent(mContext, BaseActivity.class);
-        startActivity(in);
-        finish();
-        overridePendingTransition(R.anim.anim_slide_in_left,
-                R.anim.anim_slide_out_left);
     }
 }

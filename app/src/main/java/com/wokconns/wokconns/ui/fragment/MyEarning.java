@@ -13,17 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,14 +31,11 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentMyEarningBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.PayoutHistory;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -50,11 +44,11 @@ import java.util.List;
 
 public class MyEarning extends Fragment {
     private View view;
-    private String TAG = MyEarning.class.getSimpleName();
+    private final String TAG = MyEarning.class.getSimpleName();
     private EarningDTO earningDTO;
     private ArrayList<EarningDTO.ChartData> chartDataList;
-    private HashMap<String, String> params = new HashMap<>();
-    private HashMap<String, String> paramsRequest = new HashMap<>();
+    private final HashMap<String, String> params = new HashMap<>();
+    private final HashMap<String, String> paramsRequest = new HashMap<>();
     private SharedPrefrence prefrence;
     private UserDTO userDTO;
     private BaseActivity baseActivity;
@@ -65,7 +59,7 @@ public class MyEarning extends Fragment {
     FragmentMyEarningBinding binding;
     private ArrayList<CurrencyDTO> currencyDTOArrayList = new ArrayList<>();
     String currencyCode = "";
-    private HashMap<String, String> paramsUpdate = new HashMap<>();
+    private final HashMap<String, String> paramsUpdate = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -167,7 +161,7 @@ public class MyEarning extends Fragment {
                     currencyDTOArrayList = new ArrayList<>();
                     Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
                     }.getType();
-                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+                    currencyDTOArrayList = new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
 
                     try {
                         ArrayAdapter<CurrencyDTO> currencyAdapter = new ArrayAdapter<>(baseActivity, android.R.layout.simple_list_item_1, currencyDTOArrayList);

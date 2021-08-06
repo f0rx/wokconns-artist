@@ -7,6 +7,7 @@ package com.wokconns.wokconns.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,12 +21,13 @@ import com.wokconns.wokconns.databinding.AdapterChatListBinding;
 import com.wokconns.wokconns.dto.ChatListDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.DisclaimerWarning;
 import com.wokconns.wokconns.ui.activity.OneTwoOneChat;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
 import java.util.ArrayList;
 
-public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyViewHolder> {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyViewHolder> implements DisclaimerWarning {
 
     Context mContext;
     ArrayList<ChatListDTO> chatList;
@@ -39,7 +41,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
         }
@@ -67,7 +69,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
         holder.itemView.setOnClickListener(v -> {
             Intent in = new Intent(mContext, OneTwoOneChat.class);
             in.putExtra(Consts.CHAT_LIST_DTO, chatList.get(position));
-            mContext.startActivity(in);
+
+            showDisclaimerDialog(mContext, in);
         });
 
     }

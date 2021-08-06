@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -329,6 +330,18 @@ public class ProjectUtils {
         }
     }
 
+    public static void log(String msg) {
+        log(msg, null);
+    }
+
+    public static void log(String msg, Throwable tr) {
+        log(TAG, msg, tr);
+    }
+
+    public static void log(String tag, String msg, Throwable tr) {
+        Log.wtf(tag, msg, tr);
+    }
+
 
     /**
      * Static method to cancel the Dialog.
@@ -403,14 +416,7 @@ public class ProjectUtils {
      * False if number is not valid.
      */
     public static boolean isPhoneNumberValid(String number) {
-
-
-        if (number.length() < 10 || number.length() > 11) {
-            //	Log.d("tag", "Number is not valid");
-            return false;
-        }
-
-        return true;
+        return number.length() == 11;
     }
 
 

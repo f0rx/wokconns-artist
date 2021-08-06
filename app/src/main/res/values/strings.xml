@@ -30,8 +30,24 @@
     <string name="acc_msg">Are you sure you want to Accept this appointment?</string>
     <string name="comp">Complete</string>
     <string name="close_msg">Are your sure you want to close Artist?</string>
+    <string name="disclaimer_title">Disclaimer</string>
+    <string name="disclaimer_message">
+        Wokconns is not responsible nor reliable for transactions conducted outside
+        this platform without consent from the Wokconns team.\n\n
+        Wokconns is at liberty to take legal action against any artisan or
+        customer that transacts outside the application.
+    </string>
     <string name="yes">YES!</string>
+    <string name="proceed">Proceed</string>
+    <string name="i_understand">I understand</string>
     <string name="no">NO</string>
+    <string name="rlOr"> OR </string>
+    <string name="update_price_string">
+        Enter the New Price you discussed with the Customer below.
+    </string>
+    <string name="continue_with_original">
+        Continue with:
+    </string>
     <string name="my_profile">Artist Profile</string>
     <string name="select_img">Select Image From</string>
     <string name="select_pic">Select Picture</string>
@@ -45,6 +61,7 @@
     <string name="hr">/hr</string>
     <string name="fix_rate">Fix Rate</string>
     <string name="fixed_rate">fixed rate</string>
+    <string name="registration_success_msg">Welcome</string>
     <string name="commis_msg">Artist commission will be added into your hourly rate. It will vary according to category selection. Category rate :</string>
     <string name="select_cate">Select Category</string>
     <string name="val_cat_sele">Please select category.</string>
@@ -104,6 +121,14 @@
     <string name="sign_in">Sign In</string>
     <string name="payment1">Payment ?</string>
     <string name="select_your_payment_mode">Select your payment mode</string>
+    <string name="payment_prompt">Card details</string>
+    <string name="card_number">16 digits Card Number</string>
+    <string name="card_number_hint">0000 1111 2222 3333 4444 555</string>
+    <string name="card_expiry">Card Expiry</string>
+    <string name="card_expiry_hint">MM/YY</string>
+    <string name="card_cvv">CVV</string>
+    <string name="pay_now">Pay now</string>
+
     <string name="video_gallery">Video Gallery</string>
     <string name="image_gallery">Image Gallery</string>
     <string name="about">About</string>
@@ -223,6 +248,7 @@
     <string name="no_history_found">NO HISTORY FOUND</string>
     <string name="select_image">Select Image</string>
     <string name="my_rate">My Rate</string>
+    <string name="discuss_price">Discuss price</string>
     <string name="accept">Accept</string>
     <string name="hour_rate">Hourly Rate</string>
     <string name="get_your_best_service_from_us">Get your best service from us</string>
@@ -271,6 +297,7 @@
     <string name="terms_of_use">Terms of Use</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="and">and</string>
+
     <string name="agreed">Yes, I have read and agreed to </string>
     <string name="val_description">Please enter description</string>
     <string name="val_title1">Please enter title</string>
@@ -400,4 +427,11 @@
     <string name="str_en">English</string>
     <string name="str_ar">عربى</string>
     <string name="mobile_no_not">Mobile number not available</string>
+    <string name="valid_mobile_number">Please enter a valid mobile number</string>
+    <string name="invalid_otp_str">"Please enter a valid OTP!"</string>
+    <string name="otp_verification_title">OTP Verification</string>
+    <string name="otp_verification_msg_1">Enter the OTP Code sent to</string>
+    <string name="btn_verify_txt">Verify Phone Number</string>
+    <string name="valid_otp_msg">Please enter a valid OTP Code</string>
+    <string name="verification_done">Phone number verification successful!</string>
 </resources>

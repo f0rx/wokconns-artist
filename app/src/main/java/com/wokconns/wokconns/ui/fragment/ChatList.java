@@ -62,7 +62,7 @@ public class ChatList extends Fragment {
         tvNo = v.findViewById(R.id.tvNo);
         rvChatList = v.findViewById(R.id.rvChatList);
 
-        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(requireActivity().getApplicationContext());
         rvChatList.setLayoutManager(mLayoutManager);
     }
 

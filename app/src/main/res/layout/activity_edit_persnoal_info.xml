@@ -314,7 +314,7 @@
 
                     <com.wokconns.wokconns.utils.CustomEditText
                         android:id="@+id/etRateD"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_weight="1"
@@ -322,7 +322,6 @@
                         android:drawableEnd="@drawable/ic_dollar"
                         android:hint="@string/my_rate"
                         android:inputType="number"
-                        android:maxLength="4"
                         android:padding="@dimen/_7sdp"
                         android:singleLine="true"
                         android:text=""

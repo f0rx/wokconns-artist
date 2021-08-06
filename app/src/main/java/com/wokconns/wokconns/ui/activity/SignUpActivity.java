@@ -1,10 +1,9 @@
 package com.wokconns.wokconns.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -14,20 +13,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.utils.CustomButton;
-import com.wokconns.wokconns.utils.CustomTextViewBold;
-import com.wokconns.wokconns.utils.ProjectUtils;
-import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
-
-import org.json.JSONObject;
+import com.wokconns.wokconns.utils.CustomTextViewBold;
+import com.wokconns.wokconns.utils.ProjectUtils;
 
 import java.util.HashMap;
 
@@ -86,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -136,29 +136,30 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void register() {
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-        HashMap<String, String> params = getparm();
-
-//        Log.i(TAG, "Params length ==> " + params.size());
-
-        new HttpsRequest(Consts.REGISTER_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Consts.REGISTER_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
                 try {
-                    ProjectUtils.showToast(mContext, msg);
-                    startActivity(new Intent(mContext, SignInActivity.class));
+                    ProjectUtils.showToast(mContext, String.format("%s %s!",
+                            getResources().getString(R.string.registration_success_msg),
+                            ProjectUtils.getEditTextValue(CETfirstname)));
+
+                    Intent in = new Intent(mContext, OTPVerificationActivity.class);
+                    in.putExtra(Consts.EMAIL, CETemailadd.getText().toString());
+                    in.putExtra(Consts.MOBILE, CETMobileNumber.getText().toString());
+
+                    startActivity(in);
                     finish();
+
                     overridePendingTransition(R.anim.anim_slide_in_left,
                             R.anim.anim_slide_out_left);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             } else {
                 ProjectUtils.showToast(mContext, msg);
             }
-
-
         });
     }
 
@@ -189,6 +190,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return true;
         } else {
             showSickbar(getResources().getString(R.string.trms_acc));
+            ProjectUtils.showLong(mContext, getResources().getString(R.string.trms_acc));
             return false;
         }
     }
@@ -212,15 +214,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         parms.put(Consts.NAME, ProjectUtils.getEditTextValue(CETfirstname));
         parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));
         parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
-//        parms.put("mobile_no", ProjectUtils.getEditTextValue(CETMobileNumber));
         parms.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
         parms.put(Consts.REFERRAL_CODE, ProjectUtils.getEditTextValue(etReferal));
-//        parms.put("use_code", ProjectUtils.getEditTextValue(etReferal));
         parms.put(Consts.ROLE, "1");
         parms.put(Consts.DEVICE_ID, "12345");
         parms.put(Consts.DEVICE_TYPE, "ANDROID");
         parms.put(Consts.DEVICE_TOKEN, firebase.getString(Consts.DEVICE_TOKEN, ""));
-        Log.e(TAG, parms.toString());
         return parms;
     }
 

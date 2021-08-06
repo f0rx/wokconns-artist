@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.wokconns.wokconns.dto.ArtistBooking;
+import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentNewBookingsBinding;
@@ -47,6 +48,7 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
     private String TAG = NewBookings.class.getSimpleName();
     private SharedPrefrence prefrence;
     private UserDTO userDTO;
+    private ArtistDetailsDTO artistDetails;
     private HashMap<String, String> parms = new HashMap<>();
     private LayoutInflater myInflater;
     private AdapterAllBookings adapterAllBookings;
@@ -105,6 +107,9 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
             }
         }
         );
+
+        // Fetch artist details
+        getArtist();
     }
 
     /**
@@ -168,8 +173,26 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void showData() {
-        adapterAllBookings = new AdapterAllBookings(NewBookings.this, artistBookingsList, userDTO, myInflater);
+        adapterAllBookings = new AdapterAllBookings(NewBookings.this, artistBookingsList,
+                userDTO, artistDetails, myInflater);
         binding.rvBooking.setAdapter(adapterAllBookings);
+    }
+
+    public void getArtist() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        params.put(Consts.USER_ID, userDTO.getUser_id());
+
+        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, params, requireContext())
+                .stringPost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    artistDetails = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -243,5 +266,4 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
         showData();
 
     }
-
 }

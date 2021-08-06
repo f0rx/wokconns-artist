@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 
@@ -33,8 +32,6 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
-import com.wokconns.wokconns.interfacess.OnSpinerItemClick;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
@@ -42,8 +39,6 @@ import com.wokconns.wokconns.ui.adapter.AllJobsAdapter;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
 import com.wokconns.wokconns.utils.SpinnerDialog;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

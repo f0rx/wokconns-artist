@@ -49,6 +49,7 @@ public interface Consts {
     String EDIT_APPOINTMENT_API = "edit_appointment";
     String APPOINTMENT_OPERATION_API = "appointment_operation";
     String GET_ALL_JOB_API = "get_all_job";
+    String VERIFY_PHONE = "verifyMobile";
     String APPLIED_JOB_API = "applied_job";
     String JOB_STATUS_ARTIST_API = "job_status_artist";
     String GET_APPLIED_JOB_ARTIST_API = "get_applied_job_artist";
@@ -73,6 +74,7 @@ public interface Consts {
     String ARTIST_HOME_DATA = "artistHomeData";
     String GET_PAYOUT_DATA = "getPayoutData";
     String JOB_FILTER = "jobFilter";
+    String UPDATE_ARTISAN_RATE = "updateRate";
 
     /*app data*/
     String CAMERA_ACCEPTED = "camera_accepted";
@@ -121,7 +123,9 @@ public interface Consts {
 
     /*Login Parameter*/
     String NAME = "name";
+    String EMAIL = "email";
     String EMAIL_ID = "email_id";
+    String OTP_CODE = "otp";
     String PASSWORD = "password";
     String DEVICE_TYPE = "device_type";
     String DEVICE_TOKEN = "device_token";

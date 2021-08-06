@@ -28,13 +28,10 @@ import com.wokconns.wokconns.databinding.ActivityServicesBinding;
 import com.wokconns.wokconns.databinding.DailogArProductBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.adapter.AdapterServices;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;

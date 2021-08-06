@@ -1,9 +1,7 @@
 package com.wokconns.wokconns.ui.fragment;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,7 +18,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
@@ -42,14 +39,11 @@ import com.wokconns.wokconns.dto.ArtistBooking;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
-import com.wokconns.wokconns.interfacess.LocationPermissionManager;
+import com.wokconns.wokconns.interfacess.LocationFragmentManager;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +55,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-public class CustomerBooking extends LocationPermissionManager implements View.OnClickListener {
+public class CustomerBooking extends LocationFragmentManager implements View.OnClickListener {
     private final String TAG = CustomerBooking.class.getSimpleName();
     private SharedPrefrence prefrence;
     private UserDTO userDTO;
@@ -150,33 +144,30 @@ public class CustomerBooking extends LocationPermissionManager implements View.O
         panGoogleMap(latitude, longitude, markerTitle, snippet, animate, null);
     }
 
+    @SuppressLint("MissingPermission")
     void panGoogleMap(String latitude, String longitude, String markerTitle,
                       String snippet, boolean animate, Callable<Object> callback) {
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
 
-            // For showing a move to my location button
-            if (ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                googleMap.setMyLocationEnabled(true);
+            requestLocationPermissions(isGranted -> {
+                if (isGranted) {
+                    showGPSRationale();
 
-                // For dropping a marker at a point on the Map
-                LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                googleMap.addMarker(new MarkerOptions().position(latLng)
-                        .title(markerTitle == null ? "My Location" : markerTitle).snippet(snippet));
+                    googleMap.setMyLocationEnabled(true);
 
-                if (animate) {
-                    // For zooming automatically to the location of the marker
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    // For dropping a marker at a point on the Map
+                    LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                    googleMap.addMarker(new MarkerOptions().position(latLng)
+                            .title(markerTitle == null ? "My Location" : markerTitle).snippet(snippet));
+
+                    if (animate) {
+                        // For zooming automatically to the location of the marker
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
                 }
-            } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) ||
-                    shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) && !isShowingRationale) {
-                showInContextUI(baseActivity);
-            } else {
-                if (callback != null) requestLocationPermissions(callback);
-                else requestLocationPermissions();
-            }
+            }, callback);
         });
     }
 

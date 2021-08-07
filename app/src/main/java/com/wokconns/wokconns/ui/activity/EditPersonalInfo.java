@@ -271,7 +271,7 @@ public class EditPersonalInfo extends LocationActivityManager implements View.On
     }
 
     private File getOutputMediaFile(int type) {
-        String root = Environment.getExternalStorageDirectory().toString();
+        String root = getExternalCacheDir().getPath();
         File mediaStorageDir = new File(root, Consts.APP_NAME);
         /**Create the storage directory if it does not exist*/
         if (!mediaStorageDir.exists()) {

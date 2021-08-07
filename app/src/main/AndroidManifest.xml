@@ -42,7 +42,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.activity.OTPVerificationActivity"></activity>
+        <activity android:name=".ui.activity.OTPVerificationActivity" />
         <activity android:name=".ui.activity.PayoutHistory" />
 
         <uses-library

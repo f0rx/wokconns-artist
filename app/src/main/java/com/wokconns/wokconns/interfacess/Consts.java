@@ -3,7 +3,8 @@ package com.wokconns.wokconns.interfacess;
 public interface Consts {
     String APP_NAME = "Artisan";
     //old 677440
-    String BASE_URL = "https://wms.wokconns.com/Webservice/";
+    String DOMAIN_URL = "https://wms.wokconns.com/";
+    String BASE_URL = DOMAIN_URL + "Webservice/";
     String PAYMENT_FAIL = "https://wms.wokconns.com/Stripe/Payment/fail";
     String PAYMENT_SUCCESS = "https://wms.wokconns.com/Stripe/Payment/success";
     String MAKE_PAYMENT = "https://wms.wokconns.com/Stripe/Payment/make_payment/";

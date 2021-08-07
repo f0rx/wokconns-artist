@@ -11,19 +11,9 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
@@ -37,30 +27,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.wokconns.wokconns.dto.CategoryDTO;
-import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.ui.fragment.AddBank;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.wokconns.wokconns.dto.UserDTO;
+import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wokconns.wokconns.R;
+import com.wokconns.wokconns.dto.CategoryDTO;
+import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.ui.fragment.AddBank;
 import com.wokconns.wokconns.ui.fragment.AppointmentFrag;
 import com.wokconns.wokconns.ui.fragment.ArtistProfileNew;
 import com.wokconns.wokconns.ui.fragment.ChatList;
@@ -79,8 +78,6 @@ import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.CustomTypeFaceSpan;
 import com.wokconns.wokconns.utils.FontCache;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -198,10 +195,14 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
             drawer.closeDrawers();
         });
         tvOther.setOnClickListener(v -> language("ar"));
-        Glide.with(mContext).
-                load(userDTO.getImage())
+
+        final Uri uri = Uri.parse(userDTO.getImage().contains(Consts.DOMAIN_URL + Consts.DOMAIN_URL)
+                ? userDTO.getImage().replace(Consts.DOMAIN_URL, "") : userDTO.getImage());
+
+        Glide.with(mContext)
+                .load(uri)
                 .placeholder(R.drawable.dummyuser_image)
-                .dontAnimate()
+                .useAnimationPool(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(img_profile);
         tvEmail.setText(userDTO.getEmail_id());
@@ -367,12 +368,14 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void showImage() {
         userDTO = prefrence.getParentUser(Consts.USER_DTO);
+
         Glide.with(mContext).
                 load(userDTO.getImage())
                 .placeholder(R.drawable.dummyuser_image)
-                .dontAnimate()
+                .useAnimationPool(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(img_profile);
+
         tvName.setText(userDTO.getName());
     }
 
@@ -614,7 +617,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setMessage(getResources().getString(R.string.incomplete_profile_msg))
                 .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
                     if (NetworkManager.isConnectToInternet(mContext)) {
-                        Intent intent = new Intent(mContext, EditPersnoalInfo.class);
+                        Intent intent = new Intent(mContext, EditPersonalInfo.class);
                         intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_up, R.anim.stay);
@@ -759,6 +762,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         int permissionLocation = ContextCompat.checkSelfPermission(BaseActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionLocation == PackageManager.PERMISSION_GRANTED) {

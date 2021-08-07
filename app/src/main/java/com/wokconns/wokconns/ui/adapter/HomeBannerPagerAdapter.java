@@ -13,6 +13,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.wokconns.wokconns.dto.HomeBannerDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ViewpagerHomeBannerBinding;
+import com.wokconns.wokconns.dto.UserDTO;
+import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.fragment.Home;
 
 import java.util.ArrayList;
@@ -23,12 +26,16 @@ public class HomeBannerPagerAdapter extends PagerAdapter {
     private Context mContext;
     LayoutInflater mLayoutInflater;
     ArrayList<HomeBannerDTO> bannerDTOArrayList;
+    private SharedPrefrence preference;
+    private UserDTO userDTO;
     Home homeFragment;
     ViewpagerHomeBannerBinding binding;
 
     public HomeBannerPagerAdapter(Home homeFragment, Context mContext, ArrayList<HomeBannerDTO> bannerDTOArrayList) {
         this.mContext = mContext;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        preference = SharedPrefrence.getInstance(mContext);
+        this.userDTO = preference.getParentUser(Consts.USER_DTO);
         this.bannerDTOArrayList = bannerDTOArrayList;
         this.homeFragment = homeFragment;
     }
@@ -39,7 +46,8 @@ public class HomeBannerPagerAdapter extends PagerAdapter {
         binding = DataBindingUtil.inflate(mLayoutInflater, R.layout.viewpager_home_banner, container, false);
         View itemView = binding.getRoot();
 
-        binding.tvTitle.setText(bannerDTOArrayList.get(position).getTitle());
+        binding.tvTitle.setText(String.format("%s %s!",
+                mContext.getResources().getString(R.string.welcome_text), userDTO.getName()));
         binding.tvDescription.setText(bannerDTOArrayList.get(position).getDescription());
 
 //        Glide.with(mContext)

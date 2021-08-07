@@ -33,7 +33,7 @@ import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
-import com.wokconns.wokconns.ui.activity.EditPersnoalInfo;
+import com.wokconns.wokconns.ui.activity.EditPersonalInfo;
 import com.wokconns.wokconns.ui.activity.ImageGallery;
 import com.wokconns.wokconns.ui.activity.PersnoalInfo;
 import com.wokconns.wokconns.ui.activity.PreviousWork;
@@ -310,7 +310,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
             case R.id.ivEditPersonal:
                 if (NetworkManager.isConnectToInternet(getActivity())) {
                     if (categoryDTOS.size() > 0) {
-                        Intent intent = new Intent(getActivity(), EditPersnoalInfo.class);
+                        Intent intent = new Intent(getActivity(), EditPersonalInfo.class);
                         intent.putExtra(Consts.ARTIST_DTO, artistDetailsDTO);
                         intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
                         startActivity(intent);

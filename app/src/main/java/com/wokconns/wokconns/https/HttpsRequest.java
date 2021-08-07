@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by VARUN on 01/01/19.
@@ -73,31 +74,27 @@ public class HttpsRequest {
                         Log.e(TAG, " response body --->" + response.toString());
                         Log.e(TAG, " response body --->" + jObject.toString());
 
-                        try {
-                            JSONParser jsonParser = new JSONParser(ctx, response);
+                        JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = "";
-                            if (jsonParser.jObj.has("status"))
-                                status = jsonParser.jObj.get("status");
+                        Object status = "";
+                        if (jsonParser.jObj.has("status"))
+                            status = jsonParser.jObj.opt("status");
 
-                            Object message = "";
-                            if (jsonParser.jObj.has("message"))
-                                message = jsonParser.jObj.get("message");
+                        Object message = "";
+                        if (jsonParser.jObj.has("message"))
+                            message = jsonParser.jObj.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                        if ((status instanceof String && ((String) status).contains("err"))
+                                || Objects.equals(status, "error")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else if (status.equals(ERROR_INT) || status.equals("0")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else if (Objects.equals(status, ERROR_INT) || Objects.equals(status, "0")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else {
-                                h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else {
+                            h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
                         }
                     }
 
@@ -108,11 +105,11 @@ public class HttpsRequest {
                         try {
                             JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.get("status");
-                            Object message = jsonObject.get("message");
+                            Object status = jsonObject.opt("status");
+                            Object message = jsonObject.optString("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error"))
+                                    || Objects.equals(status, "error"))
                                 h.backResponse(false, message.toString(), jsonObject);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -136,31 +133,27 @@ public class HttpsRequest {
                         Log.e(TAG, " response body --->" + response.toString());
                         Log.e(TAG, " param --->" + params.toString());
 
-                        try {
-                            JSONParser jsonParser = new JSONParser(ctx, response);
+                        JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = "";
-                            if (jsonParser.jObj.has("status"))
-                                status = jsonParser.jObj.get("status");
+                        Object status = "";
+                        if (jsonParser.jObj.has("status"))
+                            status = jsonParser.jObj.opt("status");
 
-                            Object message = "";
-                            if (jsonParser.jObj.has("message"))
-                                message = jsonParser.jObj.get("message");
+                        Object message = "";
+                        if (jsonParser.jObj.has("message"))
+                            message = jsonParser.jObj.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                        if ((status instanceof String && ((String) status).contains("err"))
+                                || Objects.equals(status, "error")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else if (status.equals(ERROR_INT) || status.equals("0")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else if (Objects.equals(status, ERROR_INT) || Objects.equals(status, "0")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else {
-                                h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else {
+                            h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
                         }
                     }
 
@@ -171,11 +164,11 @@ public class HttpsRequest {
                         try {
                             JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.get("status");
-                            Object message = jsonObject.get("message");
+                            Object status = jsonObject.opt("status");
+                            Object message = jsonObject.optString("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error"))
+                                    || Objects.equals(status, "error"))
                                 h.backResponse(false, message.toString(), jsonObject);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -228,31 +221,27 @@ public class HttpsRequest {
                         Log.e(TAG, " response body --->" + response.toString());
                         Log.e(TAG, " param --->" + params.toString());
 
-                        try {
-                            JSONParser jsonParser = new JSONParser(ctx, response);
+                        JSONParser jsonParser = new JSONParser(ctx, response);
 
-                            Object status = "";
-                            if (jsonParser.jObj.has("status"))
-                                status = jsonParser.jObj.get("status");
+                        Object status = "";
+                        if (jsonParser.jObj.has("status"))
+                            status = jsonParser.jObj.opt("status");
 
-                            Object message = "";
-                            if (jsonParser.jObj.has("message"))
-                                message = jsonParser.jObj.get("message");
+                        Object message = "";
+                        if (jsonParser.jObj.has("message"))
+                            message = jsonParser.jObj.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                        if ((status instanceof String && ((String) status).contains("err"))
+                                || Objects.equals(status, "error")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else if (status.equals(ERROR_INT) || status.equals("0")) {
-                                ProjectUtils.showLong(ctx, message.toString());
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else if (Objects.equals(status, ERROR_INT) || Objects.equals(status, "0")) {
+                            ProjectUtils.showLong(ctx, message.toString());
 
-                                h.backResponse(false, jsonParser.MESSAGE, null);
-                            } else {
-                                h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            h.backResponse(false, jsonParser.MESSAGE, null);
+                        } else {
+                            h.backResponse(jsonParser.RESULT, jsonParser.MESSAGE, response);
                         }
                     }
 
@@ -263,11 +252,11 @@ public class HttpsRequest {
                         try {
                             JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.get("status");
-                            Object message = jsonObject.get("message");
+                            Object status = jsonObject.opt("status");
+                            Object message = jsonObject.optString("message");
 
                             if ((status instanceof String && ((String) status).contains("err"))
-                                    || status.equals("error"))
+                                    || Objects.equals(status, "error"))
                                 h.backResponse(false, message.toString(), jsonObject);
                         } catch (JSONException e) {
                             e.printStackTrace();

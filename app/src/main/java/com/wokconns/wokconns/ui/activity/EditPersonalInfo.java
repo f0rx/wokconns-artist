@@ -37,7 +37,6 @@ import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.CategoryDTO;
 import com.wokconns.wokconns.dto.CurrencyDTO;
 import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.https.ApiClientImpl;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.interfacess.LocationActivityManager;
@@ -62,8 +61,8 @@ import java.util.Objects;
 import static com.schibstedspain.leku.LocationPickerActivityKt.LATITUDE;
 import static com.schibstedspain.leku.LocationPickerActivityKt.LONGITUDE;
 
-public class EditPersnoalInfo extends LocationActivityManager implements View.OnClickListener {
-    private final String TAG = EditPersnoalInfo.class.getSimpleName();
+public class EditPersonalInfo extends LocationActivityManager implements View.OnClickListener {
+    private final String TAG = EditPersonalInfo.class.getSimpleName();
     private ActivityEditPersnoalInfoBinding binding;
     private Context mContext;
 
@@ -101,7 +100,7 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_persnoal_info);
-        mContext = EditPersnoalInfo.this;
+        mContext = EditPersonalInfo.this;
         prefrence = SharedPrefrence.getInstance(mContext);
         userDTO = prefrence.getParentUser(Consts.USER_DTO);
 
@@ -159,13 +158,13 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
             }
         });
 
-        builder = new BottomSheet.Builder(EditPersnoalInfo.this).sheet(R.menu.menu_cards);
+        builder = new BottomSheet.Builder(EditPersonalInfo.this).sheet(R.menu.menu_cards);
         builder.title(getResources().getString(R.string.select_img));
         builder.listener((dialog, which) -> {
             switch (which) {
                 case R.id.camera_cards:
-                    if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (ProjectUtils.hasPermissionInManifest(EditPersonalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(EditPersonalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                             try {
                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 File file = getOutputMediaFile(1);
@@ -195,8 +194,8 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
 
                     break;
                 case R.id.gallery_cards:
-                    if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
-                        if (ProjectUtils.hasPermissionInManifest(EditPersnoalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (ProjectUtils.hasPermissionInManifest(EditPersonalInfo.this, PICK_FROM_CAMERA, Manifest.permission.CAMERA)) {
+                        if (ProjectUtils.hasPermissionInManifest(EditPersonalInfo.this, PICK_FROM_GALLERY, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
                             File file = getOutputMediaFile(1);
                             if (!file.exists()) {
@@ -447,7 +446,7 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
                 try {
                     //bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
                     pathOfImage = picUri.getPath();
-                    imageCompression = new ImageCompression(EditPersnoalInfo.this);
+                    imageCompression = new ImageCompression(EditPersonalInfo.this);
                     imageCompression.execute(pathOfImage);
                     imageCompression.setOnTaskFinishedEvent(imagePath -> {
                         try {
@@ -498,7 +497,7 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
                 try {
                     bm = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), picUri);
                     pathOfImage = picUri.getPath();
-                    imageCompression = new ImageCompression(EditPersnoalInfo.this);
+                    imageCompression = new ImageCompression(EditPersonalInfo.this);
                     imageCompression.execute(pathOfImage);
                     imageCompression.setOnTaskFinishedEvent(imagePath -> {
                         Log.e("image", imagePath);
@@ -595,7 +594,7 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
     }
 
     public void getAddress(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(EditPersnoalInfo.this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(EditPersonalInfo.this, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
@@ -682,74 +681,53 @@ public class EditPersnoalInfo extends LocationActivityManager implements View.On
     public void updateProfile() {
         ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
 
-        new ApiClientImpl(paramsUpdate).updateArtisanProfile((isSuccessful, msg, response) -> {
+        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
-
-            if (isSuccessful) {
-                ProjectUtils.showToast(mContext, msg);
-                Log.i(TAG, msg);
-                Log.i(TAG, "Some response " + response.getName());
+            if (flag) {
+                try {
+                    ProjectUtils.showToast(mContext, msg);
+                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
+                    userDTO.setIs_profile(1);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    finish();
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 ProjectUtils.showToast(mContext, msg);
             }
         });
-
-//        new HttpsRequest(Consts.UPDATE_PROFILE_ARTIST_API, paramsUpdate, paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
-//            ProjectUtils.pauseProgressDialog();
-//            if (flag) {
-//                try {
-//                    ProjectUtils.showToast(mContext, msg);
-//                    artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
-//                    userDTO.setIs_profile(1);
-//                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-//                    finish();
-//                    overridePendingTransition(R.anim.stay, R.anim.slide_down);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                ProjectUtils.showToast(mContext, msg);
-//            }
-//        });
     }
 
     public void updateProfileSelf() {
-//        RequestBody reqBody = RequestBody.create(MediaType.parse("multipart/form-data"), fileProfile);
-//        MultipartBody.Part partImage = MultipartBody.Part.createFormData(Consts.IMAGE, fileProfile.getName(), reqBody);
-//        MultipartBody.Part partUserId = MultipartBody.Part.createFormData(Consts.USER_ID, userDTO.getUser_id());
-//        ApiClientFacade api = RetrofitClient.getInstance().facade();
-//        Call<okhttp3.Response> response = api.uploadProfileImage(partImage, partUserId);
+        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, (flag, msg, response) -> {
+            if (flag) {
+                try {
+                    ProjectUtils.showToast(mContext, msg);
+                    int temp = 0;
+                    if (userDTO.getIs_profile() == 1) {
+                        temp = 1;
+                    }
+                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
+                    userDTO.setIs_profile(temp);
+                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
 
+                    Glide.with(mContext).
+                            load(userDTO.getImage())
+                            .placeholder(R.drawable.dummyuser_image)
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(binding.civProfile);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-//        new HttpsRequest(Consts.ARTIST_IMAGE_API, params, paramsFileProfile, mContext).imagePost(TAG, (flag, msg, response) -> {
-//            if (flag) {
-//                try {
-//                    ProjectUtils.showToast(mContext, msg);
-//                    int temp = 0;
-//                    if (userDTO.getIs_profile() == 1) {
-//                        temp = 1;
-//                    }
-//                    userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-//                    userDTO.setIs_profile(temp);
-//                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-////                        baseActivity.showImage();
-//
-//                    Glide.with(mContext).
-//                            load(userDTO.getImage())
-//                            .placeholder(R.drawable.dummyuser_image)
-//                            .dontAnimate()
-//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                            .into(binding.civProfile);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                ProjectUtils.showToast(mContext, msg);
-//            }
-//        });
+            } else {
+                ProjectUtils.showToast(mContext, msg);
+            }
+        });
     }
 
 }

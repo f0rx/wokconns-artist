@@ -55,14 +55,15 @@
             android:visibility="visible">
 
             <com.wokconns.wokconns.utils.CustomEditText
-                android:id="@+id/etEmail"
+                android:id="@+id/etMobile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email_id"
+                android:hint="@string/mobile_number"
                 android:imeOptions="actionDone"
+                android:maxLength="11"
+                android:inputType="phone"
                 android:singleLine="true" />
         </com.wokconns.wokconns.utils.InputOpenFieldView>
-
 
         <com.wokconns.wokconns.utils.CustomButton
             android:id="@+id/btnSubmit"

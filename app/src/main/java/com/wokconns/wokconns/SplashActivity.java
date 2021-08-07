@@ -50,7 +50,6 @@ public class SplashActivity extends AppCompatActivity {
         mContext = SplashActivity.this;
         prefference = SharedPrefrence.getInstance(SplashActivity.this);
 
-
         FirebaseMessaging.getInstance().subscribeToTopic(Consts.TOPIC_ARTIST)
                 .addOnCompleteListener(task -> {
 
@@ -63,17 +62,13 @@ public class SplashActivity extends AppCompatActivity {
             if (prefference.getBooleanValue(Consts.IS_REGISTERED)) {
                 Intent in = new Intent(mContext, BaseActivity.class);
                 startActivity(in);
-                finish();
-                overridePendingTransition(R.anim.anim_slide_in_left,
-                        R.anim.anim_slide_out_left);
             } else {
                 startActivity(new Intent(SplashActivity.this, AppIntro.class));
-                finish();
-                overridePendingTransition(R.anim.anim_slide_in_left,
-                        R.anim.anim_slide_out_left);
             }
 
-
+            finish();
+            overridePendingTransition(R.anim.anim_slide_in_left,
+                    R.anim.anim_slide_out_left);
         }
 
     };
@@ -91,30 +86,28 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
-                try {
+        if (requestCode == REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS) {
+            try {
 
-                    cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    prefference.setBooleanValue(Consts.CAMERA_ACCEPTED, cameraAccepted);
+                cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                prefference.setBooleanValue(Consts.CAMERA_ACCEPTED, cameraAccepted);
 
-                    storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    prefference.setBooleanValue(Consts.STORAGE_ACCEPTED, storageAccepted);
+                storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                prefference.setBooleanValue(Consts.STORAGE_ACCEPTED, storageAccepted);
 
-                    accessNetState = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                    prefference.setBooleanValue(Consts.MODIFY_AUDIO_ACCEPTED, accessNetState);
+                accessNetState = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                prefference.setBooleanValue(Consts.MODIFY_AUDIO_ACCEPTED, accessNetState);
 
-                    fineLoc = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                    prefference.setBooleanValue(Consts.FINE_LOC, fineLoc);
+                fineLoc = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                prefference.setBooleanValue(Consts.FINE_LOC, fineLoc);
 
-                    corasLoc = grantResults[4] == PackageManager.PERMISSION_GRANTED;
-                    prefference.setBooleanValue(Consts.CORAS_LOC, corasLoc);
-                    handler.postDelayed(mTask, 2000);
+                corasLoc = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                prefference.setBooleanValue(Consts.CORAS_LOC, corasLoc);
+                handler.postDelayed(mTask, 2000);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

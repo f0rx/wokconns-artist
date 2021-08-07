@@ -1,5 +1,7 @@
 package com.wokconns.wokconns.dto;
 
+import com.wokconns.wokconns.interfacess.Consts;
+
 import java.io.Serializable;
 
 /**

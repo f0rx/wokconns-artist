@@ -82,7 +82,7 @@
             android:name=".ui.activity.Terms"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.EditPersnoalInfo"
+            android:name=".ui.activity.EditPersonalInfo"
             android:screenOrientation="portrait" />
 
         <provider

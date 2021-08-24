@@ -1,3 +1,4 @@
+
 package com.wokconns.wokconns.ui.activity;
 
 import android.content.Context;
@@ -179,7 +180,8 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
-                ProjectUtils.showToast(mContext, getResources().getString(R.string.verification_resent));
+                ProjectUtils.showToast(mContext, msg != null ? msg :
+                        getResources().getString(R.string.verification_resent));
             } else {
                 ProjectUtils.showToast(mContext, msg);
             }

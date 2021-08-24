@@ -180,7 +180,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
-                ProjectUtils.showToast(mContext, msg != null ? msg :
+                ProjectUtils.showLong(mContext, msg != null ? msg :
                         getResources().getString(R.string.verification_resent));
             } else {
                 ProjectUtils.showToast(mContext, msg);

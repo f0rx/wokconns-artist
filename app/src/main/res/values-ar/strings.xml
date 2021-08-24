@@ -10,9 +10,9 @@
     <string name="ok">حسنا</string>
     <string name="cancel">إلغاء</string>
     <string name="hindi">لا.</string>
-    <string name="intro_1">ابحثي في مكان قريب عن خبير التجميل و Hair Stylish.</string>
-    <string name="intro_2">اجعل نفسك أكثر جمالا مما تعتقد.</string>
-    <string name="intro_3">وظف أفضل مصور</string>
+    <string name="intro_1">يستغرق العثور على العملاء ذوي الأجور المرتفعة بضع خطوات.</string>
+    <string name="intro_2">لدينا قائمة من العملاء المنتظرين لمهاراتك.</string>
+    <string name="intro_3">يمكنك الحصول على وظيفة الخياطة من حولك بشكل أسرع من أي وقت مضى.</string>
     <string name="internet_concation">الرجاء تمكين اتصال الإنترنت الخاص بك.</string>
     <string name="server_error">غير قادر على الاتصال الخادم.</string>
     <string name="error_player">حدث خطأ أثناء تهيئة مشغل YouTube (٪ 1 $)</string>
@@ -423,4 +423,7 @@
     <string name="resend_otp_txt_2">اعد ارسالها!</string>
     <string name="forgot_pass_success_msg">تم إرسال كلمة مرور جديدة إلى</string>
     <string name="welcome_text">أهلا بك</string>
+    <string name="intro_1_bottom">دعنا نوصلك بهم الآن.</string>
+    <string name="intro_2_bottom">ببساطة قم بالتسجيل للحصول على هذه الوظيفة.</string>
+    <string name="intro_3_bottom">ببساطة قم بالتسجيل في لقاء العملاء المنتظرين.</string>
 </resources>

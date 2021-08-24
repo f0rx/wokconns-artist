@@ -35,14 +35,14 @@ public class AppIntroPagerAdapter extends PagerAdapter {
         View itemView = mLayoutInflater.inflate(R.layout.appintropager_adapter, container, false);
         ImageView ivImage = itemView.findViewById(R.id.ivImage);
 
-        CustomTextView ctvText = itemView.findViewById(R.id.ctvText);
+        CustomTextView ctvTextBottom = itemView.findViewById(R.id.ctvText);
         CustomTextView ctvDescription = itemView.findViewById(R.id.ctvTextdecrib);
         ivImage.setImageResource(mResources[position]);
-        setDescText(position, ctvDescription);
+        setDescText(position, ctvDescription, ctvTextBottom);
 
 
         container.addView(itemView);
-        ctvText.setOnClickListener(v -> {
+        ctvTextBottom.setOnClickListener(v -> {
             int pos = position + 1;
             activity.scrollPage(pos);
         });
@@ -64,16 +64,19 @@ public class AppIntroPagerAdapter extends PagerAdapter {
         return view == object;
     }
 
-    public void setDescText(int pos, TextView ctvDescription) {
+    public void setDescText(int pos, TextView ctvDescription, TextView ctvTextBottom) {
         switch (pos) {
             case 0:
                 ctvDescription.setText(mContext.getString(R.string.intro_1));
+                ctvTextBottom.setText(mContext.getString(R.string.intro_1_bottom));
                 break;
             case 1:
                 ctvDescription.setText(mContext.getString(R.string.intro_2));
+                ctvTextBottom.setText(mContext.getString(R.string.intro_2_bottom));
                 break;
             case 2:
                 ctvDescription.setText(mContext.getString(R.string.intro_3));
+                ctvTextBottom.setText(mContext.getString(R.string.intro_3_bottom));
                 break;
         }
     }

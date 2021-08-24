@@ -10,9 +10,12 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="hindi">Hindi</string>
-    <string name="intro_1">Search any nearby Artisans.</string>
-    <string name="intro_2">Make yourself more beautiful than you think.</string>
-    <string name="intro_3">Hire the best Photographer &amp; create your moment.</string>
+    <string name="intro_1">It takes a few steps to get found by high paying clients.</string>
+    <string name="intro_1_bottom">Let’s connect you to them now.</string>
+    <string name="intro_2">We have a list of waiting customers for your skills.</string>
+    <string name="intro_2_bottom">Simply sign up to get that job.</string>
+    <string name="intro_3">You can get a tailoring job around you faster than you have ever got.</string>
+    <string name="intro_3_bottom">Simply sign up to Meet waiting customers.</string>
     <string name="internet_concation">Please enable your internet connection.</string>
     <string name="server_error">Unable to connect server.</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$)</string>

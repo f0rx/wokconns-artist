@@ -135,33 +135,33 @@
                     android:text=""
                     android:textSize="@dimen/_12sdp" />
 
-                <com.wokconns.wokconns.utils.CustomTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:text="@string/branch_code"
-                    android:textColor="@color/black_off"
-                    android:textSize="@dimen/_13sdp" />
+<!--                <com.wokconns.wokconns.utils.CustomTextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/_10sdp"-->
+<!--                    android:text="@string/branch_code"-->
+<!--                    android:textColor="@color/black_off"-->
+<!--                    android:textSize="@dimen/_13sdp" />-->
 
-                <com.wokconns.wokconns.utils.CustomTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/enter_branch_code"
-                    android:textColor="@color/black_off"
-                    android:textSize="@dimen/_11sdp" />
+<!--                <com.wokconns.wokconns.utils.CustomTextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/enter_branch_code"-->
+<!--                    android:textColor="@color/black_off"-->
+<!--                    android:textSize="@dimen/_11sdp" />-->
 
-                <com.wokconns.wokconns.utils.CustomEditText
-                    android:id="@+id/et_branch_code"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edittext_bg_profile"
-                    android:hint="@string/branch_code"
-                    android:inputType="textCapWords"
-                    android:padding="@dimen/_7sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:singleLine="true"
-                    android:text=""
-                    android:textSize="@dimen/_12sdp" />
+<!--                <com.wokconns.wokconns.utils.CustomEditText-->
+<!--                    android:id="@+id/et_branch_code"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/edittext_bg_profile"-->
+<!--                    android:hint="@string/branch_code"-->
+<!--                    android:inputType="textCapWords"-->
+<!--                    android:padding="@dimen/_7sdp"-->
+<!--                    android:layout_marginTop="@dimen/_5sdp"-->
+<!--                    android:singleLine="true"-->
+<!--                    android:text=""-->
+<!--                    android:textSize="@dimen/_12sdp" />-->
 
 <!--                <com.wokconns.wokconns.utils.CustomTextView-->
 <!--                    android:layout_width="match_parent"-->

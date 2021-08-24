@@ -326,8 +326,7 @@
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/ic_profile_mail"
                             android:drawablePadding="@dimen/_10sdp"
-                            android:padding="@dimen/_2sdp"
-                            android:text="samyotech@gmail.com" />
+                            android:padding="@dimen/_2sdp" />
 
                         <com.wokconns.wokconns.utils.CustomTextView
                             android:id="@+id/tv_phone"
@@ -335,8 +334,7 @@
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/ic_phone_book"
                             android:drawablePadding="@dimen/_10sdp"
-                            android:padding="@dimen/_2sdp"
-                            android:text="+91 - 9865584314" />
+                            android:padding="@dimen/_2sdp" />
 
                         <com.wokconns.wokconns.utils.CustomTextView
                             android:id="@+id/tv_gender"
@@ -345,7 +343,7 @@
                             android:drawableStart="@drawable/ic_profile_gender"
                             android:drawablePadding="@dimen/_10sdp"
                             android:padding="@dimen/_2sdp"
-                            android:text="Female" />
+                            android:text="Other" />
 
                     </LinearLayout>
 

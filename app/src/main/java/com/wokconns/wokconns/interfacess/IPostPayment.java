@@ -9,13 +9,14 @@ import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public interface IPostPayment {
     String _kTAG = IPostPayment.class.getName();
 
     default void updatePaymentStatus(Activity activity,
-                                     SharedPrefrence prefrence, Map<String, String> params,
+                                     SharedPrefrence prefrence, HashMap<String, String> params,
                                      HistoryDTO history) {
         if (prefrence.getValue(Consts.SURL).equalsIgnoreCase(Consts.PAYMENT_SUCCESS)) {
             prefrence.clearPreferences(Consts.SURL);
@@ -26,7 +27,7 @@ public interface IPostPayment {
         }
     }
 
-    default void sendPayment(Activity activity, Map<String, String> params, HistoryDTO history) {
+    default void sendPayment(Activity activity, HashMap<String, String> params, HistoryDTO history) {
         ProjectUtils.showProgressDialog(activity, true, activity.getResources().getString(R.string.please_wait));
         new HttpsRequest(Consts.MAKE_PAYMENT, params, activity).stringPost(_kTAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();

@@ -106,7 +106,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
                 try {
                     binding.etBankName.setText(response.getJSONObject("data").getString("bank_name"));
                     binding.etAccountNumber.setText(response.getJSONObject("data").getString("account_no"));
-                    binding.etBranchCode.setText(response.getJSONObject("data").getString("ifsc_code"));
+//                    binding.etBranchCode.setText(response.getJSONObject("data").getString("ifsc_code"));
                     binding.etNameCard.setText(response.getJSONObject("data").getString("account_holder_name"));
 //                        binding.etBranchAddress.setText(response.getJSONObject("data").getString("bank_address"));
                 } catch (Exception e) {
@@ -142,7 +142,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
         paramsAddAccount.put(Consts.ARTIST_ID, userDTO.getUser_id());
         paramsAddAccount.put(Consts.BANK_NAME, ProjectUtils.getEditTextValue(binding.etBankName));
         paramsAddAccount.put(Consts.ACCOUNT_NUMBER, ProjectUtils.getEditTextValue(binding.etAccountNumber));
-        paramsAddAccount.put(Consts.IFSC_CODE, ProjectUtils.getEditTextValue(binding.etBranchCode));
+//        paramsAddAccount.put(Consts.IFSC_CODE, ProjectUtils.getEditTextValue(binding.etBranchCode));
         paramsAddAccount.put(Consts.ACCOUNT_HOLDER_NAME, ProjectUtils.getEditTextValue(binding.etNameCard));
 //        paramsAddAccount.put(Consts.BANK_ADDRESS, ProjectUtils.getEditTextValue(binding.etBranchAddress));
 

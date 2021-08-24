@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,7 +91,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    private String TAG = BaseActivity.class.getSimpleName();
+    private final String TAG = BaseActivity.class.getSimpleName();
     HashMap<String, String> parms = new HashMap<>();
     private FrameLayout frame;
     private View contentView;
@@ -123,7 +124,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final float END_SCALE = 0.8f;
     InputMethodManager inputManager;
     CustomerBooking customerBooking = new CustomerBooking();
-    private boolean shouldLoadHomeFragOnBackPress = true;
+    private final boolean shouldLoadHomeFragOnBackPress = true;
     public CustomTextViewBold headerNameTV;
     private Location mylocation;
     private GoogleApiClient googleApiClient;
@@ -136,11 +137,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     public int location_check = 0;
     private LinearLayout llProfileClick;
     String type = "";
-    private HashMap<String, String> parmsCategory = new HashMap<>();
-    private HashMap<String, String> parmsApprove = new HashMap<>();
+    private final HashMap<String, String> parmsCategory = new HashMap<>();
+    private final HashMap<String, String> parmsApprove = new HashMap<>();
     private ArrayList<CategoryDTO> categoryDTOS = new ArrayList<>();
     private DialogInterface dd;
-    private HashMap<String, String> paramsLogout = new HashMap<>();
+    private final HashMap<String, String> paramsLogout = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,14 +164,14 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
         setUpGClient();
 
-        rlheader = (RelativeLayout) findViewById(R.id.header);
-        frame = (FrameLayout) findViewById(R.id.frame);
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        rlheader = findViewById(R.id.header);
+        frame = findViewById(R.id.frame);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         contentView = findViewById(R.id.content);
         headerNameTV = findViewById(R.id.headerNameTV);
-        menuLeftIV = (ImageView) findViewById(R.id.menuLeftIV);
-        ivSearch = (ImageView) findViewById(R.id.ivSearch);
+        menuLeftIV = findViewById(R.id.menuLeftIV);
+        ivSearch = findViewById(R.id.ivSearch);
 
         navHeader = navigationView.getHeaderView(0);
         img_profile = navHeader.findViewById(R.id.img_profile);
@@ -557,11 +558,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
             }
             fragmentTransaction.commitAllowingStateLoss();
             drawer.closeDrawers();
-            if (menuItem.isChecked()) {
-                menuItem.setChecked(false);
-            } else {
-                menuItem.setChecked(true);
-            }
+            menuItem.setChecked(!menuItem.isChecked());
             menuItem.setChecked(true);
 
 
@@ -761,7 +758,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         int permissionLocation = ContextCompat.checkSelfPermission(BaseActivity.this,
@@ -794,9 +792,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void language(String language) {
-        String languageToLoad = language; // your language
-
-        Locale locale = new Locale(languageToLoad);
+        Locale locale = new Locale(language);
         Locale.setDefault(locale);
 
         Configuration config = new Configuration();
@@ -821,9 +817,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                     categoryDTOS = new ArrayList<>();
                     Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
                     }.getType();
-                    categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    categoryDTOS = new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
                     clickProfile();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

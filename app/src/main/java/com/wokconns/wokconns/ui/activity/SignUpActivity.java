@@ -136,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void register() {
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.REGISTER_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Consts.REGISTER_API, getParams(), mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
@@ -146,7 +146,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             ProjectUtils.getEditTextValue(CETfirstname)));
 
                     Intent in = new Intent(mContext, OTPVerificationActivity.class);
-                    in.putExtra(Consts.EMAIL, CETemailadd.getText().toString());
                     in.putExtra(Consts.MOBILE, CETMobileNumber.getText().toString());
 
                     startActivity(in);
@@ -209,7 +208,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
-    public HashMap<String, String> getparm() {
+    public HashMap<String, String> getParams() {
         HashMap<String, String> parms = new HashMap<>();
         parms.put(Consts.NAME, ProjectUtils.getEditTextValue(CETfirstname));
         parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));

@@ -17,29 +17,28 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Objects;
 
-/**
- * Created by VARUN on 01/01/19.
- */
 public class HttpsRequest {
     public static final int ERROR_INT = 0;
     private final String match;
-    private Map<String, String> params;
-    private Map<String, File> fileparams;
+    private HashMap<String, String> params;
+    private HashMap<String, File> fileparams;
     private final Context ctx;
     private JSONObject jObject;
     private final SharedPrefrence sharedPreference;
 
-    public HttpsRequest(String match, Map<String, String> params, Context ctx) {
+    public HttpsRequest(String match, HashMap<String, String> params, Context ctx) {
         this.match = match;
         this.params = params;
         this.ctx = ctx;
         this.sharedPreference = SharedPrefrence.getInstance(ctx);
     }
 
-    public HttpsRequest(String match, Map<String, String> params, Map<String, File> fileparams, Context ctx) {
+    public HttpsRequest(String match, HashMap<String, String> params, HashMap<String, File> fileparams, Context ctx) {
         this.match = match;
         this.params = params;
         this.fileparams = fileparams;
@@ -60,8 +59,11 @@ public class HttpsRequest {
         this.sharedPreference = SharedPrefrence.getInstance(ctx);
     }
 
-
     public void stringPostJson(final String TAG, final Helper h) {
+        if (params != null)
+            if (!params.containsKey(Consts.ROLE))
+                params.put(Consts.ROLE, "1");
+
         AndroidNetworking.post(Consts.BASE_URL + match)
                 .addJSONObjectBody(jObject)
                 .setTag("test")
@@ -103,14 +105,21 @@ public class HttpsRequest {
                         ProjectUtils.pauseProgressDialog();
 
                         try {
-                            JSONObject jsonObject = new JSONObject(anError.getErrorBody());
+                            if (anError.getErrorBody() != null) {
+                                JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.opt("status");
-                            Object message = jsonObject.optString("message");
+                                Object status = jsonObject.opt("status");
+                                Object message = jsonObject.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || Objects.equals(status, "error"))
-                                h.backResponse(false, message.toString(), jsonObject);
+                                if ((status instanceof String && ((String) status).contains("err"))
+                                        || Objects.equals(status, "error"))
+                                    h.backResponse(false, message.toString(), jsonObject);
+                            }
+
+                            String msg = anError.getErrorDetail() != null
+                                    ? anError.getErrorDetail() : anError.getCause().getLocalizedMessage();
+
+                            h.backResponse(false, msg, null);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -121,6 +130,10 @@ public class HttpsRequest {
     }
 
     public void stringPost(final String TAG, final Helper h) {
+        if (params != null)
+            if (!params.containsKey(Consts.ROLE))
+                params.put(Consts.ROLE, "1");
+
         AndroidNetworking.post(Consts.BASE_URL + match)
                 .addBodyParameter(params)
                 .setTag("test")
@@ -162,14 +175,21 @@ public class HttpsRequest {
                         ProjectUtils.pauseProgressDialog();
 
                         try {
-                            JSONObject jsonObject = new JSONObject(anError.getErrorBody());
+                            if (anError.getErrorBody() != null) {
+                                JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.opt("status");
-                            Object message = jsonObject.optString("message");
+                                Object status = jsonObject.opt("status");
+                                Object message = jsonObject.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || Objects.equals(status, "error"))
-                                h.backResponse(false, message.toString(), jsonObject);
+                                if ((status instanceof String && ((String) status).contains("err"))
+                                        || Objects.equals(status, "error"))
+                                    h.backResponse(false, message.toString(), jsonObject);
+                            }
+
+                            String msg = anError.getErrorDetail() != null
+                                    ? anError.getErrorDetail() : anError.getCause().getLocalizedMessage();
+
+                            h.backResponse(false, msg, null);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -180,6 +200,10 @@ public class HttpsRequest {
     }
 
     public void stringGet(final String TAG, final Helper h) {
+        if (params != null)
+            if (!params.containsKey(Consts.ROLE))
+                params.put(Consts.ROLE, "1");
+
         AndroidNetworking.get(Consts.BASE_URL + match)
                 .setTag("test")
                 .addHeaders(Consts.LANGUAGE, sharedPreference.getValue(Consts.LANGUAGE_SELECTION))
@@ -207,6 +231,10 @@ public class HttpsRequest {
     }
 
     public void imagePost(final String TAG, final Helper h) {
+        if (params != null)
+            if (!params.containsKey(Consts.ROLE))
+                params.put(Consts.ROLE, "1");
+
         AndroidNetworking.upload(Consts.BASE_URL + match)
                 .addMultipartFile(fileparams)
                 .addMultipartParameter(params)
@@ -250,14 +278,21 @@ public class HttpsRequest {
                         ProjectUtils.pauseProgressDialog();
 
                         try {
-                            JSONObject jsonObject = new JSONObject(anError.getErrorBody());
+                            if (anError.getErrorBody() != null) {
+                                JSONObject jsonObject = new JSONObject(anError.getErrorBody());
 
-                            Object status = jsonObject.opt("status");
-                            Object message = jsonObject.optString("message");
+                                Object status = jsonObject.opt("status");
+                                Object message = jsonObject.optString("message");
 
-                            if ((status instanceof String && ((String) status).contains("err"))
-                                    || Objects.equals(status, "error"))
-                                h.backResponse(false, message.toString(), jsonObject);
+                                if ((status instanceof String && ((String) status).contains("err"))
+                                        || Objects.equals(status, "error"))
+                                    h.backResponse(false, message.toString(), jsonObject);
+                            }
+
+                            String msg = anError.getErrorDetail() != null
+                                    ? anError.getErrorDetail() : anError.getCause().getLocalizedMessage();
+
+                            h.backResponse(false, msg, null);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -1,25 +1,24 @@
 package com.wokconns.wokconns.ui.adapter;
-/**
- * Created by VARUN on 01/01/19.
- */
+
 import android.content.Context;
-import androidx.viewpager.widget.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.ui.activity.AppIntro;
 import com.wokconns.wokconns.utils.CustomTextView;
 
 public class AppIntroPagerAdapter extends PagerAdapter {
-    private Context mContext;
+    private final Context mContext;
     LayoutInflater mLayoutInflater;
-    private int[] mResources;
-    private AppIntro activity;
+    private final int[] mResources;
+    private final AppIntro activity;
 
 
     public AppIntroPagerAdapter(AppIntro appIntroActivity, Context mContext, int[] mResources) {
@@ -30,31 +29,28 @@ public class AppIntroPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
+    @NonNull
+    public View instantiateItem(@NonNull ViewGroup container, final int position) {
 
         View itemView = mLayoutInflater.inflate(R.layout.appintropager_adapter, container, false);
-        ImageView ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+        ImageView ivImage = itemView.findViewById(R.id.ivImage);
 
-        CustomTextView ctvText = (CustomTextView) itemView.findViewById(R.id.ctvText);
-        CustomTextView ctvTextdecrib = (CustomTextView) itemView.findViewById(R.id.ctvTextdecrib);
+        CustomTextView ctvText = itemView.findViewById(R.id.ctvText);
+        CustomTextView ctvDescription = itemView.findViewById(R.id.ctvTextdecrib);
         ivImage.setImageResource(mResources[position]);
-        setDescText(position, ctvText, ctvTextdecrib);
+        setDescText(position, ctvDescription);
 
 
         container.addView(itemView);
         ctvText.setOnClickListener(v -> {
-
-
             int pos = position + 1;
             activity.scrollPage(pos);
-
-
         });
         return itemView;
     }
 
     @Override
-    public void destroyItem(ViewGroup collection, int position, Object view) {
+    public void destroyItem(ViewGroup collection, int position, @NonNull Object view) {
         collection.removeView((View) view);
     }
 
@@ -64,23 +60,20 @@ public class AppIntroPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
-    public void setDescText(int pos, TextView ctvText, TextView ctvTextdecrib) {
+    public void setDescText(int pos, TextView ctvDescription) {
         switch (pos) {
             case 0:
-
-                ctvTextdecrib.setText(mContext.getString(R.string.intro_1));
+                ctvDescription.setText(mContext.getString(R.string.intro_1));
                 break;
             case 1:
-
-                ctvTextdecrib.setText(mContext.getString(R.string.intro_2));
+                ctvDescription.setText(mContext.getString(R.string.intro_2));
                 break;
             case 2:
-
-                ctvTextdecrib.setText(mContext.getString(R.string.intro_3));
+                ctvDescription.setText(mContext.getString(R.string.intro_3));
                 break;
         }
     }

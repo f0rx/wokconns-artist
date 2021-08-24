@@ -259,7 +259,7 @@ public interface Consts {
     String JOB_APPLY_NOTIFICATION = "10012";//user
     String DELETE_JOB_NOTIFICATION = "10013";//ar
     String TYPE = "type";
-    String TOPIC_ARTIST = "Artist";
+    String TOPIC_ARTIST = "Artisan";
 
     String LANGUAGE_SELECTION = "language_selection";
     String VOICE_PREFERENCE = "voice_preference";

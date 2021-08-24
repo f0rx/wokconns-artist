@@ -29,7 +29,7 @@ import static com.wokconns.wokconns.utils.ProjectUtils.TAG;
 public class OTPVerificationActivity extends AppCompatActivity implements TextWatcher {
     private static final int NUMBER_OF_DIGITS = 4;
     private final ArrayList<CustomEditText> CETArrayList = new ArrayList<>(NUMBER_OF_DIGITS);
-    private String tempNum, emailAddress, otpCode;
+    private String tempNum, otpCode, mobile;
     private final Context mContext = OTPVerificationActivity.this;
 
     @Override
@@ -38,7 +38,6 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         ProjectUtils.Fullscreen(OTPVerificationActivity.this);
         setContentView(R.layout.activity_otp_verification);
 
-        String mobile = "";
         final CustomTextView CTVPhoneNumber = findViewById(R.id.CTVMobileNumber);
         final LinearLayout codeLayout = findViewById(R.id.codeLayout);
         final Button verifyBtn = findViewById(R.id.CBVerifyMobile);
@@ -47,7 +46,6 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
 
         if (getIntent().hasExtra(Consts.MOBILE)) {
             mobile = getIntent().getStringExtra(Consts.MOBILE);
-            emailAddress = getIntent().getStringExtra(Consts.EMAIL);
             CTVPhoneNumber.setText(mobile);
         }
 
@@ -152,7 +150,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.EMAIL, emailAddress);
+        params.put(Consts.MOBILE, mobile);
         params.put(Consts.OTP_CODE, otpCode);
 
         new HttpsRequest(Consts.VERIFY_PHONE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
@@ -175,7 +173,7 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.EMAIL, emailAddress);
+        params.put(Consts.MOBILE, mobile);
 
         new HttpsRequest(Consts.RESEND_VERIFY_OTP_CODE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();

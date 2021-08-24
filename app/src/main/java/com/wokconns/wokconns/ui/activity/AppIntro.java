@@ -2,28 +2,25 @@ package com.wokconns.wokconns.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.viewpager.widget.ViewPager;
+
 import com.ToxicBakery.viewpager.transforms.StackTransformer;
+import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityAppIntro2Binding;
 import com.wokconns.wokconns.interfacess.Consts;
 import com.wokconns.wokconns.preferences.SharedPrefrence;
 import com.wokconns.wokconns.ui.adapter.AppIntroPagerAdapter;
 import com.wokconns.wokconns.utils.ProjectUtils;
-import com.wokconns.wokconns.R;
-
 
 public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
@@ -46,7 +43,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
 
         binding.llSignin.setOnClickListener(this);
         binding.llSignup.setOnClickListener(this);
-        binding.llLanguage.setOnClickListener(this);
+//        binding.llLanguage.setOnClickListener(this);
 
         mAdapter = new AppIntroPagerAdapter(AppIntro.this, mContext, mResources);
         binding.mViewPager.setAdapter(mAdapter);
@@ -56,10 +53,8 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
         setPageViewIndicator();
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "ClickableViewAccessibility"})
     private void setPageViewIndicator() {
-
-        Log.d("###setPageViewIndicator", " : called");
         dotsCount = mAdapter.getCount();
         dots = new ImageView[dotsCount];
 
@@ -102,11 +97,11 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
 
         dots[position].setImageDrawable(getResources().getDrawable(R.drawable.selecteditem_dot));
 
-        if (position + 1 == dotsCount) {
-
-        } else {
-
-        }
+//        if (position + 1 == dotsCount) {
+//
+//        } else {
+//
+//        }
 
     }
 
@@ -143,6 +138,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
                 .show();
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

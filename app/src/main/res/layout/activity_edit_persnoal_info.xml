@@ -229,13 +229,6 @@
                     android:textColor="@color/black_off"
                     android:textSize="@dimen/_14sdp" />
 
-                <com.wokconns.wokconns.utils.CustomTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/your_country"
-                    android:textColor="@color/black_off"
-                    android:textSize="@dimen/_12sdp" />
-
                 <com.wokconns.wokconns.utils.CustomEditText
                     android:id="@+id/et_country"
                     android:layout_width="match_parent"
@@ -403,12 +396,12 @@
                     android:text="" />
 
 
-                <com.wokconns.wokconns.utils.CustomTextViewBold
-                    android:id="@+id/tvText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/black" />
+<!--                <com.wokconns.wokconns.utils.CustomTextViewBold-->
+<!--                    android:id="@+id/tvText"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:textColor="@color/black" />-->
 
                 <com.wokconns.wokconns.utils.CustomButton
                     android:id="@+id/btnSubmit"

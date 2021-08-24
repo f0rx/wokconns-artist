@@ -45,7 +45,7 @@
     <string name="hr">/ساعة</string>
     <string name="fix_rate">معدل الإصلاح</string>
     <string name="fixed_rate">سعر الصرف الثابت</string>
-    <string name="commis_msg">ستتم إضافة عمولة FabArtist إلى أجر الساعة. سوف تختلف حسب اختيار الفئة. معدل الفئة:</string>
+<!--    <string name="commis_msg">ستتم إضافة عمولة FabArtist إلى أجر الساعة. سوف تختلف حسب اختيار الفئة. معدل الفئة:</string>-->
     <string name="select_cate">اختر الفئة</string>
     <string name="val_cat_sele">الرجاء تحديد الفئة.</string>
     <string name="val_name">الرجاء إدخال الاسم.</string>

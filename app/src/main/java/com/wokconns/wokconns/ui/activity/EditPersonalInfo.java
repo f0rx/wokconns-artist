@@ -225,8 +225,8 @@ public class EditPersonalInfo extends LocationActivityManager implements View.On
         spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
             binding.etCategoryD.setText(item);
             paramsUpdate.put(Consts.CATEGORY_ID, id);
-            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
-                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
+//            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+//                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
         });
 
         if (artistDetailsDTO != null) {
@@ -299,10 +299,8 @@ public class EditPersonalInfo extends LocationActivityManager implements View.On
             if (categoryDTOS.get(j).getId().equalsIgnoreCase(artistDetailsDTO.getCategory_id())) {
                 categoryDTOS.get(j).setSelected(true);
                 binding.etCategoryD.setText(categoryDTOS.get(j).getCat_name());
-                binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
-                        categoryDTOS.get(j).getCurrency_type(), categoryDTOS.get(j).getPrice()));
-
-
+//                binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+//                        categoryDTOS.get(j).getCurrency_type(), categoryDTOS.get(j).getPrice()));
             }
         }
 
@@ -310,10 +308,8 @@ public class EditPersonalInfo extends LocationActivityManager implements View.On
         spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
             binding.etCategoryD.setText(item);
             paramsUpdate.put(Consts.CATEGORY_ID, id);
-            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
-                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
-
-
+//            binding.tvText.setText(String.format("%s%s%s", getResources().getString(R.string.commis_msg),
+//                    categoryDTOS.get(position).getCurrency_type(), categoryDTOS.get(position).getPrice()));
         });
         binding.etCategoryD.setText(artistDetailsDTO.getCategory_name());
         binding.etNameD.setText(artistDetailsDTO.getName());

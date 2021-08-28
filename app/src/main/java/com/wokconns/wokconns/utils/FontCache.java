@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Typeface;
 
 import java.util.HashMap;
-/**
- * Created by VARUN on 01/01/19.
- */
+
 public class FontCache {
 
-    private static HashMap<String, Typeface> fontCache = new HashMap<>();
+    private static final HashMap<String, Typeface> fontCache = new HashMap<>();
 
     public static Typeface getTypeface(String fontname, Context context) {
         Typeface typeface = fontCache.get(fontname);

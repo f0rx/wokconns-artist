@@ -39,8 +39,8 @@ android {
         applicationId "com.wokconns.wokconns"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.0.5"
+        versionCode 6
+        versionName "1.0.6"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -71,9 +71,14 @@ android {
         }
 
         release {
-            minifyEnabled true
             signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            postprocessing {
+                removeUnusedCode false
+                removeUnusedResources false
+                obfuscate false
+                optimizeCode true
+                proguardFile 'proguard-rules.pro'
+            }
         }
     }
     ext {

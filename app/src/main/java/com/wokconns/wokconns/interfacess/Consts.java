@@ -61,7 +61,7 @@ public interface Consts {
     String MY_EARNING1_API = "myEarning1";
     String WALLET_REQUEST_API = "walletRequest";
     String ADD_MONEY_API = "addMoney";
-    String GET_WALLET_HISTORY_API = "getWalletHistory";
+//    String GET_WALLET_HISTORY_API = "getWalletHistory";
     String GET_WALLET_HISTORY_NEW_API = "getWalletHistoryNew";
     String GET_WALLET_API = "getWallet";
     String DELETE_GALLERY_API = "deleteGallery";
@@ -265,7 +265,7 @@ public interface Consts {
     String VOICE_PREFERENCE = "voice_preference";
     String VOICE_PREFERENCE_ENGLISH = "en";
     String VOICE_PREFERENCE_ARABIC = "ar";
-    String LANGUAGE = "language";
+    String LANGUAGE = "Language";
 
     String ENGLISH_TAG = "en";
     String ARABIC_TAG = "ar";

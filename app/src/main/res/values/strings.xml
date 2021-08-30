@@ -74,8 +74,8 @@
     <string name="val_rate">Please enter rate.</string>
     <string name="val_youtube_url">Please enter youtube url.</string>
     <string name="chats">Chats</string>
-    <string name="val_comment">Please enter comment</string>
-    <string name="val_email">Please enter email id.</string>
+    <string name="val_comment">Please add a comment!</string>
+    <string name="val_email">Please enter your email address.</string>
     <string name="val_phone">Please enter your mobile number.</string>
     <string name="val_pass">Password must contain at least six characters.</string>
     <string name="val_pass1">Password must be at least 6 characters long.</string>
@@ -83,7 +83,7 @@
     <string name="my_appoin">My Appointments</string>
     <string name="customer_booking">Current Booking</string>
     <string name="dec_cpas">Decline</string>
-    <string name="decline_msg">Are you sure you want to decline request?</string>
+    <string name="decline_msg">Are you sure you want to decline this request?</string>
     <string name="cancel_msg">Are you sure you want to cancel this job?</string>
     <string name="finish_msg">Are you sure you want to Finish this job?</string>
     <string name="get_discount">Get Discount</string>
@@ -95,12 +95,12 @@
     <string name="profile_settings">Personal Profile</string>
     <string name="female">Female</string>
     <string name="male">Male</string>
-    <string name="logout_msg">Are you sure you want to logout?</string>
+    <string name="logout_msg">Sure you want to logout?</string>
     <string name="notifications">Notifications</string>
     <string name="my_earnings">Your Earnings</string>
     <string name="earning_graph">Earning Graph</string>
     <string name="payment">Payment</string>
-    <string name="process_payment">Are you sure want to process your payment?</string>
+    <string name="process_payment">Are you sure you want to process this payment?</string>
     <string name="home">Home</string>
     <string name="jobs">Find Jobs</string>
     <string name="jobs_home">Jobs</string>
@@ -112,7 +112,7 @@
     <string name="inprogres">Inprogress</string>
     <string name="reject">Reject</string>
     <string name="reject_msg">Are you sure you want to reject the application?</string>
-    <string name="start_app">Are you sure do you want to start the application?</string>
+    <string name="start_app">Are you sure you want to continue with this application?</string>
     <string name="start">Start</string>
     <string name="service">Invoice Id #</string>
     <string name="unpaid">Unpaid</string>

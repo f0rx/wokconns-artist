@@ -17,8 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -67,7 +65,7 @@ public class HttpsRequest {
         AndroidNetworking.post(Consts.BASE_URL + match)
                 .addJSONObjectBody(jObject)
                 .setTag("test")
-                .addHeaders(Consts.LANGUAGE, sharedPreference.getValue(Consts.LANGUAGE_SELECTION))
+                .addHeaders(Consts.LANGUAGE, "en")
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -137,7 +135,7 @@ public class HttpsRequest {
         AndroidNetworking.post(Consts.BASE_URL + match)
                 .addBodyParameter(params)
                 .setTag("test")
-                .addHeaders(Consts.LANGUAGE, sharedPreference.getValue(Consts.LANGUAGE_SELECTION))
+                .addHeaders(Consts.LANGUAGE, "en")
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -206,7 +204,7 @@ public class HttpsRequest {
 
         AndroidNetworking.get(Consts.BASE_URL + match)
                 .setTag("test")
-                .addHeaders(Consts.LANGUAGE, sharedPreference.getValue(Consts.LANGUAGE_SELECTION))
+                .addHeaders(Consts.LANGUAGE, "en")
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -238,7 +236,7 @@ public class HttpsRequest {
         AndroidNetworking.upload(Consts.BASE_URL + match)
                 .addMultipartFile(fileparams)
                 .addMultipartParameter(params)
-                .addHeaders(Consts.LANGUAGE, sharedPreference.getValue(Consts.LANGUAGE_SELECTION))
+                .addHeaders(Consts.LANGUAGE, "en")
                 .setTag("uploadTest")
                 .setPriority(Priority.IMMEDIATE)
                 .build()

@@ -107,10 +107,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/mobile_number"
-                            android:inputType="number"
+                            android:editable="false"
                             android:singleLine="true"
-                            android:text=""
-                            android:textSize="@dimen/_11sdp" />
+                            android:textSize="@dimen/_12sdp" />
 
                     </com.wokconns.wokconns.utils.InputOpenFieldView>
                 </LinearLayout>

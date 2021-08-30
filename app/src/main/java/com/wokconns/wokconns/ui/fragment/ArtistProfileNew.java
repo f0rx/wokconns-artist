@@ -415,6 +415,11 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
         dialogBinding.etEmailD.setText(userDTO.getEmail_id());
         dialogBinding.etMobileD.setText(userDTO.getMobile());
 
+        dialogBinding.etMobileD.setOnClickListener(v -> ProjectUtils.showLong(
+                requireContext(), "Please write to support if you need to update " +
+                        "your mobile number;\n\nUse title - \"Change Mobile Number\""
+        ));
+
         try {
             dialogBinding.ccp.setDefaultCountryUsingNameCode("NG");
             dialogBinding.ccp.resetToDefaultCountry();
@@ -735,6 +740,8 @@ public class ArtistProfileNew extends Fragment implements View.OnClickListener, 
                             artistDetailsDTO = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistDetailsDTO.class);
                             userDTO.setMobile(dialogBinding.etMobileD.getText().toString());
                             prefrence.setParentUser(userDTO, Consts.USER_DTO);
+
+                            showData();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

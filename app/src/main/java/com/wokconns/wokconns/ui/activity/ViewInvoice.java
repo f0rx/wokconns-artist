@@ -4,14 +4,13 @@ import android.content.Context;
 import androidx.databinding.DataBindingUtil;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.dto.HistoryDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityViewInvoiceBinding;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
 public class ViewInvoice extends AppCompatActivity {
@@ -24,8 +23,8 @@ public class ViewInvoice extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_invoice);
         mContext = ViewInvoice.this;
-        if (getIntent().hasExtra(Consts.HISTORY_DTO)) {
-            historyDTO = (HistoryDTO) getIntent().getSerializableExtra(Consts.HISTORY_DTO);
+        if (getIntent().hasExtra(Const.HISTORY_DTO)) {
+            historyDTO = (HistoryDTO) getIntent().getSerializableExtra(Const.HISTORY_DTO);
         }
         setUiAction();
     }

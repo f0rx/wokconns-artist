@@ -30,9 +30,9 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentMyEarningBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.PayoutHistory;
 import com.wokconns.wokconns.utils.ProjectUtils;
@@ -49,7 +49,7 @@ public class MyEarning extends Fragment {
     private ArrayList<EarningDTO.ChartData> chartDataList;
     private final HashMap<String, String> params = new HashMap<>();
     private final HashMap<String, String> paramsRequest = new HashMap<>();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private BaseActivity baseActivity;
 
@@ -68,11 +68,11 @@ public class MyEarning extends Fragment {
         view = binding.getRoot();
 
         baseActivity.headerNameTV.setText(getResources().getString(R.string.my_earnings));
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        params.put(Consts.ARTIST_ID, "14");
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        params.put(Const.ARTIST_ID, "14");
 //        params.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        paramsRequest.put(Consts.USER_ID, userDTO.getUser_id());
+        paramsRequest.put(Const.USER_ID, userDTO.getUser_id());
 
         setUiAction();
         return view;
@@ -90,7 +90,7 @@ public class MyEarning extends Fragment {
             Log.e(TAG, "onItemClick: " + currencyDTO.getCode());
 
             currencyCode = currencyDTO.getCode();
-            params.put(Consts.CURRENCY_CODE, currencyCode);
+            params.put(Const.CURRENCY_CODE, currencyCode);
 
             try {
                 getEarning();
@@ -122,7 +122,7 @@ public class MyEarning extends Fragment {
 
     public void getEarning() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.MY_EARNING1_API, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.MY_EARNING1_API, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 try {
@@ -142,7 +142,7 @@ public class MyEarning extends Fragment {
     public void requestPayment() {
 
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.WALLET_REQUEST_API, paramsRequest, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.WALLET_REQUEST_API, paramsRequest, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showLong(getActivity(), msg);
@@ -155,7 +155,7 @@ public class MyEarning extends Fragment {
     }
 
     public void getCurrencyValue() {
-        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     currencyDTOArrayList = new ArrayList<>();

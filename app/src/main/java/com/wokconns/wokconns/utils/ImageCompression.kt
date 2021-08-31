@@ -1,195 +1,165 @@
-package com.wokconns.wokconns.utils;
+package com.wokconns.wokconns.utils
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.media.ExifInterface;
-import android.os.AsyncTask;
-import android.os.Environment;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.*
+import android.media.ExifInterface
+import android.os.AsyncTask
+import com.wokconns.wokconns.interfacess.Const
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
-import com.wokconns.wokconns.interfacess.Consts;
+@SuppressLint("StaticFieldLeak")
+class ImageCompression(private val mContext: Context) : AsyncTask<String?, Void?, String?>() {
+    private lateinit var delegate: AsyncResponse
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+    private val filename: String
+        get() {
+            val mediaStorageDir =
+                File(mContext.externalCacheDir?.path + File.separator + Const.APP_NAME)
 
-public class ImageCompression extends AsyncTask<String, Void, String> {
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists()) {
+                mediaStorageDir.mkdirs()
+            }
+            val mImageName = "IMG_" + System.currentTimeMillis() + ".jpg"
+            return mediaStorageDir.absolutePath + "/" + mImageName
+        }
 
-    private final Context context;
-    private static final float maxHeight = 1280.0f;
-    private static final float maxWidth = 1280.0f;
-
-
-    public ImageCompression(Context context) {
-        this.context = context;
+    interface AsyncResponse {
+        fun processFinish(imagePath: String?)
     }
 
-    public interface AsyncResponse {
-        void processFinish(String imagePath);
-    }
-
-    public AsyncResponse delegate = null;
-
-    public void setOnTaskFinishedEvent(AsyncResponse delegate) {
+    fun setOnTaskFinishedEvent(delegate: AsyncResponse?) {
         if (delegate != null) {
-            this.delegate = delegate;
+            this.delegate = delegate
         }
     }
 
-    @Override
-    protected String doInBackground(String... strings) {
-        if (strings.length == 0 || strings[0] == null)
-            return null;
-
-        return compressImage(strings[0]);
+    override fun doInBackground(vararg params: String?): String? {
+        return if (params.isEmpty() || params[0] == null) null else compressImage(params[0])
     }
 
-    protected void onPostExecute(String imagePath) {
+    override fun onPostExecute(imagePath: String?) {
         // imagePath is path of new compressed image.
-        if (delegate != null)
-            this.delegate.processFinish(imagePath);
+        delegate.processFinish(imagePath)
     }
 
-
-    public String compressImage(String imagePath) {
-        Bitmap scaledBitmap = null;
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(imagePath, options);
-
-        int actualHeight = options.outHeight;
-        int actualWidth = options.outWidth;
-
-        float imgRatio = (float) actualWidth / (float) actualHeight;
-        float maxRatio = maxWidth / maxHeight;
-
+    fun compressImage(imagePath: String?): String {
+        var scaledBitmap: Bitmap? = null
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        var bmp = BitmapFactory.decodeFile(imagePath, options)
+        var actualHeight = options.outHeight
+        var actualWidth = options.outWidth
+        var imgRatio = actualWidth.toFloat() / actualHeight.toFloat()
+        val maxRatio = maxWidth / maxHeight
         if (actualHeight > maxHeight || actualWidth > maxWidth) {
             if (imgRatio < maxRatio) {
-                imgRatio = maxHeight / actualHeight;
-                actualWidth = (int) (imgRatio * actualWidth);
-                actualHeight = (int) maxHeight;
+                imgRatio = maxHeight / actualHeight
+                actualWidth = (imgRatio * actualWidth).toInt()
+                actualHeight = maxHeight.toInt()
             } else if (imgRatio > maxRatio) {
-                imgRatio = maxWidth / actualWidth;
-                actualHeight = (int) (imgRatio * actualHeight);
-                actualWidth = (int) maxWidth;
+                imgRatio = maxWidth / actualWidth
+                actualHeight = (imgRatio * actualHeight).toInt()
+                actualWidth = maxWidth.toInt()
             } else {
-                actualHeight = (int) maxHeight;
-                actualWidth = (int) maxWidth;
-
+                actualHeight = maxHeight.toInt()
+                actualWidth = maxWidth.toInt()
             }
         }
-
-        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
-        options.inJustDecodeBounds = false;
-        options.inDither = false;
-        options.inPurgeable = true;
-        options.inInputShareable = true;
-        options.inTempStorage = new byte[16 * 1024];
-
+        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight)
+        options.inJustDecodeBounds = false
+        options.inDither = false
+        options.inPurgeable = true
+        options.inInputShareable = true
+        options.inTempStorage = ByteArray(16 * 1024)
         try {
-            bmp = BitmapFactory.decodeFile(imagePath, options);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-
+            bmp = BitmapFactory.decodeFile(imagePath, options)
+        } catch (exception: OutOfMemoryError) {
+            exception.printStackTrace()
         }
         try {
-            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.RGB_565);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
+            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.RGB_565)
+        } catch (exception: OutOfMemoryError) {
+            exception.printStackTrace()
         }
-
-        float ratioX = actualWidth / (float) options.outWidth;
-        float ratioY = actualHeight / (float) options.outHeight;
-        float middleX = actualWidth / 2.0f;
-        float middleY = actualHeight / 2.0f;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        if (bmp != null) bmp.recycle();
-
-        ExifInterface exif;
+        val ratioX = actualWidth / options.outWidth.toFloat()
+        val ratioY = actualHeight / options.outHeight.toFloat()
+        val middleX = actualWidth / 2.0f
+        val middleY = actualHeight / 2.0f
+        val scaleMatrix = Matrix()
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY)
+        val canvas = Canvas(scaledBitmap!!)
+        canvas.setMatrix(scaleMatrix)
+        canvas.drawBitmap(
+            bmp!!,
+            middleX - bmp.width / 2,
+            middleY - bmp.height / 2,
+            Paint(Paint.FILTER_BITMAP_FLAG)
+        )
+        bmp.recycle()
+        val exif: ExifInterface
         try {
-            exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
-            Matrix matrix = new Matrix();
+            exif = ExifInterface(imagePath!!)
+            val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
+            val matrix = Matrix()
             if (orientation == 6) {
-                matrix.postRotate(90);
+                matrix.postRotate(90f)
             } else if (orientation == 3) {
-                matrix.postRotate(180);
+                matrix.postRotate(180f)
             } else if (orientation == 8) {
-                matrix.postRotate(270);
+                matrix.postRotate(270f)
             }
-            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-        } catch (IOException e) {
-            e.printStackTrace();
+            scaledBitmap = Bitmap.createBitmap(
+                scaledBitmap,
+                0,
+                0,
+                scaledBitmap.width,
+                scaledBitmap.height,
+                matrix,
+                true
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        FileOutputStream out = null;
-        String filepath = getFilename();
+        var out: FileOutputStream? = null
+        val filepath = filename
         try {
-            out = new FileOutputStream(filepath);
+            out = FileOutputStream(filepath)
 
             //write the compressed bitmap at the destination specified by filename.
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            scaledBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, out)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
         }
-
-        return filepath;
+        return filepath
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+    companion object {
+        private const val maxHeight = 1280.0f
+        private const val maxWidth = 1280.0f
+        fun calculateInSampleSize(
+            options: BitmapFactory.Options,
+            reqWidth: Int,
+            reqHeight: Int
+        ): Int {
+            val height = options.outHeight
+            val width = options.outWidth
+            var inSampleSize = 1
+            if (height > reqHeight || width > reqWidth) {
+                val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
+                val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
+                inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
+            }
+            val totalPixels = (width * height).toFloat()
+            val totalReqPixelsCap = (reqWidth * reqHeight * 2).toFloat()
+            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+                inSampleSize++
+            }
+            return inSampleSize
         }
-        final float totalPixels = width * height;
-        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-
-        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-            inSampleSize++;
-        }
-
-        return inSampleSize;
     }
-
-    public String getFilename() {
-
-//        File file = new File(Environment.getExternalStorageDir∂ectory()
-//                .getPath(), Consts.POOCH_PLAY + File.separator + Consts.DATABASE);
-//        if (!file.exists()) {
-//            file.mkdirs();
-//        }
-//        String dbPath = (file.getPath() + File.separator + DATABASE_NAME);
-//        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-//                + "/Android/data/"
-//                + context.getApplicationContext().getPackageName()
-//                + "/Files/Compressed");
-        File mediaStorageDir = new File(context.getExternalCacheDir().getPath() + File.separator + Consts.APP_NAME);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            mediaStorageDir.mkdirs();
-        }
-
-        String mImageName = "IMG_" + System.currentTimeMillis() + ".jpg";
-        return (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
-
-    }
-
 }

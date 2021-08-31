@@ -23,9 +23,9 @@ import com.google.gson.Gson;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.databinding.FragmentProfileSettingBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.LanguageSelection;
 import com.wokconns.wokconns.ui.activity.SignInActivity;
@@ -46,7 +46,7 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
     private HashMap<String, String> params;
     private HashMap<String, String> paramsLogout = new HashMap<>();
     private HashMap<String, File> paramsFile = new HashMap<>();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private String TAG = ProfileSetting.class.getSimpleName();
     private View view;
@@ -62,8 +62,8 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_setting, container, false);
         view = binding.getRoot();
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
 
         baseActivity.headerNameTV.setText(getResources().getString(R.string.settings));
         setUiAction();
@@ -89,15 +89,15 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
                 break;
             case R.id.ll_language:
                 Intent intent = new Intent(baseActivity, LanguageSelection.class);
-                intent.putExtra(Consts.TYPE, "1");
+                intent.putExtra(Const.TYPE, "1");
                 startActivity(intent);
                 break;
             case R.id.ll_privacy:
-                baseURL = Consts.PRIVACY_URL;
+                baseURL = Const.PRIVACY_URL;
                 getURLForWebView();
                 break;
             case R.id.ll_faq:
-                baseURL = Consts.FAQ_URL;
+                baseURL = Const.FAQ_URL;
                 getURLForWebView();
                 break;
         }
@@ -126,9 +126,9 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
         tvYesPass.setOnClickListener(
                 v -> {
                     params = new HashMap<>();
-                    params.put(Consts.USER_ID, userDTO.getUser_id());
-                    params.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(etOldPassD));
-                    params.put(Consts.NEW_PASSWORD, ProjectUtils.getEditTextValue(etNewPassD));
+                    params.put(Const.USER_ID, userDTO.getUser_id());
+                    params.put(Const.PASSWORD, ProjectUtils.getEditTextValue(etOldPassD));
+                    params.put(Const.NEW_PASSWORD, ProjectUtils.getEditTextValue(etNewPassD));
 
                     if (NetworkManager.isConnectToInternet(getActivity())) {
                         Submit();
@@ -144,15 +144,15 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
 
     public void updateProfile() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 try {
                     ProjectUtils.showToast(getActivity(), msg);
 
                     userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                    baseActivity.showImage();
+                    prefrence.setParentUser(userDTO, Const.USER_DTO);
+                    baseActivity.updateBaseActivityInfo();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -168,7 +168,7 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
 
     public void logout() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ARTIST_LOGOUT_API, paramsLogout, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(getActivity(), msg);
@@ -208,21 +208,21 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
     }
 
     private void getURLForWebView() {
-        if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
-            prefrence.setValue(Consts.LANGUAGE_SELECTION, "en");
+        if (prefrence.getValue(Const.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
+            prefrence.setValue(Const.LANGUAGE_SELECTION, "en");
         }
         new HttpsRequest(baseURL, baseActivity).stringGet(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
-                    if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
+                    if (baseURL.equalsIgnoreCase(Const.PRIVACY_URL)) {
                         Intent intent1 = new Intent(baseActivity, WebViewCommon.class);
-                        intent1.putExtra(Consts.URL, msg);
-                        intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
+                        intent1.putExtra(Const.URL, msg);
+                        intent1.putExtra(Const.HEADER, getResources().getString(R.string.privacy_policy));
                         startActivity(intent1);
-                    } else if (baseURL.equalsIgnoreCase(Consts.FAQ_URL)) {
+                    } else if (baseURL.equalsIgnoreCase(Const.FAQ_URL)) {
                         Intent intent3 = new Intent(baseActivity, WebViewCommon.class);
-                        intent3.putExtra(Consts.URL, msg);
-                        intent3.putExtra(Consts.HEADER, getResources().getString(R.string.faq));
+                        intent3.putExtra(Const.URL, msg);
+                        intent3.putExtra(Const.HEADER, getResources().getString(R.string.faq));
                         startActivity(intent3);
                     }
                 } catch (Exception e) {

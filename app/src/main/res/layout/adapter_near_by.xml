@@ -3,12 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="NearByDTO"
             type="com.wokconns.wokconns.dto.HomeNearByJobsDTO" />
     </data>
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,8 +32,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    app:cardCornerRadius="@dimen/_5sdp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    app:cardCornerRadius="@dimen/_5sdp">
 
                     <ImageView
                         android:id="@+id/iv_image"
@@ -61,7 +59,7 @@
                         android:maxLength="80"
                         android:maxLines="2"
                         android:text="@{NearByDTO.title}"
-                        android:textSize="@dimen/_10sdp"/>
+                        android:textSize="@dimen/_10sdp" />
 
                     <com.wokconns.wokconns.utils.CustomTextView
                         android:id="@+id/tv_price"

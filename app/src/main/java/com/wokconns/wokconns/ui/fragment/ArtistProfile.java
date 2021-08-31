@@ -29,9 +29,9 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentArtistProfileBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.EditPersonalInfo;
 import com.wokconns.wokconns.ui.activity.ImageGallery;
@@ -59,7 +59,7 @@ import static android.app.Activity.RESULT_OK;
 public class ArtistProfile extends Fragment implements View.OnClickListener, AppBarLayout.OnOffsetChangedListener {
     private String TAG = ArtistProfile.class.getSimpleName();
     private FragmentArtistProfileBinding binding;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private ArtistDetailsDTO artistDetailsDTO;
     private HashMap<String, String> parms = new HashMap<>();
@@ -97,13 +97,13 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_artist_profile, container, false);
 
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
         baseActivity.headerNameTV.setText(getResources().getString(R.string.my_profile));
-        parmsCategory.put(Consts.USER_ID, userDTO.getUser_id());
+        parmsCategory.put(Const.USER_ID, userDTO.getUser_id());
 
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        parms.put(Consts.USER_ID, userDTO.getUser_id());
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
+        parms.put(Const.USER_ID, userDTO.getUser_id());
         setUiAction();
         return binding.getRoot();
     }
@@ -121,12 +121,12 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
             if (artistDetailsDTO != null) {
                 if (NetworkManager.isConnectToInternet(getActivity())) {
                     paramsUpdate = new HashMap<>();
-                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
+                    paramsUpdate.put(Const.USER_ID, userDTO.getUser_id());
                     if (artistDetailsDTO.getIs_online().equalsIgnoreCase("1")) {
-                        paramsUpdate.put(Consts.IS_ONLINE, "0");
+                        paramsUpdate.put(Const.IS_ONLINE, "0");
                         isOnline();
                     } else {
-                        paramsUpdate.put(Consts.IS_ONLINE, "1");
+                        paramsUpdate.put(Const.IS_ONLINE, "1");
                         isOnline();
                     }
                 } else {
@@ -164,7 +164,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                                     picUri = Uri.fromFile(file); // create
                                 }
 
-                                prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                                prefrence.setValue(Const.IMAGE_URI_CAMERA, picUri.toString());
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
                                 startActivityForResult(intent, PICK_FROM_CAMERA);
                             } catch (Exception e) {
@@ -220,7 +220,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     categoryDTOS = new ArrayList<>();
@@ -240,7 +240,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ARTIST_BY_ID_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
 
@@ -257,7 +257,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
 
     public void showData() {
         bundle = new Bundle();
-        bundle.putSerializable(Consts.ARTIST_DTO, artistDetailsDTO);
+        bundle.putSerializable(Const.ARTIST_DTO, artistDetailsDTO);
 
         binding.tvName.setText(artistDetailsDTO.getName());
         Glide.with(getActivity()).
@@ -311,8 +311,8 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                 if (NetworkManager.isConnectToInternet(getActivity())) {
                     if (categoryDTOS.size() > 0) {
                         Intent intent = new Intent(getActivity(), EditPersonalInfo.class);
-                        intent.putExtra(Consts.ARTIST_DTO, artistDetailsDTO);
-                        intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
+                        intent.putExtra(Const.ARTIST_DTO, artistDetailsDTO);
+                        intent.putExtra(Const.CATEGORY_list, categoryDTOS);
                         startActivity(intent);
                         getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stay);
                     } else {
@@ -408,7 +408,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void isOnline() {
-        new HttpsRequest(Consts.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ONLINE_OFFLINE_API, paramsUpdate, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(getActivity(), msg);
                 getArtist();
@@ -423,7 +423,7 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
 
     private File getOutputMediaFile(int type) {
         String root = Environment.getExternalStorageDirectory().toString();
-        File mediaStorageDir = new File(root, Consts.APP_NAME);
+        File mediaStorageDir = new File(root, Const.APP_NAME);
         /**Create the storage directory if it does not exist*/
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -436,9 +436,9 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
         File mediaFile;
         if (type == 1) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    Consts.APP_NAME + timeStamp + ".png");
+                    Const.APP_NAME + timeStamp + ".png");
 
-            imageName = Consts.APP_NAME + timeStamp + ".png";
+            imageName = Const.APP_NAME + timeStamp + ".png";
         } else {
             return null;
         }
@@ -466,10 +466,10 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .into(binding.ivArtist);
                             paramsFile = new HashMap<>();
-                            paramsFile.put(Consts.IMAGE, file);
+                            paramsFile.put(Const.IMAGE, file);
                             Log.e("image", imagePath);
                             params = new HashMap<>();
-                            params.put(Consts.USER_ID, userDTO.getUser_id());
+                            params.put(Const.USER_ID, userDTO.getUser_id());
                             if (NetworkManager.isConnectToInternet(getActivity())) {
                                 updateProfileSelf();
                             } else {
@@ -506,10 +506,10 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .into(binding.ivArtist);
                             paramsFile = new HashMap<>();
-                            paramsFile.put(Consts.IMAGE, file);
+                            paramsFile.put(Const.IMAGE, file);
                             Log.e("image", imagePath);
                             params = new HashMap<>();
-                            params.put(Consts.USER_ID, userDTO.getUser_id());
+                            params.put(Const.USER_ID, userDTO.getUser_id());
                             if (NetworkManager.isConnectToInternet(getActivity())) {
                                 updateProfileSelf();
                             } else {
@@ -529,11 +529,11 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
         }
         if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             if (picUri != null) {
-                picUri = Uri.parse(prefrence.getValue(Consts.IMAGE_URI_CAMERA));
+                picUri = Uri.parse(prefrence.getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             } else {
                 picUri = Uri.parse(prefrence
-                        .getValue(Consts.IMAGE_URI_CAMERA));
+                        .getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             }
         }
@@ -561,14 +561,14 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void updateProfileSelf() {
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.UPDATE_PROFILE_API, params, paramsFile, getActivity()).imagePost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     ProjectUtils.showToast(getActivity(), msg);
 
                     userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
-                    baseActivity.showImage();
+                    prefrence.setParentUser(userDTO, Const.USER_DTO);
+                    baseActivity.updateBaseActivityInfo();
 
                     Glide.with(getActivity()).
                             load(userDTO.getImage())
@@ -596,12 +596,12 @@ public class ArtistProfile extends Fragment implements View.OnClickListener, App
     }
 
     public void deleteImage() {
-        paramsDeleteImg.put(Consts.USER_ID, userDTO.getUser_id());
-        new HttpsRequest(Consts.DELETE_PROFILE_IMAGE_API, paramsDeleteImg, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        paramsDeleteImg.put(Const.USER_ID, userDTO.getUser_id());
+        new HttpsRequest(Const.DELETE_PROFILE_IMAGE_API, paramsDeleteImg, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 userDTO.setImage("");
                 artistDetailsDTO.setImage("");
-                prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                prefrence.setParentUser(userDTO, Const.USER_DTO);
                 showData();
             } else {
                 ProjectUtils.showToast(getActivity(), msg);

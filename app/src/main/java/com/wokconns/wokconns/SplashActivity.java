@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -15,12 +14,10 @@ import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 //import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.wokconns.wokconns.databinding.ActivitySplashBinding;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.AppIntro;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
@@ -30,7 +27,7 @@ import com.wokconns.wokconns.utils.ProjectUtils;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private SharedPrefrence prefference;
+    private SharedPrefs prefference;
     private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 1003;
     private String[] permissions = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -48,9 +45,9 @@ public class SplashActivity extends AppCompatActivity {
         ProjectUtils.Fullscreen(SplashActivity.this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         mContext = SplashActivity.this;
-        prefference = SharedPrefrence.getInstance(SplashActivity.this);
+        prefference = SharedPrefs.getInstance(SplashActivity.this);
 
-        FirebaseMessaging.getInstance().subscribeToTopic(Consts.TOPIC_ARTIST)
+        FirebaseMessaging.getInstance().subscribeToTopic(Const.TOPIC_ARTIST)
                 .addOnCompleteListener(task -> {
 
                 });
@@ -59,7 +56,7 @@ public class SplashActivity extends AppCompatActivity {
     Runnable mTask = new Runnable() {
         @Override
         public void run() {
-            if (prefference.getBooleanValue(Consts.IS_REGISTERED)) {
+            if (prefference.getBooleanValue(Const.IS_REGISTERED)) {
                 Intent in = new Intent(mContext, BaseActivity.class);
                 startActivity(in);
             } else {
@@ -90,19 +87,19 @@ public class SplashActivity extends AppCompatActivity {
             try {
 
                 cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                prefference.setBooleanValue(Consts.CAMERA_ACCEPTED, cameraAccepted);
+                prefference.setBooleanValue(Const.CAMERA_ACCEPTED, cameraAccepted);
 
                 storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                prefference.setBooleanValue(Consts.STORAGE_ACCEPTED, storageAccepted);
+                prefference.setBooleanValue(Const.STORAGE_ACCEPTED, storageAccepted);
 
                 accessNetState = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                prefference.setBooleanValue(Consts.MODIFY_AUDIO_ACCEPTED, accessNetState);
+                prefference.setBooleanValue(Const.MODIFY_AUDIO_ACCEPTED, accessNetState);
 
                 fineLoc = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                prefference.setBooleanValue(Consts.FINE_LOC, fineLoc);
+                prefference.setBooleanValue(Const.FINE_LOC, fineLoc);
 
                 corasLoc = grantResults[4] == PackageManager.PERMISSION_GRANTED;
-                prefference.setBooleanValue(Consts.CORAS_LOC, corasLoc);
+                prefference.setBooleanValue(Const.CORAS_LOC, corasLoc);
                 handler.postDelayed(mTask, 2000);
 
             } catch (Exception e) {

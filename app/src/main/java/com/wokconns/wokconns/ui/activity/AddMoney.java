@@ -15,9 +15,9 @@ import android.widget.LinearLayout;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.utils.CustomButton;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
@@ -35,7 +35,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
     float rs1 = 0;
     float final_rs = 0;
    private HashMap<String, String> parmas = new HashMap<>();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private String amt = "";
     private String currency = "";
@@ -48,9 +48,9 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_money);
         mContext = AddMoney.this;
-        prefrence = SharedPrefrence.getInstance(mContext);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-         parmas.put(Consts.USER_ID, userDTO.getUser_id());
+        prefrence = SharedPrefs.getInstance(mContext);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+         parmas.put(Const.USER_ID, userDTO.getUser_id());
         setUiAction();
     }
 
@@ -60,9 +60,9 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
 
         ivBack.setOnClickListener(v -> finish());
 
-        if (getIntent().hasExtra(Consts.AMOUNT)) {
-            amt = getIntent().getStringExtra(Consts.AMOUNT);
-            currency = getIntent().getStringExtra(Consts.CURRENCY);
+        if (getIntent().hasExtra(Const.AMOUNT)) {
+            amt = getIntent().getStringExtra(Const.AMOUNT);
+            currency = getIntent().getStringExtra(Const.CURRENCY);
 
             tvWallet.setText(String.format("%s %s", currency, amt));
         }
@@ -119,7 +119,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
             case R.id.cbAdd:
                 if (etAddMoney.getText().toString().length() > 0 && Float.parseFloat(etAddMoney.getText().toString().trim())>0) {
                     if (NetworkManager.isConnectToInternet(mContext)) {
-                        parmas.put(Consts.AMOUNT, ProjectUtils.getEditTextValue(etAddMoney));
+                        parmas.put(Const.AMOUNT, ProjectUtils.getEditTextValue(etAddMoney));
                         dialogPayment();
 
 
@@ -137,24 +137,24 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        if (prefrence.getValue(Consts.SURL).equalsIgnoreCase(Consts.PAYMENT_SUCCESS)) {
-            prefrence.clearPreferences(Consts.SURL);
+        if (prefrence.getValue(Const.SURL).equalsIgnoreCase(Const.PAYMENT_SUCCESS)) {
+            prefrence.clearPreferences(Const.SURL);
             finish();
-        } else if (prefrence.getValue(Consts.FURL).equalsIgnoreCase(Consts.PAYMENT_FAIL)) {
-            prefrence.clearPreferences(Consts.FURL);
+        } else if (prefrence.getValue(Const.FURL).equalsIgnoreCase(Const.PAYMENT_FAIL)) {
+            prefrence.clearPreferences(Const.FURL);
             finish();
-        }else if (prefrence.getValue(Consts.SURL).equalsIgnoreCase(Consts.PAYMENT_SUCCESS_paypal)) {
-            prefrence.clearPreferences(Consts.SURL);
+        }else if (prefrence.getValue(Const.SURL).equalsIgnoreCase(Const.PAYMENT_SUCCESS_paypal)) {
+            prefrence.clearPreferences(Const.SURL);
             addMoney();
-        }else if (prefrence.getValue(Consts.FURL).equalsIgnoreCase(Consts.PAYMENT_FAIL_Paypal)) {
-            prefrence.clearPreferences(Consts.FURL);
+        }else if (prefrence.getValue(Const.FURL).equalsIgnoreCase(Const.PAYMENT_FAIL_Paypal)) {
+            prefrence.clearPreferences(Const.FURL);
             finish();
         }
     }
 
 
     public void addMoney() {
-        new HttpsRequest(Consts.ADD_MONEY_API, parmas, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ADD_MONEY_API, parmas, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showLong(mContext, msg);
                 finish();
@@ -184,17 +184,17 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
         llCancel.setOnClickListener(v -> dialog.dismiss());
         paystackButton.setOnClickListener(v -> {
             Intent in2 = new Intent(mContext, PaymentWeb.class);
-            in2.putExtra(Consts.USER_DTO, userDTO);
-            in2.putExtra(Consts.AMOUNT, amt);
-            in2.putExtra(Consts.CURRENCY, currency);
+            in2.putExtra(Const.USER_DTO, userDTO);
+            in2.putExtra(Const.AMOUNT, amt);
+            in2.putExtra(Const.CURRENCY, currency);
             AddMoney.this.startActivity(in2);
             dialog.dismiss();
         });
         flutterwaveButton.setOnClickListener(v -> {
             Intent in2 = new Intent(mContext, PaymentWeb.class);
-            in2.putExtra(Consts.USER_DTO, userDTO);
-            in2.putExtra(Consts.AMOUNT, amt);
-            in2.putExtra(Consts.CURRENCY, currency);
+            in2.putExtra(Const.USER_DTO, userDTO);
+            in2.putExtra(Const.AMOUNT, amt);
+            in2.putExtra(Const.CURRENCY, currency);
             AddMoney.this.startActivity(in2);
             dialog.dismiss();
         });

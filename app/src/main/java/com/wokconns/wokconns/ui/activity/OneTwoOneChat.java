@@ -33,9 +33,9 @@ import com.wokconns.wokconns.dto.GetCommentDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.AdapterViewComment;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ImageCompression;
@@ -70,7 +70,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
     private ChatListDTO chatListDTO;
     private  HashMap<String, String> parmsGet = new HashMap<>();
     private CustomTextViewBold tvNameHedar;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     IntentFilter intentFilter = new IntentFilter();
 
@@ -96,18 +96,18 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_two_one_chat);
         mContext = OneTwoOneChat.this;
-        prefrence = SharedPrefrence.getInstance(mContext);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(mContext);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
 
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        intentFilter.addAction(Consts.CHAT_NOTIFICATION);
+        intentFilter.addAction(Const.CHAT_NOTIFICATION);
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, intentFilter);
 
-        if (getIntent().hasExtra(Consts.CHAT_LIST_DTO)){
-            chatListDTO = (ChatListDTO) getIntent().getSerializableExtra(Consts.CHAT_LIST_DTO);
+        if (getIntent().hasExtra(Const.CHAT_LIST_DTO)){
+            chatListDTO = (ChatListDTO) getIntent().getSerializableExtra(Const.CHAT_LIST_DTO);
 
-            parmsGet.put(Consts.ARTIST_ID, userDTO.getUser_id());
-            parmsGet.put(Consts.USER_ID, chatListDTO.getUser_id());
+            parmsGet.put(Const.ARTIST_ID, userDTO.getUser_id());
+            parmsGet.put(Const.USER_ID, chatListDTO.getUser_id());
         }
 
         setUiAction();
@@ -230,7 +230,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
                                     picUri = Uri.fromFile(file); // create
                                 }
 
-                                prefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                                prefrence.setValue(Const.IMAGE_URI_CAMERA, picUri.toString());
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
                                 startActivityForResult(intent, PICK_FROM_CAMERA);
                             } catch (Exception e) {
@@ -272,7 +272,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
 
     private File getOutputMediaFile(int type) {
         String root = Environment.getExternalStorageDirectory().toString();
-        File mediaStorageDir = new File(root, Consts.APP_NAME);
+        File mediaStorageDir = new File(root, Const.APP_NAME);
         /**Create the storage directory if it does not exist*/
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -285,9 +285,9 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
         File mediaFile;
         if (type == 1) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    Consts.APP_NAME + timeStamp + ".png");
+                    Const.APP_NAME + timeStamp + ".png");
 
-            imageName = Consts.APP_NAME + timeStamp + ".png";
+            imageName = Const.APP_NAME + timeStamp + ".png";
         } else {
             return null;
         }
@@ -314,7 +314,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
                         try {
                             // bitmap = MediaStore.Images.Media.getBitmap(SaveDetailsActivityNew.this.getContentResolver(), resultUri);
                             file = new File(imagePath);
-                            paramsFile.put(Consts.IMAGE,file);
+                            paramsFile.put(Const.IMAGE,file);
                             Log.e("image", imagePath);
 
                         } catch (Exception e) {
@@ -343,7 +343,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
                         Log.e("image", imagePath);
                         try {
                             file = new File(imagePath);
-                            paramsFile.put(Consts.IMAGE,file);
+                            paramsFile.put(Const.IMAGE,file);
                             Log.e("image", imagePath);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -356,11 +356,11 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
         }
         if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             if (picUri != null) {
-                picUri = Uri.parse(prefrence.getValue(Consts.IMAGE_URI_CAMERA));
+                picUri = Uri.parse(prefrence.getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             } else {
                 picUri = Uri.parse(prefrence
-                        .getValue(Consts.IMAGE_URI_CAMERA));
+                        .getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             }
         }
@@ -475,7 +475,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
     }
 
     public void getComment() {
-        new HttpsRequest(Consts.GET_CHAT_API, parmsGet, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_CHAT_API, parmsGet, mContext).stringPost(TAG, (flag, msg, response) -> {
             swipeRefreshLayout.setRefreshing(false);
             if (flag) {
                 try {
@@ -504,18 +504,18 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
 
 
     public void doComment() {
-        values.put(Consts.USER_ID, chatListDTO.getUser_id());
-        values.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        values.put(Consts.MESSAGE, ProjectUtils.getEditTextValue(edittextMessage));
-        values.put(Consts.SEND_BY, userDTO.getUser_id());
-        values.put(Consts.SENDER_NAME, userDTO.getName());
+        values.put(Const.USER_ID, chatListDTO.getUser_id());
+        values.put(Const.ARTIST_ID, userDTO.getUser_id());
+        values.put(Const.MESSAGE, ProjectUtils.getEditTextValue(edittextMessage));
+        values.put(Const.SEND_BY, userDTO.getUser_id());
+        values.put(Const.SENDER_NAME, userDTO.getName());
 
         if (file != null){
-            values.put(Consts.CHAT_TYPE,"2");
+            values.put(Const.CHAT_TYPE,"2");
         }else {
-            values.put(Consts.CHAT_TYPE,"1");
+            values.put(Const.CHAT_TYPE,"1");
         }
-        new HttpsRequest(Consts.SEND_CHAT_API, values,paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.SEND_CHAT_API, values,paramsFile, mContext).imagePost(TAG, (flag, msg, response) -> {
             if (flag) {
                 edittextMessage.setText("");
                 hideImageContainer();
@@ -531,7 +531,7 @@ public class OneTwoOneChat extends AppCompatActivity implements View.OnClickList
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase(Consts.CHAT_NOTIFICATION)) {
+            if (intent.getAction().equalsIgnoreCase(Const.CHAT_NOTIFICATION)) {
                 getComment();
                 Log.e("CHAT_NOTIFICATION","CHAT_NOTIFICATION");
                 Log.e(TAG, "Value " + prefrence.getIntValue("Value"));

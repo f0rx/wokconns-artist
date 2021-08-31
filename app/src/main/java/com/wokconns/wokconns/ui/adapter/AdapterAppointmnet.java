@@ -21,18 +21,14 @@ import com.wokconns.wokconns.dto.AppointmentDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.ui.fragment.AppointmentFrag;
 import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -54,8 +50,8 @@ public class AdapterAppointmnet extends RecyclerView.Adapter<AdapterAppointmnet.
         mContext = appointmentFrag.getActivity();
         this.appointmentDTOSList = appointmentDTOSList;
         this.userDTO = userDTO;
-        sdf1 = new SimpleDateFormat(Consts.DATE_FORMATE_SERVER, Locale.ENGLISH);
-        timeZone = new SimpleDateFormat(Consts.DATE_FORMATE_TIMEZONE, Locale.ENGLISH);
+        sdf1 = new SimpleDateFormat(Const.DATE_FORMATE_SERVER, Locale.ENGLISH);
+        timeZone = new SimpleDateFormat(Const.DATE_FORMATE_TIMEZONE, Locale.ENGLISH);
     }
 
     @Override
@@ -117,29 +113,29 @@ public class AdapterAppointmnet extends RecyclerView.Adapter<AdapterAppointmnet.
 
 
         holder.tvEdit.setOnClickListener(v -> {
-            paramBookAppointment.put(Consts.ARTIST_ID, userDTO.getUser_id());
-            paramBookAppointment.put(Consts.USER_ID, appointmentDTOSList.get(position).getUser_id());
-            paramBookAppointment.put(Consts.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
+            paramBookAppointment.put(Const.ARTIST_ID, userDTO.getUser_id());
+            paramBookAppointment.put(Const.USER_ID, appointmentDTOSList.get(position).getUser_id());
+            paramBookAppointment.put(Const.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
             clickScheduleDateTime();
         });
         holder.llDecline.setOnClickListener(v -> {
-            paramDeclineAppointment.put(Consts.USER_ID, userDTO.getUser_id());
-            paramDeclineAppointment.put(Consts.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
-            paramDeclineAppointment.put(Consts.REQUEST, "2");
+            paramDeclineAppointment.put(Const.USER_ID, userDTO.getUser_id());
+            paramDeclineAppointment.put(Const.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
+            paramDeclineAppointment.put(Const.REQUEST, "2");
             bookDailog(mContext.getResources().getString(R.string.dec),mContext.getResources().getString(R.string.dec_msg));
 
         });
         holder.llAccept.setOnClickListener(v -> {
-            paramDeclineAppointment.put(Consts.USER_ID, userDTO.getUser_id());
-            paramDeclineAppointment.put(Consts.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
-            paramDeclineAppointment.put(Consts.REQUEST, "1");
+            paramDeclineAppointment.put(Const.USER_ID, userDTO.getUser_id());
+            paramDeclineAppointment.put(Const.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
+            paramDeclineAppointment.put(Const.REQUEST, "1");
             bookDailog(mContext.getResources().getString(R.string.acc),mContext.getResources().getString(R.string.acc_msg));
 
         });
         holder.llComplete.setOnClickListener(v -> {
-            paramDeclineAppointment.put(Consts.USER_ID, userDTO.getUser_id());
-            paramDeclineAppointment.put(Consts.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
-            paramDeclineAppointment.put(Consts.REQUEST, "3");
+            paramDeclineAppointment.put(Const.USER_ID, userDTO.getUser_id());
+            paramDeclineAppointment.put(Const.APPOINTMENT_ID, appointmentDTOSList.get(position).getId());
+            paramDeclineAppointment.put(Const.REQUEST, "3");
             bookDailog(mContext.getResources().getString(R.string.comp),"Are you sure you want to Complete this appointment?");
 
         });
@@ -184,15 +180,15 @@ public class AdapterAppointmnet extends RecyclerView.Adapter<AdapterAppointmnet.
                 .curved()
                 .mustBeOnFuture()
                 .listener(date -> {
-                    paramBookAppointment.put(Consts.DATE_STRING, String.valueOf(sdf1.format(date).toString().toUpperCase()));
-                    paramBookAppointment.put(Consts.TIMEZONE, String.valueOf(timeZone.format(date)));
+                    paramBookAppointment.put(Const.DATE_STRING, String.valueOf(sdf1.format(date).toString().toUpperCase()));
+                    paramBookAppointment.put(Const.TIMEZONE, String.valueOf(timeZone.format(date)));
                     bookAppointment();
                 })
                 .display();
     }
 
     public void bookAppointment() {
-        new HttpsRequest(Consts.EDIT_APPOINTMENT_API, paramBookAppointment, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.EDIT_APPOINTMENT_API, paramBookAppointment, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);
                 appointmentFrag.getHistroy();
@@ -205,7 +201,7 @@ public class AdapterAppointmnet extends RecyclerView.Adapter<AdapterAppointmnet.
     }
     public void declineAppointment() {
 
-        new HttpsRequest(Consts.APPOINTMENT_OPERATION_API, paramDeclineAppointment, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.APPOINTMENT_OPERATION_API, paramDeclineAppointment, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);
                 appointmentFrag.getHistroy();

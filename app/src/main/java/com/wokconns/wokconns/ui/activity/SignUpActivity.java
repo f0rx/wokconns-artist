@@ -19,9 +19,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.utils.CustomButton;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
@@ -38,7 +38,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private CustomTextView CTVsignin;
     private final String TAG = SignUpActivity.class.getSimpleName();
     private RelativeLayout RRsncbar;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private SharedPreferences firebase;
     private CustomTextViewBold tvTerms, tvPrivacy;
@@ -53,9 +53,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         ProjectUtils.Fullscreen(SignUpActivity.this);
         setContentView(R.layout.activity_sign_up);
         mContext = SignUpActivity.this;
-        prefrence = SharedPrefrence.getInstance(mContext);
+        prefrence = SharedPrefs.getInstance(mContext);
         firebase = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        Log.e("tokensss", firebase.getString(Consts.DEVICE_TOKEN, ""));
+        Log.e("tokensss", firebase.getString(Const.DEVICE_TOKEN, ""));
         setUiAction();
     }
 
@@ -97,11 +97,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.tvTerms:
-                baseURL = Consts.TERMS_URL;
+                baseURL = Const.TERMS_URL;
                 getURLForWebView();
                 break;
             case R.id.tvPrivacy:
-                baseURL = Consts.PRIVACY_URL;
+                baseURL = Const.PRIVACY_URL;
                 getURLForWebView();
                 break;
             case R.id.ivEnterShow:
@@ -136,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void register() {
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.REGISTER_API, getParams(), mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.REGISTER_API, getParams(), mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
@@ -146,7 +146,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             ProjectUtils.getEditTextValue(CETfirstname)));
 
                     Intent in = new Intent(mContext, OTPVerificationActivity.class);
-                    in.putExtra(Consts.MOBILE, CETMobileNumber.getText().toString());
+                    in.putExtra(Const.MOBILE, CETMobileNumber.getText().toString());
 
                     startActivity(in);
                     finish();
@@ -210,15 +210,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     public HashMap<String, String> getParams() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.NAME, ProjectUtils.getEditTextValue(CETfirstname));
-        parms.put(Consts.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));
-        parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
-        parms.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
-        parms.put(Consts.REFERRAL_CODE, ProjectUtils.getEditTextValue(etReferal));
-        parms.put(Consts.ROLE, "1");
-        parms.put(Consts.DEVICE_ID, "12345");
-        parms.put(Consts.DEVICE_TYPE, "ANDROID");
-        parms.put(Consts.DEVICE_TOKEN, firebase.getString(Consts.DEVICE_TOKEN, ""));
+        parms.put(Const.NAME, ProjectUtils.getEditTextValue(CETfirstname));
+        parms.put(Const.EMAIL_ID, ProjectUtils.getEditTextValue(CETemailadd));
+        parms.put(Const.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
+        parms.put(Const.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
+        parms.put(Const.REFERRAL_CODE, ProjectUtils.getEditTextValue(etReferal));
+        parms.put(Const.ROLE, "1");
+        parms.put(Const.DEVICE_ID, "12345");
+        parms.put(Const.DEVICE_TYPE, "ANDROID");
+        parms.put(Const.DEVICE_TOKEN, firebase.getString(Const.DEVICE_TOKEN, ""));
         return parms;
     }
 
@@ -242,21 +242,21 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void getURLForWebView() {
-        if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase(""))
-            prefrence.setValue(Consts.LANGUAGE_SELECTION, "en");
+        if (prefrence.getValue(Const.LANGUAGE_SELECTION).equalsIgnoreCase(""))
+            prefrence.setValue(Const.LANGUAGE_SELECTION, "en");
 
         new HttpsRequest(baseURL, mContext).stringGet(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
-                    if (baseURL.equalsIgnoreCase(Consts.PRIVACY_URL)) {
+                    if (baseURL.equalsIgnoreCase(Const.PRIVACY_URL)) {
                         Intent intent1 = new Intent(mContext, WebViewCommon.class);
-                        intent1.putExtra(Consts.URL, msg);
-                        intent1.putExtra(Consts.HEADER, getResources().getString(R.string.privacy_policy));
+                        intent1.putExtra(Const.URL, msg);
+                        intent1.putExtra(Const.HEADER, getResources().getString(R.string.privacy_policy));
                         startActivity(intent1);
-                    } else if (baseURL.equalsIgnoreCase(Consts.TERMS_URL)) {
+                    } else if (baseURL.equalsIgnoreCase(Const.TERMS_URL)) {
                         Intent intent3 = new Intent(mContext, WebViewCommon.class);
-                        intent3.putExtra(Consts.URL, msg);
-                        intent3.putExtra(Consts.HEADER, getResources().getString(R.string.terms_of_use));
+                        intent3.putExtra(Const.URL, msg);
+                        intent3.putExtra(Const.HEADER, getResources().getString(R.string.terms_of_use));
                         startActivity(intent3);
                     }
                 } catch (Exception e) {

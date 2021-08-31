@@ -15,8 +15,8 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.dto.HistoryDTO;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.ViewInvoice;
 import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
@@ -35,7 +35,7 @@ public class PaidAdapter extends RecyclerView.Adapter<PaidAdapter.MyViewHolder> 
     Context mContext;
     ArrayList<HistoryDTO> objects =null;
     ArrayList<HistoryDTO> historyDTOList;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private LayoutInflater inflater;
 
     public PaidAdapter(Context mContext, ArrayList<HistoryDTO> objects, LayoutInflater inflater) {
@@ -44,7 +44,7 @@ public class PaidAdapter extends RecyclerView.Adapter<PaidAdapter.MyViewHolder> 
         this.historyDTOList = new ArrayList<>();
         this.historyDTOList.addAll(objects);
         this.inflater = inflater;
-        prefrence = SharedPrefrence.getInstance(mContext);
+        prefrence = SharedPrefs.getInstance(mContext);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class PaidAdapter extends RecyclerView.Adapter<PaidAdapter.MyViewHolder> 
 
         holder.tvView.setOnClickListener(v -> {
             Intent in = new Intent(mContext, ViewInvoice.class);
-            in.putExtra(Consts.HISTORY_DTO, objects.get(position));
+            in.putExtra(Const.HISTORY_DTO, objects.get(position));
             mContext.startActivity(in);
 
         });

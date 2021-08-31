@@ -23,9 +23,9 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityAddServiceBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.utils.ImageCompression;
 import com.wokconns.wokconns.utils.MainFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
@@ -40,7 +40,7 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
     private static final String TAG = AddServiceActivity.class.getCanonicalName();
     ActivityAddServiceBinding addServiceBinding;
     Context context;
-    SharedPrefrence sharedPrefrence;
+    SharedPrefs sharedPrefs;
     UserDTO userDTO;
     String user_id = "";
 
@@ -63,8 +63,8 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
 
     public void init() {
         context = AddServiceActivity.this;
-        sharedPrefrence = SharedPrefrence.getInstance(context);
-        userDTO = sharedPrefrence.getParentUser(Consts.USER_DTO);
+        sharedPrefs = SharedPrefs.getInstance(context);
+        userDTO = sharedPrefs.getParentUser(Const.USER_DTO);
         user_id = userDTO.getUser_id();
 
         imagePickerSheet();
@@ -77,10 +77,10 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
     public void addService() {
         HashMap<String, File> fileParams = new HashMap<>();
         if (file_service != null) {
-            fileParams.put(Consts.PRODUCT_IMAGE, file_service);
+            fileParams.put(Const.PRODUCT_IMAGE, file_service);
         }
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_PRODUCT_API, (getParamsAddService()), fileParams, context).imagePost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ADD_PRODUCT_API, (getParamsAddService()), fileParams, context).imagePost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(context, msg);
@@ -96,9 +96,9 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
 
     protected HashMap<String, String> getParamsAddService() {
         HashMap<String, String> paramsAddService = new HashMap<>();
-        paramsAddService.put(Consts.USER_ID, userDTO.getUser_id());
-        paramsAddService.put(Consts.PRODUCT_NAME, ProjectUtils.getEditTextValue(addServiceBinding.etProductName));
-        paramsAddService.put(Consts.PRICE, ProjectUtils.getEditTextValue(addServiceBinding.etProductPrice));
+        paramsAddService.put(Const.USER_ID, userDTO.getUser_id());
+        paramsAddService.put(Const.PRODUCT_NAME, ProjectUtils.getEditTextValue(addServiceBinding.etProductName));
+        paramsAddService.put(Const.PRICE, ProjectUtils.getEditTextValue(addServiceBinding.etProductPrice));
         return paramsAddService;
     }
 
@@ -194,7 +194,7 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
                         picUri = Uri.fromFile(file); // create
                     }
 
-                    sharedPrefrence.setValue(Consts.IMAGE_URI_CAMERA, picUri.toString());
+                    sharedPrefs.setValue(Const.IMAGE_URI_CAMERA, picUri.toString());
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri); // set the image file
                     startActivityForResult(intent, PICK_FROM_CAMERA);
                 } catch (Exception e) {
@@ -266,11 +266,11 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
         }
         if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             if (picUri != null) {
-                picUri = Uri.parse(sharedPrefrence.getValue(Consts.IMAGE_URI_CAMERA));
+                picUri = Uri.parse(sharedPrefs.getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             } else {
-                picUri = Uri.parse(sharedPrefrence
-                        .getValue(Consts.IMAGE_URI_CAMERA));
+                picUri = Uri.parse(sharedPrefs
+                        .getValue(Const.IMAGE_URI_CAMERA));
                 startCropping(picUri, CROP_CAMERA_IMAGE);
             }
         }
@@ -313,7 +313,7 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
 
     private File getOutputMediaFile(int type) {
         String root = Environment.getExternalStorageDirectory().toString();
-        File mediaStorageDir = new File(root, Consts.APP_NAME);
+        File mediaStorageDir = new File(root, Const.APP_NAME);
         /**Create the storage directory if it does not exist*/
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -326,9 +326,9 @@ public class AddServiceActivity extends AppCompatActivity implements View.OnClic
         File mediaFile;
         if (type == 1) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    Consts.APP_NAME + timeStamp + ".png");
+                    Const.APP_NAME + timeStamp + ".png");
 
-            imageName = Consts.APP_NAME + timeStamp + ".png";
+            imageName = Const.APP_NAME + timeStamp + ".png";
         } else {
             return null;
         }

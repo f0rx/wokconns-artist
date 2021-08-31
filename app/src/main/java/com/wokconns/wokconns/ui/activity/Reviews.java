@@ -13,7 +13,7 @@ import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.ReviewsDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityReviewsBinding;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.ui.adapter.ReviewAdapter;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class Reviews extends AppCompatActivity implements View.OnClickListener {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reviews);
         context = Reviews.this;
         bundle = getIntent().getExtras();
-        artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Consts.ARTIST_DTO);
+        artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Const.ARTIST_DTO);
         showUiAction();
 
     }

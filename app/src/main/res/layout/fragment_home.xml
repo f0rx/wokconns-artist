@@ -123,9 +123,9 @@
                         android:layout_centerVertical="true"
                         android:background="?android:attr/selectableItemBackground"
                         android:text="@string/see_all"
+                        android:textAllCaps="true"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="@dimen/_9sdp"
-                        android:textAllCaps="true"/>
+                        android:textSize="@dimen/_9sdp" />
 
                 </RelativeLayout>
 

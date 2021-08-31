@@ -58,14 +58,14 @@
                     android:icon="@drawable/ic_profile"
                     android:title="@string/my_profile" />
 
-                <item
-                    android:id="@+id/nav_earing"
-                    android:icon="@drawable/ic_earning"
-                    android:title="@string/my_earnings" />
-                <item
-                    android:id="@+id/nav_wallet"
-                    android:icon="@drawable/ic_wallet"
-                    android:title="@string/ic_wallet" />
+<!--                <item-->
+<!--                    android:id="@+id/nav_earing"-->
+<!--                    android:icon="@drawable/ic_earning"-->
+<!--                    android:title="@string/my_earnings" />-->
+<!--                <item-->
+<!--                    android:id="@+id/nav_wallet"-->
+<!--                    android:icon="@drawable/ic_wallet"-->
+<!--                    android:title="@string/ic_wallet" />-->
                 <item
                     android:id="@+id/nav_bank"
                     android:icon="@drawable/ic_add_bank"

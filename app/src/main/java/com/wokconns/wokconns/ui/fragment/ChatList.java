@@ -16,16 +16,13 @@ import com.wokconns.wokconns.dto.ChatListDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.adapter.ChatListAdapter;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class ChatList extends Fragment {
     private ChatListAdapter chatListAdapter;
     private ArrayList<ChatListDTO> chatList;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private CustomTextViewBold tvNo;
     private View view;
@@ -50,8 +47,8 @@ public class ChatList extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.activity_chat_list, container, false);
 
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
         baseActivity.headerNameTV.setText(getResources().getString(R.string.chats));
         setUiAction(view);
         return view;
@@ -80,7 +77,7 @@ public class ChatList extends Fragment {
 
     public void getChat() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_CHAT_HISTORY_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_CHAT_HISTORY_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 tvNo.setVisibility(View.GONE);
@@ -105,7 +102,7 @@ public class ChatList extends Fragment {
 
     public HashMap<String, String> getparm() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
         return parms;
     }
 

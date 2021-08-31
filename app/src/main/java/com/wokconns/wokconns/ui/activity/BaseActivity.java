@@ -1,5 +1,7 @@
 package com.wokconns.wokconns.ui.activity;
 
+import static com.wokconns.wokconns.utils.ProjectUtils.showToast;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +13,6 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,9 +58,9 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.dto.CategoryDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.fragment.AddBank;
 import com.wokconns.wokconns.ui.fragment.AppointmentFrag;
 import com.wokconns.wokconns.ui.fragment.ArtistProfileNew;
@@ -91,18 +92,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    private final String TAG = BaseActivity.class.getSimpleName();
-    HashMap<String, String> parms = new HashMap<>();
-    private FrameLayout frame;
-    private View contentView;
-    public NavigationView navigationView;
-    public RelativeLayout header;
-    public DrawerLayout drawer;
-    public View navHeader;
-    public ImageView menuLeftIV, ivSearch;
-    Context mContext;
-    private SharedPrefrence prefrence;
-    private UserDTO userDTO;
     public static final String TAG_MAIN = "main";
     public static final String TAG_BOOKING = "booking";
     public static final String TAG_CHAT = "chat";
@@ -118,30 +107,42 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     public static final String TAG_WALLET = "wallet";
     public static final String TAG_SIGN_OUT = "signOut";
     public static final String TAG_ADD_BANK = "addBank";
-    public static String CURRENT_TAG = TAG_MAIN;
-    public static int navItemIndex = 0;
-    private Handler mHandler;
     private static final float END_SCALE = 0.8f;
-    InputMethodManager inputManager;
-    CustomerBooking customerBooking = new CustomerBooking();
-    private final boolean shouldLoadHomeFragOnBackPress = true;
-    public CustomTextViewBold headerNameTV;
-    private Location mylocation;
-    private GoogleApiClient googleApiClient;
     private final static int REQUEST_CHECK_SETTINGS_GPS = 0x1;
     private final static int REQUEST_ID_MULTIPLE_PERMISSIONS = 0x2;
+    public static String CURRENT_TAG = TAG_MAIN;
+    public static int navItemIndex = 0;
+    private final String TAG = BaseActivity.class.getSimpleName();
+    private final boolean shouldLoadHomeFragOnBackPress = true;
+    private final HashMap<String, String> parmsCategory = new HashMap<>();
+    private final HashMap<String, String> parmsApprove = new HashMap<>();
+    private final HashMap<String, String> paramsLogout = new HashMap<>();
+    public NavigationView navigationView;
+    public RelativeLayout header;
+    public DrawerLayout drawer;
+    public View navHeader;
+    public ImageView menuLeftIV, ivSearch;
+    public CustomTextViewBold headerNameTV;
+    public RelativeLayout rlheader;
+    public int location_check = 0;
+    HashMap<String, String> parms = new HashMap<>();
+    Context mContext;
+    InputMethodManager inputManager;
+    CustomerBooking customerBooking = new CustomerBooking();
+    String type = "";
+    private FrameLayout frame;
+    private View contentView;
+    private SharedPrefs prefrence;
+    private UserDTO userDTO;
+    private Handler mHandler;
+    private Location mylocation;
+    private GoogleApiClient googleApiClient;
     private CircleImageView img_profile;
     private CustomTextViewBold tvName;
     private CustomTextView tvEmail, tvOther, tvEnglish;
-    public RelativeLayout rlheader;
-    public int location_check = 0;
     private LinearLayout llProfileClick;
-    String type = "";
-    private final HashMap<String, String> parmsCategory = new HashMap<>();
-    private final HashMap<String, String> parmsApprove = new HashMap<>();
     private ArrayList<CategoryDTO> categoryDTOS = new ArrayList<>();
     private DialogInterface dd;
-    private final HashMap<String, String> paramsLogout = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,13 +154,13 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         mContext = BaseActivity.this;
         mHandler = new Handler();
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        prefrence = SharedPrefrence.getInstance(mContext);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        parmsCategory.put(Consts.USER_ID, userDTO.getUser_id());
-        parmsApprove.put(Consts.USER_ID, userDTO.getUser_id());
+        prefrence = SharedPrefs.getInstance(mContext);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        parmsCategory.put(Const.USER_ID, userDTO.getUser_id());
+        parmsApprove.put(Const.USER_ID, userDTO.getUser_id());
 
-        if (getIntent().hasExtra(Consts.SCREEN_TAG)) {
-            type = getIntent().getStringExtra(Consts.SCREEN_TAG);
+        if (getIntent().hasExtra(Const.SCREEN_TAG)) {
+            type = getIntent().getStringExtra(Const.SCREEN_TAG);
         }
 
         setUpGClient();
@@ -197,8 +198,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         });
         tvOther.setOnClickListener(v -> language("ar"));
 
-        final Uri uri = Uri.parse(userDTO.getImage().contains(Consts.DOMAIN_URL + Consts.DOMAIN_URL)
-                ? userDTO.getImage().replace(Consts.DOMAIN_URL, "") : userDTO.getImage());
+        final Uri uri = Uri.parse(userDTO.getImage().contains(Const.DOMAIN_URL + Const.DOMAIN_URL)
+                ? userDTO.getImage().replace(Const.DOMAIN_URL, "") : userDTO.getImage());
 
         Glide.with(mContext)
                 .load(uri)
@@ -206,63 +207,63 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .useAnimationPool(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(img_profile);
-        tvEmail.setText(userDTO.getEmail_id());
-        tvName.setText(userDTO.getName());
 
+        tvName.setText(userDTO.getName());
+        tvEmail.setText(userDTO.getEmail_id());
 
         if (savedInstanceState == null) {
             if (type != null) {
-                if (type.equalsIgnoreCase(Consts.CHAT_NOTIFICATION)) {
+                if (type.equalsIgnoreCase(Const.CHAT_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 3;
                     CURRENT_TAG = TAG_CHAT;
                     loadHomeFragment(new ChatList(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.TICKET_COMMENT_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.TICKET_COMMENT_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 13;
                     CURRENT_TAG = TAG_TICKETS;
                     loadHomeFragment(new Tickets(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.TICKET_STATUS_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.TICKET_STATUS_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 13;
                     CURRENT_TAG = TAG_TICKETS;
                     loadHomeFragment(new Tickets(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.WALLET_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.WALLET_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 10;
                     CURRENT_TAG = TAG_WALLET;
                     loadHomeFragment(new Wallet(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.DECLINE_BOOKING_ARTIST_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.DECLINE_BOOKING_ARTIST_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 4;
                     CURRENT_TAG = TAG_BOOKINGS_ALL;
                     loadHomeFragment(new NewBookings(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.START_BOOKING_ARTIST_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.START_BOOKING_ARTIST_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 2;
                     CURRENT_TAG = TAG_BOOKING;
                     loadHomeFragment(new CustomerBooking(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.BRODCAST_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.BRODCAST_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 6;
                     CURRENT_TAG = TAG_NOTIFICATION;
                     loadHomeFragment(new Notification(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.ADMIN_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.ADMIN_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 6;
                     CURRENT_TAG = TAG_NOTIFICATION;
                     loadHomeFragment(new Notification(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.BOOK_ARTIST_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.BOOK_ARTIST_NOTIFICATION)) {
                     ivSearch.setVisibility(View.GONE);
                     navItemIndex = 4;
                     CURRENT_TAG = TAG_BOOKINGS_ALL;
                     loadHomeFragment(new NewBookings(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.JOB_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.JOB_NOTIFICATION)) {
                     ivSearch.setVisibility(View.VISIBLE);
                     navItemIndex = 1;
                     CURRENT_TAG = TAG_MAIN;
                     loadHomeFragment(new JobsFrag(), CURRENT_TAG);
-                } else if (type.equalsIgnoreCase(Consts.DELETE_JOB_NOTIFICATION)) {
+                } else if (type.equalsIgnoreCase(Const.DELETE_JOB_NOTIFICATION)) {
                     ivSearch.setVisibility(View.VISIBLE);
                     navItemIndex = 1;
                     CURRENT_TAG = TAG_MAIN;
@@ -308,34 +309,34 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
         drawer.setScrimColor(Color.TRANSPARENT);
         drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-                                     @Override
-                                     public void onDrawerSlide(View drawerView, float slideOffset) {
+                 @Override
+                 public void onDrawerSlide(View drawerView, float slideOffset) {
 
-                                         // Scale the View based on current slide offset
-                                         final float diffScaledOffset = slideOffset * (1 - END_SCALE);
-                                         final float offsetScale = 1 - diffScaledOffset;
-                                         contentView.setScaleX(offsetScale);
-                                         contentView.setScaleY(offsetScale);
+                     // Scale the View based on current slide offset
+                     final float diffScaledOffset = slideOffset * (1 - END_SCALE);
+                     final float offsetScale = 1 - diffScaledOffset;
+                     contentView.setScaleX(offsetScale);
+                     contentView.setScaleY(offsetScale);
 
-                                         // Translate the View, accounting for the scaled width
-                                         final float xOffset = drawerView.getWidth() * slideOffset;
-                                         final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
-                                         final float xTranslation = xOffset - xOffsetDiff;
-                                         contentView.setTranslationX(xTranslation);
-                                     }
+                     // Translate the View, accounting for the scaled width
+                     final float xOffset = drawerView.getWidth() * slideOffset;
+                     final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
+                     final float xTranslation = xOffset - xOffsetDiff;
+                     contentView.setTranslationX(xTranslation);
+                 }
 
-                                     @Override
-                                     public void onDrawerClosed(View drawerView) {
-                                     }
-                                 }
+                 @Override
+                 public void onDrawerClosed(View drawerView) {
+                 }
+             }
         );
 
 
-        if (userDTO.getIs_profile() == 0) {
+        if (userDTO.is_profile() == 0) {
             if (NetworkManager.isConnectToInternet(mContext)) {
                 getCategory();
             } else {
-                ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
+                showToast(mContext, getResources().getString(R.string.internet_concation));
             }
 
         }
@@ -344,8 +345,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onResume() {
         super.onResume();
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        if (userDTO.getIs_profile() == 1) {
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        if (userDTO.is_profile() == 1) {
             if (userDTO.getApproval_status() == 0) {
                 getApproveStatus();
             }
@@ -367,8 +368,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         mi.setTitle(spannableString);
     }
 
-    public void showImage() {
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+    public void updateBaseActivityInfo() {
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+
+        tvName.setText(userDTO.getName());
+        tvEmail.setText(userDTO.getEmail_id());
 
         Glide.with(mContext).
                 load(userDTO.getImage())
@@ -376,8 +380,6 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .useAnimationPool(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(img_profile);
-
-        tvName.setText(userDTO.getName());
     }
 
     public void loadHomeFragment(final Fragment fragment, final String TAG) {
@@ -491,14 +493,14 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                     CURRENT_TAG = TAG_PROFILE;
                     fragmentTransaction.replace(R.id.frame, new ArtistProfileNew());
                     break;
-                case R.id.nav_earing:
-                    ivSearch.setVisibility(View.GONE);
-                    rlheader.setVisibility(View.VISIBLE);
-
-                    navItemIndex = 8;
-                    CURRENT_TAG = TAG_EARN;
-                    fragmentTransaction.replace(R.id.frame, new MyEarning());
-                    break;
+//                case R.id.nav_earing:
+//                    ivSearch.setVisibility(View.GONE);
+//                    rlheader.setVisibility(View.VISIBLE);
+//
+//                    navItemIndex = 8;
+//                    CURRENT_TAG = TAG_EARN;
+//                    fragmentTransaction.replace(R.id.frame, new MyEarning());
+//                    break;
                 case R.id.nav_history:
                     ivSearch.setVisibility(View.GONE);
                     rlheader.setVisibility(View.VISIBLE);
@@ -507,14 +509,14 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                     CURRENT_TAG = TAG_HISTORY;
                     fragmentTransaction.replace(R.id.frame, new HistoryFragment());
                     break;
-                case R.id.nav_wallet:
-                    ivSearch.setVisibility(View.GONE);
-                    rlheader.setVisibility(View.VISIBLE);
-
-                    navItemIndex = 10;
-                    CURRENT_TAG = TAG_WALLET;
-                    fragmentTransaction.replace(R.id.frame, new Wallet());
-                    break;
+//                case R.id.nav_wallet:
+//                    ivSearch.setVisibility(View.GONE);
+//                    rlheader.setVisibility(View.VISIBLE);
+//
+//                    navItemIndex = 10;
+//                    CURRENT_TAG = TAG_WALLET;
+//                    fragmentTransaction.replace(R.id.frame, new Wallet());
+//                    break;
                 case R.id.nav_bank:
                     ivSearch.setVisibility(View.GONE);
                     rlheader.setVisibility(View.GONE);
@@ -615,11 +617,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
                     if (NetworkManager.isConnectToInternet(mContext)) {
                         Intent intent = new Intent(mContext, EditPersonalInfo.class);
-                        intent.putExtra(Consts.CATEGORY_list, categoryDTOS);
+                        intent.putExtra(Const.CATEGORY_list, categoryDTOS);
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_up, R.anim.stay);
                     } else {
-                        ProjectUtils.showToast(mContext, getResources().getString(R.string.internet_concation));
+                        showToast(mContext, getResources().getString(R.string.internet_concation));
                     }
 
                     dialog.dismiss();
@@ -728,13 +730,13 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
         if (mylocation != null) {
             Double latitude = mylocation.getLatitude();
             Double longitude = mylocation.getLongitude();
-            prefrence.setValue(Consts.LATITUDE, latitude + "");
-            prefrence.setValue(Consts.LONGITUDE, longitude + "");
+            prefrence.setValue(Const.LATITUDE, latitude + "");
+            prefrence.setValue(Const.LONGITUDE, longitude + "");
 
-            parms.put(Consts.USER_ID, userDTO.getUser_id());
-            parms.put(Consts.ROLE, "1");
-            parms.put(Consts.LATITUDE, latitude + "");
-            parms.put(Consts.LONGITUDE, longitude + "");
+            parms.put(Const.USER_ID, userDTO.getUser_id());
+            parms.put(Const.ROLE, "1");
+            parms.put(Const.LATITUDE, latitude + "");
+            parms.put(Const.LONGITUDE, longitude + "");
             updateLocation();
 
         }
@@ -781,11 +783,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void updateLocation() {
         //ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_LOCATION_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.UPDATE_LOCATION_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
 
             } else {
-                ProjectUtils.showToast(mContext, msg);
+                showToast(mContext, msg);
 
             }
         });
@@ -811,7 +813,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_CATEGORY_API, parmsCategory, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     categoryDTOS = new ArrayList<>();
@@ -831,12 +833,12 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void getApproveStatus() {
-        new HttpsRequest(Consts.GET_APPROVAL_STATUS_API, parmsApprove, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_APPROVAL_STATUS_API, parmsApprove, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     int approval_status = response.getInt("approval_status");
                     userDTO.setApproval_status(approval_status);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    prefrence.setParentUser(userDTO, Const.USER_DTO);
                     if (approval_status == 0) {
                         approveDailog();
                     }
@@ -864,11 +866,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void logout() {
-        ProjectUtils.showProgressDialog(mContext, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_LOGOUT_API, paramsLogout, mContext).stringPost(TAG, (flag, msg, response) -> {
+        ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
+        new HttpsRequest(Const.ARTIST_LOGOUT_API, paramsLogout, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
-                ProjectUtils.showToast(mContext, msg);
+                showToast(mContext, msg);
 
                 dd.dismiss();
                 prefrence.clearAllPreferences();
@@ -877,7 +879,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.C
                 startActivity(intent);
                 finish();
             } else {
-                ProjectUtils.showToast(mContext, msg);
+                showToast(mContext, msg);
             }
 
 

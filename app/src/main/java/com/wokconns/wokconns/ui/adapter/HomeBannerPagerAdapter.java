@@ -9,13 +9,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.wokconns.wokconns.dto.HomeBannerDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ViewpagerHomeBannerBinding;
 import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.fragment.Home;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class HomeBannerPagerAdapter extends PagerAdapter {
     private Context mContext;
     LayoutInflater mLayoutInflater;
     ArrayList<HomeBannerDTO> bannerDTOArrayList;
-    private SharedPrefrence preference;
+    private SharedPrefs preference;
     private UserDTO userDTO;
     Home homeFragment;
     ViewpagerHomeBannerBinding binding;
@@ -34,8 +33,8 @@ public class HomeBannerPagerAdapter extends PagerAdapter {
     public HomeBannerPagerAdapter(Home homeFragment, Context mContext, ArrayList<HomeBannerDTO> bannerDTOArrayList) {
         this.mContext = mContext;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        preference = SharedPrefrence.getInstance(mContext);
-        this.userDTO = preference.getParentUser(Consts.USER_DTO);
+        preference = SharedPrefs.getInstance(mContext);
+        this.userDTO = preference.getParentUser(Const.USER_DTO);
         this.bannerDTOArrayList = bannerDTOArrayList;
         this.homeFragment = homeFragment;
     }

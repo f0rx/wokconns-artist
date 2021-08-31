@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
@@ -19,12 +18,9 @@ import com.wokconns.wokconns.dto.ProductDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterServicesBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.ui.activity.Services;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,7 +91,7 @@ public class AdapterServices extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .into(myViewHolder.binding.IVproduct);
 
             myViewHolder.binding.ivDelete.setOnClickListener(v -> {
-                parms.put(Consts.PRODUCT_ID, productDTOList.get(position).getId());
+                parms.put(Const.PRODUCT_ID, productDTOList.get(position).getId());
                 deleteDialog();
             });
         }
@@ -156,7 +152,7 @@ public class AdapterServices extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void deleteGallery() {
-        new HttpsRequest(Consts.DELETE_PRODUCT_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.DELETE_PRODUCT_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 if (type.equalsIgnoreCase("services")) {
                     ((Services) context).getArtist();

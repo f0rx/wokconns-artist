@@ -18,15 +18,12 @@ import com.wokconns.wokconns.dto.HistoryDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.PaidAdapter;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,7 +38,7 @@ public class PaidFrag extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     private ArrayList<HistoryDTO> historyDTOList;
     private ArrayList<HistoryDTO> historyDTOListPaid;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private CustomTextViewBold tvNo;
     private LayoutInflater myInflater;
@@ -53,8 +50,8 @@ public class PaidFrag extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_paid, container, false);
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
         myInflater = LayoutInflater.from(getActivity());
         setUiAction(view);
         return view;
@@ -112,7 +109,7 @@ public class PaidFrag extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
     public void getHistroy() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_INVOICE_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_INVOICE_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             swipeRefreshLayout.setRefreshing(false);
             if (flag) {
@@ -141,8 +138,8 @@ public class PaidFrag extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
     public HashMap<String, String> getparm() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.USER_ID, userDTO.getUser_id());
-        parms.put(Consts.ROLE, "1");
+        parms.put(Const.USER_ID, userDTO.getUser_id());
+        parms.put(Const.ROLE, "1");
         return parms;
     }
 

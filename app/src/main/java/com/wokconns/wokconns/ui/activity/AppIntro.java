@@ -17,8 +17,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.ToxicBakery.viewpager.transforms.StackTransformer;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityAppIntro2Binding;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.AppIntroPagerAdapter;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
@@ -27,7 +27,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
     private AppIntroPagerAdapter mAdapter;
     private int dotsCount;
     private ImageView[] dots;
-    public SharedPrefrence preference;
+    public SharedPrefs preference;
     private Context mContext;
     int[] mResources = {R.drawable.intro_1, R.drawable.intro_2, R.drawable.intro_3};
 
@@ -39,7 +39,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
         ProjectUtils.Fullscreen(AppIntro.this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_app_intro2);
         mContext = AppIntro.this;
-        preference = SharedPrefrence.getInstance(mContext);
+        preference = SharedPrefs.getInstance(mContext);
 
         binding.llSignin.setOnClickListener(this);
         binding.llSignup.setOnClickListener(this);
@@ -152,7 +152,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
                 break;
             case R.id.ll_language:
                 Intent intent = new Intent(mContext, LanguageSelection.class);
-                intent.putExtra(Consts.TYPE, "0");
+                intent.putExtra(Const.TYPE, "0");
                 startActivity(intent);
                 finish();
                 break;

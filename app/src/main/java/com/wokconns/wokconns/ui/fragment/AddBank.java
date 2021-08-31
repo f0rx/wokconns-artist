@@ -23,14 +23,11 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentAddBankBinding;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +41,7 @@ import static com.schibstedspain.leku.LocationPickerActivityKt.LONGITUDE;
 public class AddBank extends Fragment implements View.OnClickListener {
     private View view;
     private String TAG = AddBank.class.getSimpleName();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private String status = "";
 
@@ -60,8 +57,8 @@ public class AddBank extends Fragment implements View.OnClickListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_bank, container, false);
         view = binding.getRoot();
 
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
 
         setUiAction();
         return view;
@@ -72,7 +69,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
         binding.btnSubmit.setOnClickListener(this);
 //        binding.etBranchAddress.setOnClickListener(this);
 
-        paramsGetAccount.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        paramsGetAccount.put(Const.ARTIST_ID, userDTO.getUser_id());
 
         getAccount();
     }
@@ -100,7 +97,7 @@ public class AddBank extends Fragment implements View.OnClickListener {
 
     public void getAccount() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_ACCOUNT_DETAIL, paramsGetAccount, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ACCOUNT_DETAIL, paramsGetAccount, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 try {
@@ -139,14 +136,14 @@ public class AddBank extends Fragment implements View.OnClickListener {
     }
 
     public void addAccount() {
-        paramsAddAccount.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        paramsAddAccount.put(Consts.BANK_NAME, ProjectUtils.getEditTextValue(binding.etBankName));
-        paramsAddAccount.put(Consts.ACCOUNT_NUMBER, ProjectUtils.getEditTextValue(binding.etAccountNumber));
+        paramsAddAccount.put(Const.ARTIST_ID, userDTO.getUser_id());
+        paramsAddAccount.put(Const.BANK_NAME, ProjectUtils.getEditTextValue(binding.etBankName));
+        paramsAddAccount.put(Const.ACCOUNT_NUMBER, ProjectUtils.getEditTextValue(binding.etAccountNumber));
 //        paramsAddAccount.put(Consts.IFSC_CODE, ProjectUtils.getEditTextValue(binding.etBranchCode));
-        paramsAddAccount.put(Consts.ACCOUNT_HOLDER_NAME, ProjectUtils.getEditTextValue(binding.etNameCard));
+        paramsAddAccount.put(Const.ACCOUNT_HOLDER_NAME, ProjectUtils.getEditTextValue(binding.etNameCard));
 //        paramsAddAccount.put(Consts.BANK_ADDRESS, ProjectUtils.getEditTextValue(binding.etBranchAddress));
 
-        new HttpsRequest(Consts.ADD_ACCOUNT_DETAIL, paramsAddAccount, getActivity()).stringPost(TAG,
+        new HttpsRequest(Const.ADD_ACCOUNT_DETAIL, paramsAddAccount, getActivity()).stringPost(TAG,
                 (flag, msg, response) -> {
                     ProjectUtils.pauseProgressDialog();
                     if (flag) {

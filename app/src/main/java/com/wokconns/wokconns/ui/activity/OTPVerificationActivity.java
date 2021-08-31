@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.ProjectUtils;
@@ -45,8 +45,8 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         final CustomTextView resendVerificationBtn = findViewById(R.id.resendVerificationBtn);
         final View root = findViewById(R.id.rootOTPScreen);
 
-        if (getIntent().hasExtra(Consts.MOBILE)) {
-            mobile = getIntent().getStringExtra(Consts.MOBILE);
+        if (getIntent().hasExtra(Const.MOBILE)) {
+            mobile = getIntent().getStringExtra(Const.MOBILE);
             CTVPhoneNumber.setText(mobile);
         }
 
@@ -151,10 +151,10 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.MOBILE, mobile);
-        params.put(Consts.OTP_CODE, otpCode);
+        params.put(Const.MOBILE, mobile);
+        params.put(Const.OTP_CODE, otpCode);
 
-        new HttpsRequest(Consts.VERIFY_PHONE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.VERIFY_PHONE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {
@@ -174,9 +174,9 @@ public class OTPVerificationActivity extends AppCompatActivity implements TextWa
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.MOBILE, mobile);
+        params.put(Const.MOBILE, mobile);
 
-        new HttpsRequest(Consts.RESEND_VERIFY_OTP_CODE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.RESEND_VERIFY_OTP_CODE, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (flag) {

@@ -28,10 +28,9 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.application.GlobalState;
 import com.wokconns.wokconns.databinding.FragmentHomeBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.ImageGallery;
 import com.wokconns.wokconns.ui.activity.Services;
@@ -43,8 +42,6 @@ import com.wokconns.wokconns.ui.adapter.AdapterServices;
 import com.wokconns.wokconns.ui.adapter.HomeBannerPagerAdapter;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,7 +49,7 @@ import java.util.HashMap;
 public class Home extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     private View view;
     private String TAG = Home.class.getSimpleName();
-    private SharedPrefrence preference;
+    private SharedPrefs preference;
     private UserDTO userDTO;
 
     HashMap<String, String> params = new HashMap<>();
@@ -91,8 +88,8 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         view = binding.getRoot();
         baseActivity.headerNameTV.setText(getResources().getString(R.string.app_name));
-        preference = SharedPrefrence.getInstance(getActivity());
-        userDTO = preference.getParentUser(Consts.USER_DTO);
+        preference = SharedPrefs.getInstance(getActivity());
+        userDTO = preference.getParentUser(Const.USER_DTO);
 
         setUiAction();
         return view;
@@ -124,10 +121,10 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
         binding.tvSeeAll3.setOnClickListener(this);
         binding.tvSeeAll4.setOnClickListener(this);
 
-        params.put(Consts.USER_ID, userDTO.getUser_id());
-        params.put(Consts.LATITUDE, ""+preference.getValue(Consts.LATITUDE));
-        params.put(Consts.LONGITUDE, ""+preference.getValue(Consts.LONGITUDE));
-        params.put(Consts.DISTANCE, "50");
+        params.put(Const.USER_ID, userDTO.getUser_id());
+        params.put(Const.LATITUDE, ""+preference.getValue(Const.LATITUDE));
+        params.put(Const.LONGITUDE, ""+preference.getValue(Const.LONGITUDE));
+        params.put(Const.DISTANCE, "50");
     }
 
     @Override
@@ -181,7 +178,7 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
     public void getHomeData() {
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ARTIST_HOME_DATA, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ARTIST_HOME_DATA, params, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             binding.swipeRefreshLayout.setRefreshing(false);
             if (flag) {
@@ -222,7 +219,6 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
     }
 
-
     public void setData() {
         bannerDTOArrayList = homeDataDTO.getBanner();
         nearByJobsDTOArrayList = homeDataDTO.getNear_by_jobs();
@@ -241,7 +237,7 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
         if (nearByJobsDTOArrayList.size() > 0) {
             binding.rlNearBy.setVisibility(View.VISIBLE);
-            nearByAdapter = new AdapterNearBy(baseActivity, nearByJobsDTOArrayList);
+            nearByAdapter = new AdapterNearBy(baseActivity, nearByJobsDTOArrayList, baseActivity);
             binding.rvNearBy.setAdapter(nearByAdapter);
             binding.rvNearBy.setNestedScrollingEnabled(false);
         } else {
@@ -250,7 +246,7 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
         if (recomendedDTOArrayList.size() > 0) {
             binding.rlRecommended.setVisibility(View.VISIBLE);
-            recommendedAdapter = new AdapterRecommended(baseActivity, recomendedDTOArrayList);
+            recommendedAdapter = new AdapterRecommended(baseActivity, recomendedDTOArrayList, baseActivity);
             binding.rvRecommended.setAdapter(recommendedAdapter);
             binding.rvRecommended.setNestedScrollingEnabled(false);
         } else {
@@ -259,7 +255,9 @@ public class Home extends Fragment implements View.OnClickListener, SwipeRefresh
 
         if (invoiceDTOArrayList.size() > 0) {
             binding.rlLastInvoice.setVisibility(View.VISIBLE);
-            invoiceAdapter = new AdapterInvoice(baseActivity, invoiceDTOArrayList, LayoutInflater.from(getActivity()));
+            invoiceAdapter = new AdapterInvoice(
+                    baseActivity, invoiceDTOArrayList, LayoutInflater.from(getActivity())
+            );
             binding.rvLastInvoice.setAdapter(invoiceAdapter);
             binding.rvLastInvoice.setNestedScrollingEnabled(false);
         } else {

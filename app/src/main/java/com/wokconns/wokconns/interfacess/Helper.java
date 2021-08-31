@@ -1,9 +1,0 @@
-package com.wokconns.wokconns.interfacess;
-
-import org.json.JSONObject;
-/**
- * Created by VARUN on 01/01/19.
- */
-public interface Helper {
-    void backResponse(boolean flag, String msg, JSONObject response);
-}

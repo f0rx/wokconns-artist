@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
@@ -30,14 +29,11 @@ import com.wokconns.wokconns.databinding.AdapterAllJobsBinding;
 import com.wokconns.wokconns.databinding.DailogApplyJobBinding;
 import com.wokconns.wokconns.databinding.ItemSectionBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.fragment.AllJobsFrag;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +49,7 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<AllJobsDTO> allJobsDTOList;
     private UserDTO userDTO;
     private LayoutInflater inflater;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
@@ -70,7 +66,7 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.allJobsDTOList.addAll(objects);
         this.userDTO = userDTO;
         this.inflater = inflater;
-        prefrence = SharedPrefrence.getInstance(mContext);
+        prefrence = SharedPrefs.getInstance(mContext);
 
     }
 
@@ -112,9 +108,9 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .into(holder.allJobsBinding.ivImage);
             holder.allJobsBinding.llApply.setOnClickListener(v -> {
 
-                params.put(Consts.USER_ID, objects.get(position).getUser_id());
-                params.put(Consts.JOB_ID, objects.get(position).getJob_id());
-                params.put(Consts.ARTIST_ID, userDTO.getUser_id());
+                params.put(Const.USER_ID, objects.get(position).getUser_id());
+                params.put(Const.JOB_ID, objects.get(position).getJob_id());
+                params.put(Const.ARTIST_ID, userDTO.getUser_id());
                 dialogAbout(objects.get(position).getCurrency_symbol());
             });
 
@@ -189,8 +185,8 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         dailogApplyJobBinding.ivClose.setOnClickListener(v -> dialogApplyJob.dismiss());
         dailogApplyJobBinding.tvSubmit.setOnClickListener(
                 v -> {
-                    params.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etAboutD));
-                    params.put(Consts.PRICE, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etPriceD));
+                    params.put(Const.DESCRIPTION, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etAboutD));
+                    params.put(Const.PRICE, ProjectUtils.getEditTextValue(dailogApplyJobBinding.etPriceD));
                     submitPersonalProfile();
 
                 });
@@ -198,7 +194,7 @@ public class AllJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void applyJob() {
 
-        new HttpsRequest(Consts.APPLIED_JOB_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.APPLIED_JOB_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             dialogApplyJob.dismiss();
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);

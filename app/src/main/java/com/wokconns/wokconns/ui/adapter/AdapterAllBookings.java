@@ -27,7 +27,7 @@ import com.wokconns.wokconns.dto.ArtistDetailsDTO;
 import com.wokconns.wokconns.dto.ChatListDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.interfacess.DisclaimerWarning;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.ui.activity.OneTwoOneChat;
@@ -190,7 +190,7 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
                         Intent in = new Intent(context, OneTwoOneChat.class);
 
                         try {
-                            in.putExtra(Consts.CHAT_LIST_DTO, chatHistory.get(0));
+                            in.putExtra(Const.CHAT_LIST_DTO, chatHistory.get(0));
                             showDisclaimerDialog(context, in);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -269,8 +269,8 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 // Update price here
                 paramsPricing = new HashMap<>();
-                paramsPricing.put(Consts.BOOKING_ID, artistBookingsList.get(pos).getId());
-                paramsPricing.put(Consts.PRICE, binding1.CETEditPrice.getText().toString());
+                paramsPricing.put(Const.BOOKING_ID, artistBookingsList.get(pos).getId());
+                paramsPricing.put(Const.PRICE, binding1.CETEditPrice.getText().toString());
                 updateArtisanRate(successful -> {
                     if (successful) sendBookingRequest(req, pos);
                 }, dialog);
@@ -282,11 +282,11 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void sendBookingRequest(String req, int pos) {
         HashMap<String, String> paramsBookingOp = new HashMap<>();
-        paramsBookingOp.put(Consts.BOOKING_ID, artistBookingsList.get(pos).getId());
-        paramsBookingOp.put(Consts.REQUEST, req);
-        paramsBookingOp.put(Consts.USER_ID, artistBookingsList.get(pos).getUser_id());
+        paramsBookingOp.put(Const.BOOKING_ID, artistBookingsList.get(pos).getId());
+        paramsBookingOp.put(Const.REQUEST, req);
+        paramsBookingOp.put(Const.USER_ID, artistBookingsList.get(pos).getUser_id());
         ProjectUtils.showProgressDialog(context, true, context.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, context)
+        new HttpsRequest(Const.BOOKING_OPERATION_API, paramsBookingOp, context)
                 .stringPost(TAG, (flag, msg, response) -> {
                     ProjectUtils.pauseProgressDialog();
                     if (flag) {
@@ -300,12 +300,12 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void decline(int pos) {
         HashMap<String, String> paramsDecline = new HashMap<>();
-        paramsDecline.put(Consts.USER_ID, userDTO.getUser_id());
-        paramsDecline.put(Consts.BOOKING_ID, artistBookingsList.get(pos).getId());
-        paramsDecline.put(Consts.DECLINE_BY, "1");
-        paramsDecline.put(Consts.DECLINE_REASON, "Busy");
+        paramsDecline.put(Const.USER_ID, userDTO.getUser_id());
+        paramsDecline.put(Const.BOOKING_ID, artistBookingsList.get(pos).getId());
+        paramsDecline.put(Const.DECLINE_BY, "1");
+        paramsDecline.put(Const.DECLINE_REASON, "Busy");
         ProjectUtils.showProgressDialog(context, true, context.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.DECLINE_BOOKING_API, paramsDecline, context).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(context, msg);
@@ -322,7 +322,7 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         ProjectUtils.showProgressDialog(context, false, context.getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.UPDATE_ARTISAN_RATE, paramsPricing, context)
+        new HttpsRequest(Const.UPDATE_ARTISAN_RATE, paramsPricing, context)
                 .stringPost(TAG, (flag, msg, response) -> {
                     ProjectUtils.pauseProgressDialog();
 
@@ -337,11 +337,11 @@ public class AdapterAllBookings extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void getChat(NetworkCallback callback) {
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        params.put(Const.ARTIST_ID, userDTO.getUser_id());
 
         ProjectUtils.showProgressDialog(context, true, context.getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.GET_CHAT_HISTORY_API, params, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_CHAT_HISTORY_API, params, context).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 try {

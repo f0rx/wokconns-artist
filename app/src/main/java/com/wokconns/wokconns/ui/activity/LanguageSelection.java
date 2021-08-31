@@ -14,8 +14,8 @@ import com.wokconns.wokconns.dto.LanguageDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityLanguageSelectionBinding;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.AdapterLanguage;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.Locale;
 public class LanguageSelection extends AppCompatActivity implements View.OnClickListener {
     private ActivityLanguageSelectionBinding binding;
     private static final String TAG = LanguageSelection.class.getSimpleName();
-    private SharedPrefrence sharedPrefrence;
+    private SharedPrefs sharedPrefs;
     private Context mContext;
     private AdapterLanguage adapterLanguage;
     private ArrayList<LanguageDTO> languageDTOList;
@@ -38,14 +38,14 @@ public class LanguageSelection extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_language_selection);
         mContext = LanguageSelection.this;
-        sharedPrefrence = SharedPrefrence.getInstance(mContext);
-        userDTO = sharedPrefrence.getParentUser(Consts.USER_DTO);
+        sharedPrefs = SharedPrefs.getInstance(mContext);
+        userDTO = sharedPrefs.getParentUser(Const.USER_DTO);
         init();
     }
 
     private void init() {
         binding.llBack.setOnClickListener(this);
-        type = getIntent().getStringExtra(Consts.TYPE);
+        type = getIntent().getStringExtra(Const.TYPE);
         showLanguage();
     }
 

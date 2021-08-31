@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.CompoundButton;
 
 import com.google.gson.Gson;
 import com.wokconns.wokconns.dto.ArtistDetailsDTO;
@@ -24,15 +23,12 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityPersnoalInfoBinding;
 import com.wokconns.wokconns.databinding.DailogArQualificationBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.QualificationAdapter;
 import com.wokconns.wokconns.ui.fragment.ArtistProfile;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +43,7 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
     private QualificationAdapter qualificationAdapter;
     private LinearLayoutManager mLayoutManagerQuali;
     private UserDTO userDTO;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private ArtistProfile parentFrag;
     private HashMap<String, String> paramsUpdate;
     private Dialog dialogEditQualification;
@@ -60,13 +56,13 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
         // Inflate the layout for this fragment
         binding = DataBindingUtil.setContentView(this, R.layout.activity_persnoal_info);
         context = PersnoalInfo.this;
-        prefrence = SharedPrefrence.getInstance(context);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(context);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
 //        parentFrag = ((ArtistProfile) PersnoalInfo.this.getParentFragment());
 //        bundle = this.getArguments();
-        artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Consts.ARTIST_DTO);
+        artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Const.ARTIST_DTO);
 
-        paramsRate.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        paramsRate.put(Const.ARTIST_ID, userDTO.getUser_id());
 
         showUiAction();
     }
@@ -82,10 +78,10 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
         binding.switchRate.setOnCheckedChangeListener((compoundButton, b) -> {
             if (compoundButton.isShown()) {
                 if (b == true) {
-                    paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "0");
+                    paramsRate.put(Const.ARTIST_COMMISSION_TYPE, "0");
                     chnageRate();
                 } else {
-                    paramsRate.put(Consts.ARTIST_COMMISSION_TYPE, "1");
+                    paramsRate.put(Const.ARTIST_COMMISSION_TYPE, "1");
                     chnageRate();
                 }
             }
@@ -151,9 +147,9 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
         binding1.tvNoQuali.setOnClickListener(v -> dialogEditQualification.dismiss());
         binding1.tvYesQuali.setOnClickListener(
                 v -> {
-                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
-                    paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(binding1.etQaulTitleD));
-                    paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(binding1.etQaulDesD));
+                    paramsUpdate.put(Const.USER_ID, userDTO.getUser_id());
+                    paramsUpdate.put(Const.TITLE, ProjectUtils.getEditTextValue(binding1.etQaulTitleD));
+                    paramsUpdate.put(Const.DESCRIPTION, ProjectUtils.getEditTextValue(binding1.etQaulDesD));
 
                     if (NetworkManager.isConnectToInternet(context)) {
                         if (!ProjectUtils.isEditTextFilled(binding1.etQaulTitleD)) {
@@ -174,7 +170,7 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
 
     public void addQualification() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_QUALIFICATION_API, paramsUpdate, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ADD_QUALIFICATION_API, paramsUpdate, context).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(context, msg);
@@ -189,7 +185,7 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
     }
 
     public void chnageRate() {
-        new HttpsRequest(Consts.CHANGE_COMMISSION_ARTIST_API, paramsRate, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.CHANGE_COMMISSION_ARTIST_API, paramsRate, context).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showLong(context, msg);
                 parentFrag.getArtist();
@@ -201,16 +197,16 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
 
     public void submitProfile() {
         params = new HashMap<>();
-        params.put(Consts.USER_ID, userDTO.getUser_id());
-        params.put(Consts.NAME, ProjectUtils.getEditTextValue(binding.etName));
-        params.put(Consts.MOBILE, ProjectUtils.getEditTextValue(binding.etMobileNo));
+        params.put(Const.USER_ID, userDTO.getUser_id());
+        params.put(Const.NAME, ProjectUtils.getEditTextValue(binding.etName));
+        params.put(Const.MOBILE, ProjectUtils.getEditTextValue(binding.etMobileNo));
 
         if (binding.rbGenderF.isChecked()) {
-            params.put(Consts.GENDER, "0");
+            params.put(Const.GENDER, "0");
         } else if (binding.rbGenderM.isChecked()) {
-            params.put(Consts.GENDER, "1");
+            params.put(Const.GENDER, "1");
         } else {
-            params.put(Consts.GENDER, "2");
+            params.put(Const.GENDER, "2");
         }
         if (NetworkManager.isConnectToInternet(context)) {
             updateProfileSelf();
@@ -221,13 +217,13 @@ public class PersnoalInfo extends AppCompatActivity implements View.OnClickListe
 
     public void updateProfileSelf() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_PROFILE_API, params, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.UPDATE_PROFILE_API, params, context).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 try {
                     ProjectUtils.showToast(context, msg);
                     userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    prefrence.setParentUser(userDTO, Const.USER_DTO);
                     showDataSelf();
 
                 } catch (Exception e) {

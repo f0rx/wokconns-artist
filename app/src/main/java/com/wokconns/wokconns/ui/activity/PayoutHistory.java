@@ -15,14 +15,11 @@ import com.wokconns.wokconns.databinding.ActivityPayoutHistoryBinding;
 import com.wokconns.wokconns.dto.PayoutDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.AdapterPayoutHistory;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class PayoutHistory extends AppCompatActivity implements View.OnClickList
     Context context;
     ActivityPayoutHistoryBinding binding;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence preference;
+    private SharedPrefs preference;
     private UserDTO userDTO;
     private AdapterPayoutHistory payoutHistoryAdapter;
     private ArrayList<PayoutDTO> payoutDTOList = new ArrayList<>();
@@ -48,8 +45,8 @@ public class PayoutHistory extends AppCompatActivity implements View.OnClickList
     }
 
     public void setUiAction() {
-        preference = SharedPrefrence.getInstance(context);
-        userDTO = preference.getParentUser(Consts.USER_DTO);
+        preference = SharedPrefs.getInstance(context);
+        userDTO = preference.getParentUser(Const.USER_DTO);
 
         binding.llBack.setOnClickListener(this);
 
@@ -86,7 +83,7 @@ public class PayoutHistory extends AppCompatActivity implements View.OnClickList
 
     public void getPayoutHistory() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.GET_PAYOUT_DATA, getparam(), context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_PAYOUT_DATA, getparam(), context).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
 
@@ -111,7 +108,7 @@ public class PayoutHistory extends AppCompatActivity implements View.OnClickList
 
     public HashMap<String, String> getparam() {
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.USER_ID, userDTO.getUser_id());
+        params.put(Const.USER_ID, userDTO.getUser_id());
 //        parms.put(Consts.USER_ID, "14");
         return params;
     }

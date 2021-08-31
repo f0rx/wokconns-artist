@@ -16,7 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterMyBookingsWorkBinding;
 import com.wokconns.wokconns.dto.ArtistBookingDTO;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 
 import java.util.ArrayList;
 
@@ -25,14 +25,14 @@ public class AdapterMyBookingsWork extends RecyclerView.Adapter<AdapterMyBooking
 
     LayoutInflater layoutInflater;
     private ArrayList<ArtistBookingDTO> artistJobsDTOArrayList;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     AdapterMyBookingsWorkBinding binding;
 
     public AdapterMyBookingsWork(Context context, ArrayList<ArtistBookingDTO> artistJobsDTOArrayList) {
         this.context = context;
         this.artistJobsDTOArrayList = artistJobsDTOArrayList;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        prefrence = SharedPrefrence.getInstance(context);
+        prefrence = SharedPrefs.getInstance(context);
     }
 
     @NonNull

@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.databinding.MyJobsWorkAdapterBinding;
 import com.wokconns.wokconns.dto.ArtistJobsDTO;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.R;
 
 import java.util.ArrayList;
@@ -26,14 +26,14 @@ public class MyJobsWorkAdapter extends RecyclerView.Adapter<MyJobsWorkAdapter.My
 
     LayoutInflater layoutInflater;
     private ArrayList<ArtistJobsDTO> artistJobsDTOArrayList;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     MyJobsWorkAdapterBinding binding;
 
     public MyJobsWorkAdapter(Context context, ArrayList<ArtistJobsDTO> artistJobsDTOArrayList) {
         this.context = context;
         this.artistJobsDTOArrayList = artistJobsDTOArrayList;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        prefrence = SharedPrefrence.getInstance(context);
+        prefrence = SharedPrefs.getInstance(context);
     }
 
     @NonNull

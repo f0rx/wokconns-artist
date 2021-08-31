@@ -4,13 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityWebViewCommonBinding;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 
 public class WebViewCommon extends AppCompatActivity {
     ActivityWebViewCommonBinding binding;
@@ -25,9 +24,9 @@ public class WebViewCommon extends AppCompatActivity {
 
         binding.rlclose.setOnClickListener(v -> finish());
 
-        if (getIntent().hasExtra(Consts.URL)) {
-            url = getIntent().getStringExtra(Consts.URL);
-            header = getIntent().getStringExtra(Consts.HEADER);
+        if (getIntent().hasExtra(Const.URL)) {
+            url = getIntent().getStringExtra(Const.URL);
+            header = getIntent().getStringExtra(Const.HEADER);
             binding.tvTitle.setText(header);
         }
 

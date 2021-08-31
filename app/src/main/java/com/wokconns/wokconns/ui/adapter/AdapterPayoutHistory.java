@@ -17,7 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterPayoutHistoryBinding;
 import com.wokconns.wokconns.dto.PayoutDTO;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 
 import java.util.ArrayList;
 
@@ -26,14 +26,14 @@ public class AdapterPayoutHistory extends RecyclerView.Adapter<AdapterPayoutHist
 
     LayoutInflater layoutInflater;
     private ArrayList<PayoutDTO> payoutDTOArrayList;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     AdapterPayoutHistoryBinding binding;
 
     public AdapterPayoutHistory(Context context, ArrayList<PayoutDTO> payoutDTOArrayList) {
         this.context = context;
         this.payoutDTOArrayList = payoutDTOArrayList;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        prefrence = SharedPrefrence.getInstance(context);
+        prefrence = SharedPrefs.getInstance(context);
     }
 
     @NonNull

@@ -19,16 +19,13 @@ import android.view.Window;
 import com.wokconns.wokconns.dto.QualificationsDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.ui.activity.PersnoalInfo;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +71,7 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
         holder.tvEditQuali.setOnClickListener(v -> dialogQualification(position));
         holder.tvDeleteQuali.setOnClickListener(v -> {
             paramsDelete = new HashMap<>();
-            paramsDelete.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(position).getId());
+            paramsDelete.put(Const.QUALIFICATION_ID, qualificationsDTOList.get(position).getId());
             deleteDialog();
         });
     }
@@ -125,9 +122,9 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
         tvNoQuali.setOnClickListener(v -> dialogEditQualification.dismiss());
         tvYesQuali.setOnClickListener(
                 v -> {
-                    paramsUpdate.put(Consts.QUALIFICATION_ID, qualificationsDTOList.get(pos).getId());
-                    paramsUpdate.put(Consts.TITLE, ProjectUtils.getEditTextValue(etQaulTitleD));
-                    paramsUpdate.put(Consts.DESCRIPTION, ProjectUtils.getEditTextValue(etQaulDesD));
+                    paramsUpdate.put(Const.QUALIFICATION_ID, qualificationsDTOList.get(pos).getId());
+                    paramsUpdate.put(Const.TITLE, ProjectUtils.getEditTextValue(etQaulTitleD));
+                    paramsUpdate.put(Const.DESCRIPTION, ProjectUtils.getEditTextValue(etQaulDesD));
 
                     if (NetworkManager.isConnectToInternet(mContext)) {
                         updateQuali();
@@ -139,7 +136,7 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
     }
     public void updateQuali() {
         ProjectUtils.showProgressDialog(mContext, true, mContext.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.UPDATE_QUALIFICATION_API, paramsUpdate, mContext).stringPost("TAG", (flag, msg, response) -> {
+        new HttpsRequest(Const.UPDATE_QUALIFICATION_API, paramsUpdate, mContext).stringPost("TAG", (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);
@@ -176,7 +173,7 @@ public class QualificationAdapter extends RecyclerView.Adapter<QualificationAdap
 
     public void deleteQuali() {
         ProjectUtils.showProgressDialog(mContext, true, mContext.getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DELETE_QUALIFICATION_API, paramsDelete, mContext).stringPost("TAG", (flag, msg, response) -> {
+        new HttpsRequest(Const.DELETE_QUALIFICATION_API, paramsDelete, mContext).stringPost("TAG", (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);

@@ -17,9 +17,9 @@ import com.wokconns.wokconns.databinding.FragmentMyJobsWorkBinding;
 import com.wokconns.wokconns.dto.ArtistJobsDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.activity.PreviousWork;
 import com.wokconns.wokconns.ui.adapter.MyJobsWorkAdapter;
@@ -33,7 +33,7 @@ public class MyJobsWorkFrag extends Fragment implements SwipeRefreshLayout.OnRef
     private MyJobsWorkAdapter myJobsWorkAdapter;
     private ArrayList<ArtistJobsDTO> artistJobsDTOList;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence preference;
+    private SharedPrefs preference;
     private UserDTO userDTO;
     private LayoutInflater myInflater;
     private PreviousWork context;
@@ -44,8 +44,8 @@ public class MyJobsWorkFrag extends Fragment implements SwipeRefreshLayout.OnRef
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_jobs_work, container, false);
         view = binding.getRoot();
-        preference = SharedPrefrence.getInstance(getActivity());
-        userDTO = preference.getParentUser(Consts.USER_DTO);
+        preference = SharedPrefs.getInstance(getActivity());
+        userDTO = preference.getParentUser(Const.USER_DTO);
         myInflater = LayoutInflater.from(getActivity());
         setUiAction(view);
         return view;
@@ -96,7 +96,7 @@ public class MyJobsWorkFrag extends Fragment implements SwipeRefreshLayout.OnRef
 
     public void gotos() {
         Intent in = new Intent(getActivity(), BaseActivity.class);
-        in.putExtra(Consts.SCREEN_TAG, Consts.START_BOOKING_ARTIST_NOTIFICATION);
+        in.putExtra(Const.SCREEN_TAG, Const.START_BOOKING_ARTIST_NOTIFICATION);
         startActivity(in);
         context.finish();
 

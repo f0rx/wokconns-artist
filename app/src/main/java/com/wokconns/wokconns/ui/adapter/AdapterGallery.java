@@ -17,12 +17,9 @@ import com.wokconns.wokconns.dto.GalleryDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterGalleryBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.ui.activity.ImageGallery;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +76,8 @@ public class AdapterGallery extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
 
         myViewHolder.binding.ivDelete.setOnClickListener(v -> {
-            parms.put(Consts.ID, gallery.get(position).getId());
-            parms.put(Consts.USER_ID, gallery.get(position).getUser_id());
+            parms.put(Const.ID, gallery.get(position).getId());
+            parms.put(Const.USER_ID, gallery.get(position).getUser_id());
             deleteDialog();
         });
     }
@@ -126,7 +123,7 @@ public class AdapterGallery extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void deleteGallery() {
-        new HttpsRequest(Consts.DELETE_GALLERY_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.DELETE_GALLERY_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(context, msg);
                 if (type.equalsIgnoreCase("gallery")) {

@@ -18,9 +18,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.utils.ProjectUtils;
 import com.wokconns.wokconns.utils.CustomButton;
@@ -29,7 +29,6 @@ import com.wokconns.wokconns.utils.CustomTextView;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String notVerifiedErrorMatcher = "does not have a verified phone number";
@@ -40,7 +39,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private CustomTextView CTVsignup;
     private String TAG = SignInActivity.class.getSimpleName();
     private RelativeLayout RRsncbar;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private SharedPreferences firebase;
     private ImageView ivEnterShow;
@@ -53,7 +52,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         mContext = SignInActivity.this;
-        prefrence = SharedPrefrence.getInstance(mContext);
+        prefrence = SharedPrefs.getInstance(mContext);
         firebase = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         setUiAction();
@@ -105,18 +104,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void login() {
-        if (prefrence.getValue(Consts.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
-            prefrence.setValue(Consts.LANGUAGE_SELECTION, "en");
+        if (prefrence.getValue(Const.LANGUAGE_SELECTION).equalsIgnoreCase("")) {
+            prefrence.setValue(Const.LANGUAGE_SELECTION, "en");
         }
 
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.LOGIN_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.LOGIN_API, getparm(), mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
 
             if (msg != null && msg.contains(notVerifiedErrorMatcher)) {
                 Intent in = new Intent(mContext, OTPVerificationActivity.class);
-                in.putExtra(Consts.MOBILE, CETMobileNumber.getText().toString());
+                in.putExtra(Const.MOBILE, CETMobileNumber.getText().toString());
 
                 startActivity(in);
                 overridePendingTransition(R.anim.anim_slide_in_left,
@@ -129,9 +128,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
                     userDTO = new Gson().fromJson(response.getJSONObject("data").toString(), UserDTO.class);
 
-                    prefrence.setParentUser(userDTO, Consts.USER_DTO);
+                    prefrence.setParentUser(userDTO, Const.USER_DTO);
 
-                    prefrence.setBooleanValue(Consts.IS_REGISTERED, true);
+                    prefrence.setBooleanValue(Const.IS_REGISTERED, true);
 
                     ProjectUtils.showToast(mContext, msg);
 
@@ -166,12 +165,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     public HashMap<String, String> getparm() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
-        parms.put(Consts.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
-        parms.put(Consts.DEVICE_TYPE, "ANDROID");
-        parms.put(Consts.DEVICE_TOKEN, firebase.getString(Consts.DEVICE_TOKEN, ""));
-        parms.put(Consts.DEVICE_ID, "12345");
-        parms.put(Consts.ROLE, "1");
+        parms.put(Const.MOBILE, ProjectUtils.getEditTextValue(CETMobileNumber));
+        parms.put(Const.PASSWORD, ProjectUtils.getEditTextValue(CETenterpassword));
+        parms.put(Const.DEVICE_TYPE, "ANDROID");
+        parms.put(Const.DEVICE_TOKEN, firebase.getString(Const.DEVICE_TOKEN, ""));
+        parms.put(Const.DEVICE_ID, "12345");
+        parms.put(Const.ROLE, "1");
         Log.e(TAG + " Login", parms.toString());
         return parms;
     }

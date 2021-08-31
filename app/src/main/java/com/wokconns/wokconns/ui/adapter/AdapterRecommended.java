@@ -17,6 +17,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.dto.HomeRecomendedDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterRecommendedBinding;
+import com.wokconns.wokconns.ui.activity.BaseActivity;
+import com.wokconns.wokconns.ui.fragment.JobsFrag;
 
 import java.util.ArrayList;
 
@@ -26,10 +28,14 @@ public class AdapterRecommended extends RecyclerView.Adapter<AdapterRecommended.
     ArrayList<HomeRecomendedDTO> recomendedDTOArrayList;
     AdapterRecommendedBinding binding;
     LayoutInflater layoutInflater;
+    BaseActivity baseActivity;
 
-    public AdapterRecommended(Context mContext, ArrayList<HomeRecomendedDTO> recomendedDTOArrayList) {
+    public AdapterRecommended(Context mContext,
+                              ArrayList<HomeRecomendedDTO> recomendedDTOArrayList,
+                              BaseActivity baseActivity) {
         this.mContext = mContext;
         this.recomendedDTOArrayList = recomendedDTOArrayList;
+        this.baseActivity = baseActivity;
     }
 
     @Override
@@ -39,6 +45,15 @@ public class AdapterRecommended extends RecyclerView.Adapter<AdapterRecommended.
         }
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.adapter_recommended, parent, false);
         View itemView = binding.getRoot();
+
+        itemView.setOnClickListener(v -> {
+            baseActivity.ivSearch.setVisibility(View.VISIBLE);
+            baseActivity.rlheader.setVisibility(View.VISIBLE);
+
+            BaseActivity.navItemIndex = 1;
+            BaseActivity.CURRENT_TAG = BaseActivity.TAG_MAIN;
+            baseActivity.loadHomeFragment(new JobsFrag(), BaseActivity.CURRENT_TAG);
+        });
         return new MyViewHolder(binding);
     }
 

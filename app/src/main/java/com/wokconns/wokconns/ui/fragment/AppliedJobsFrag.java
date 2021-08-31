@@ -23,18 +23,15 @@ import com.wokconns.wokconns.dto.AppliedJobDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.adapter.AppliedJobAdapter;
 import com.wokconns.wokconns.utils.CustomEditText;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -50,7 +47,7 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
     private ArrayList<AppliedJobDTO> appliedJobDTOSListSection;
     private ArrayList<AppliedJobDTO> appliedJobDTOSListSection1;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private CustomTextViewBold tvNo;
     private LayoutInflater myInflater;
@@ -64,8 +61,8 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_applied_jobs, container, false);
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
         myInflater = LayoutInflater.from(getActivity());
         setUiAction(view);
         return view;
@@ -155,7 +152,7 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     public void getjobs() {
-        new HttpsRequest(Consts.GET_APPLIED_JOB_ARTIST_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_APPLIED_JOB_ARTIST_API, getparm(), getActivity()).stringPost(TAG, (flag, msg, response) -> {
             swipeRefreshLayout.setRefreshing(false);
             if (flag) {
                 tvNo.setVisibility(View.GONE);
@@ -185,7 +182,7 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
 
     public HashMap<String, String> getparm() {
         HashMap<String, String> parms = new HashMap<>();
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
         return parms;
     }
 
@@ -210,7 +207,7 @@ public class AppliedJobsFrag extends Fragment implements SwipeRefreshLayout.OnRe
 
     public void gotos() {
         Intent in = new Intent(getActivity(), BaseActivity.class);
-        in.putExtra(Consts.SCREEN_TAG, Consts.START_BOOKING_ARTIST_NOTIFICATION);
+        in.putExtra(Const.SCREEN_TAG, Const.START_BOOKING_ARTIST_NOTIFICATION);
         startActivity(in);
         baseActivity.finish();
 

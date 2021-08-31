@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
@@ -20,7 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.databinding.AdapterChatListBinding;
 import com.wokconns.wokconns.dto.ChatListDTO;
 import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.interfacess.DisclaimerWarning;
 import com.wokconns.wokconns.ui.activity.OneTwoOneChat;
 import com.wokconns.wokconns.utils.ProjectUtils;
@@ -68,7 +67,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
 
         holder.itemView.setOnClickListener(v -> {
             Intent in = new Intent(mContext, OneTwoOneChat.class);
-            in.putExtra(Consts.CHAT_LIST_DTO, chatList.get(position));
+            in.putExtra(Const.CHAT_LIST_DTO, chatList.get(position));
 
             showDisclaimerDialog(mContext, in);
         });

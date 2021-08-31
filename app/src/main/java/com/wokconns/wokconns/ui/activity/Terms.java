@@ -2,13 +2,12 @@ package com.wokconns.wokconns.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 
 public class Terms extends AppCompatActivity {
     private WebView mWebView;
@@ -25,7 +24,7 @@ public class Terms extends AppCompatActivity {
         mWebView.setWebViewClient(new MyBrowser());
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl(Consts.TERMS_URL);
+        mWebView.loadUrl(Const.TERMS_URL);
 
     }
 

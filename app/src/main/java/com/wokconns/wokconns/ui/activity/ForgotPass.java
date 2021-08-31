@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
 import com.wokconns.wokconns.utils.CustomButton;
 import com.wokconns.wokconns.utils.CustomEditText;
@@ -65,11 +65,11 @@ public class ForgotPass extends AppCompatActivity {
     }
 
     public void updatepass() {
-        parms.put(Consts.MOBILE, ProjectUtils.getEditTextValue(etMobile));
+        parms.put(Const.MOBILE, ProjectUtils.getEditTextValue(etMobile));
 
         ProjectUtils.showProgressDialog(mContext, false, getResources().getString(R.string.please_wait));
 
-        new HttpsRequest(Consts.FORGET_PASSWORD_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.FORGET_PASSWORD_API, parms, mContext).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 if (msg == null || msg.isEmpty())

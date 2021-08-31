@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.wokconns.wokconns.dto.LanguageDTO;
 import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.AppIntro;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 
@@ -29,7 +29,7 @@ import java.util.Locale;
 public class AdapterLanguage extends RecyclerView.Adapter<AdapterLanguage.LanguageHolder> {
     private ArrayList<LanguageDTO> datas = new ArrayList<>();
     private Context mContext;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private String half, second_half;
     String language = "";
     String type = "";
@@ -37,7 +37,7 @@ public class AdapterLanguage extends RecyclerView.Adapter<AdapterLanguage.Langua
     public AdapterLanguage(ArrayList<LanguageDTO> datas, Context mContext, String type) {
         this.datas = datas;
         this.mContext = mContext;
-        prefrence = SharedPrefrence.getInstance(mContext);
+        prefrence = SharedPrefs.getInstance(mContext);
         this.type = type;
     }
 
@@ -88,8 +88,8 @@ public class AdapterLanguage extends RecyclerView.Adapter<AdapterLanguage.Langua
             }
 
 
-            prefrence.setValue(Consts.LANGUAGE_SELECTION, datas.get(position).getLanguage_code());
-            prefrence.setValue(Consts.VOICE_PREFERENCE, datas.get(position).getLanguage_code());
+            prefrence.setValue(Const.LANGUAGE_SELECTION, datas.get(position).getLanguage_code());
+            prefrence.setValue(Const.VOICE_PREFERENCE, datas.get(position).getLanguage_code());
             language(datas.get(position).getLanguage_code());
 
         });

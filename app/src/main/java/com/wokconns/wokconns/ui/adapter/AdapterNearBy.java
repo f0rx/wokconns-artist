@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.dto.HomeNearByJobsDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterNearByBinding;
+import com.wokconns.wokconns.ui.activity.BaseActivity;
+import com.wokconns.wokconns.ui.fragment.JobsFrag;
+import com.wokconns.wokconns.utils.ProjectUtils;
 
 import java.util.ArrayList;
 
@@ -26,12 +30,17 @@ public class AdapterNearBy extends RecyclerView.Adapter<AdapterNearBy.MyViewHold
     ArrayList<HomeNearByJobsDTO> nearByJobsDTOArrayList;
     AdapterNearByBinding binding;
     LayoutInflater layoutInflater;
+    BaseActivity baseActivity;
 
-    public AdapterNearBy(Context mContext, ArrayList<HomeNearByJobsDTO> nearByJobsDTOArrayList) {
+    public AdapterNearBy(Context mContext,
+                         ArrayList<HomeNearByJobsDTO> nearByJobsDTOArrayList,
+                         BaseActivity baseActivity) {
         this.mContext = mContext;
         this.nearByJobsDTOArrayList = nearByJobsDTOArrayList;
+        this.baseActivity = baseActivity;
     }
 
+    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (layoutInflater == null) {
@@ -39,6 +48,15 @@ public class AdapterNearBy extends RecyclerView.Adapter<AdapterNearBy.MyViewHold
         }
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.adapter_near_by, parent, false);
         View itemView = binding.getRoot();
+
+        itemView.setOnClickListener(v -> {
+            baseActivity.ivSearch.setVisibility(View.VISIBLE);
+            baseActivity.rlheader.setVisibility(View.VISIBLE);
+
+            BaseActivity.navItemIndex = 1;
+            BaseActivity.CURRENT_TAG = BaseActivity.TAG_MAIN;
+            baseActivity.loadHomeFragment(new JobsFrag(), BaseActivity.CURRENT_TAG);
+        });
         return new MyViewHolder(binding);
     }
 
@@ -46,7 +64,8 @@ public class AdapterNearBy extends RecyclerView.Adapter<AdapterNearBy.MyViewHold
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         holder.binding.setNearByDTO(nearByJobsDTOArrayList.get(position));
 
-        holder.binding.tvPrice.setText(nearByJobsDTOArrayList.get(position).getCurrency_symbol()+" "+nearByJobsDTOArrayList.get(position).getPrice());
+        holder.binding.tvPrice.setText(String.format("%s %s", nearByJobsDTOArrayList.get(position).getCurrency_symbol(),
+                nearByJobsDTOArrayList.get(position).getPrice()));
 
         Glide.with(mContext).
                 load(nearByJobsDTOArrayList.get(position).getUserImage())

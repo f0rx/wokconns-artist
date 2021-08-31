@@ -17,14 +17,11 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityPreviousWorkBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.interfacess.Const;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.MyJobsWorkAdapter;
 import com.wokconns.wokconns.ui.fragment.MyBookingsWorkFrag;
 import com.wokconns.wokconns.ui.fragment.MyJobsWorkFrag;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +38,7 @@ public class PreviousWork extends AppCompatActivity implements View.OnClickListe
     private LinearLayoutManager mLayoutManagerReview;
     private HashMap<String, String> parms = new HashMap<>();
     private UserDTO userDTO;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private MyBookingsWorkFrag appliedWorksFrag = new MyBookingsWorkFrag();
     private MyJobsWorkFrag myJobsWorkFrag = new MyJobsWorkFrag();
     private FragmentManager fragmentManager;
@@ -52,14 +49,14 @@ public class PreviousWork extends AppCompatActivity implements View.OnClickListe
         // Inflate the layout for this fragment
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_work);
         context = PreviousWork.this;
-        prefrence = SharedPrefrence.getInstance(context);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        parms.put(Consts.USER_ID, userDTO.getUser_id());
+        prefrence = SharedPrefs.getInstance(context);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
+        parms.put(Const.USER_ID, userDTO.getUser_id());
 
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Consts.ARTIST_DTO);
+            artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Const.ARTIST_DTO);
         }
 
         showUiAction();
@@ -117,7 +114,7 @@ public class PreviousWork extends AppCompatActivity implements View.OnClickListe
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
 

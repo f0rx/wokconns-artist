@@ -364,7 +364,7 @@
     <string name="your_description">Your Description</string>
     <string name="your_description_msg">Please enter your description</string>
     <string name="currency_msg">Currency</string>
-    <string name="NA">NA</string>
+    <string name="NA">N/A</string>
 
     <!--Gallery-->
     <string name="add_new_gallery">Add new</string>

@@ -2,6 +2,8 @@ package com.wokconns.wokconns.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +21,11 @@ import com.wokconns.wokconns.utils.ProjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by VARUN on 01/01/19.
- */
-
 public class AdapterWalletHistory extends RecyclerView.Adapter<AdapterWalletHistory.MyViewHolder> {
 
     private Wallet wallet;
     private Context mContext;
     private ArrayList<WalletHistory> walletHistoryList;
-
 
     public AdapterWalletHistory(Wallet wallet, ArrayList<WalletHistory> walletHistoryList) {
         this.wallet = wallet;
@@ -46,21 +43,20 @@ public class AdapterWalletHistory extends RecyclerView.Adapter<AdapterWalletHist
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         if (walletHistoryList.get(position).getStatus().equalsIgnoreCase("0")) {
-            holder.tvAmount.setText("+" + walletHistoryList.get(position).getCurrency_type() + " " + walletHistoryList.get(position).getAmount());
+            holder.tvAmount.setText(String.format("+%s %s", walletHistoryList.get(position).getCurrency_type(), walletHistoryList.get(position).getAmount()));
             holder.tvAmount.setTextColor(mContext.getResources().getColor(R.color.green));
             holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.credit));
         } else {
-            holder.tvAmount.setText("-" + walletHistoryList.get(position).getCurrency_type() + " " + walletHistoryList.get(position).getAmount());
+            holder.tvAmount.setText(String.format("-%s %s", walletHistoryList.get(position).getCurrency_type(), walletHistoryList.get(position).getAmount()));
             holder.tvAmount.setTextColor(mContext.getResources().getColor(R.color.black));
             holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.debit));
         }
+
         holder.tvDate.setText(ProjectUtils.convertTimestampDateToTime(ProjectUtils.correctTimestamp(Long.parseLong(walletHistoryList.get(position).getCreated_at()))));
         holder.tvPaidReceive.setText(walletHistoryList.get(position).getDescription());
-
     }
-
 
     @Override
     public int getItemCount() {

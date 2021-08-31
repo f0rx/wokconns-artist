@@ -27,9 +27,9 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.ActivityServicesBinding;
 import com.wokconns.wokconns.databinding.DailogArProductBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.adapter.AdapterServices;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
@@ -51,7 +51,7 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
     private Dialog dialogEditProduct;
     private HashMap<String, File> paramsFile;
     private UserDTO userDTO;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     BottomSheet.Builder builder;
     private HashMap<String, String> parms = new HashMap<>();
     File file;
@@ -64,14 +64,14 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_services);
         context = Services.this;
         binding.llServicesAdd.setOnClickListener(this);
-        prefrence = SharedPrefrence.getInstance(context);
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        parms.put(Consts.USER_ID, userDTO.getUser_id());
+        prefrence = SharedPrefs.getInstance(context);
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
+        parms.put(Const.USER_ID, userDTO.getUser_id());
 
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Consts.ARTIST_DTO);
+            artistDetailsDTO = (ArtistDetailsDTO) bundle.getSerializable(Const.ARTIST_DTO);
         }
         showUiAction();
     }
@@ -135,10 +135,10 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
         binding1.tvNoPro.setOnClickListener(v -> dialogEditProduct.dismiss());
         binding1.tvYesPro.setOnClickListener(
                 v -> {
-                    paramsUpdate.put(Consts.USER_ID, userDTO.getUser_id());
-                    paramsUpdate.put(Consts.PRODUCT_NAME, ProjectUtils.getEditTextValue(binding1.etProNameD));
-                    paramsUpdate.put(Consts.PRICE, ProjectUtils.getEditTextValue(binding1.etRateProD));
-                    paramsFile.put(Consts.PRODUCT_IMAGE, file);
+                    paramsUpdate.put(Const.USER_ID, userDTO.getUser_id());
+                    paramsUpdate.put(Const.PRODUCT_NAME, ProjectUtils.getEditTextValue(binding1.etProNameD));
+                    paramsUpdate.put(Const.PRICE, ProjectUtils.getEditTextValue(binding1.etRateProD));
+                    paramsFile.put(Const.PRODUCT_IMAGE, file);
 
                     if (NetworkManager.isConnectToInternet(context)) {
                         if (!validation(binding1.etImageD, getResources().getString(R.string.val_iamg_ad))) {
@@ -167,7 +167,7 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void getArtist() {
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ARTIST_BY_ID_API, parms, context).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
 
@@ -184,7 +184,7 @@ public class Services extends AppCompatActivity implements View.OnClickListener 
 
     public void addProduct() {
         ProjectUtils.showProgressDialog(context, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.ADD_PRODUCT_API, paramsUpdate, paramsFile, context).imagePost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.ADD_PRODUCT_API, paramsUpdate, paramsFile, context).imagePost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(context, msg);

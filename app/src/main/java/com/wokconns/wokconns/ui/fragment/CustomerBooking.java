@@ -38,10 +38,10 @@ import com.wokconns.wokconns.databinding.FragmentCustomerBookingBinding;
 import com.wokconns.wokconns.dto.ArtistBooking;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.interfacess.LocationFragmentManager;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
@@ -57,7 +57,7 @@ import java.util.concurrent.Callable;
 
 public class CustomerBooking extends LocationFragmentManager implements View.OnClickListener {
     private final String TAG = CustomerBooking.class.getSimpleName();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private final HashMap<String, String> paramsGetBooking = new HashMap<>();
     private ArtistBooking artistBooking;
@@ -79,9 +79,9 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
         StrictMode.setThreadPolicy(policy);
 
         baseActivity.headerNameTV.setText(getResources().getString(R.string.customer_booking));
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        paramsGetBooking.put(Consts.ARTIST_ID, userDTO.getUser_id());
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        paramsGetBooking.put(Const.ARTIST_ID, userDTO.getUser_id());
         mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
@@ -93,7 +93,7 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
             e.printStackTrace();
         }
 
-        panGoogleMap(prefrence.getValue(Consts.LATITUDE), prefrence.getValue(Consts.LONGITUDE),
+        panGoogleMap(prefrence.getValue(Const.LATITUDE), prefrence.getValue(Const.LONGITUDE),
                 userDTO.getName(), userDTO.getAddress());
         setUiAction();
         return view;
@@ -220,7 +220,7 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
 
 
     public void getBooking() {
-        new HttpsRequest(Consts.CURRENT_BOOKING_API, paramsGetBooking, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.CURRENT_BOOKING_API, paramsGetBooking, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 binding.cardData.setVisibility(View.VISIBLE);
                 binding.cardNoRequest.setVisibility(View.GONE);
@@ -238,7 +238,7 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
             } else {
                 binding.cardData.setVisibility(View.GONE);
                 binding.cardNoRequest.setVisibility(View.VISIBLE);
-                panGoogleMap(prefrence.getValue(Consts.LATITUDE), prefrence.getValue(Consts.LONGITUDE),
+                panGoogleMap(prefrence.getValue(Const.LATITUDE), prefrence.getValue(Const.LONGITUDE),
                         userDTO.getName(), userDTO.getAddress());
             }
 
@@ -386,11 +386,11 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
 
     public void booking(String req) {
         HashMap<String, String> paramsBookingOp = new HashMap<>();
-        paramsBookingOp.put(Consts.BOOKING_ID, artistBooking.getId());
-        paramsBookingOp.put(Consts.REQUEST, req);
-        paramsBookingOp.put(Consts.USER_ID, artistBooking.getUser_id());
+        paramsBookingOp.put(Const.BOOKING_ID, artistBooking.getId());
+        paramsBookingOp.put(Const.REQUEST, req);
+        paramsBookingOp.put(Const.USER_ID, artistBooking.getUser_id());
         ProjectUtils.showProgressDialog(baseActivity, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.BOOKING_OPERATION_API, paramsBookingOp, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.BOOKING_OPERATION_API, paramsBookingOp, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(baseActivity, msg);
@@ -417,12 +417,12 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
 
     public void decline() {
         HashMap<String, String> paramsDecline = new HashMap<>();
-        paramsDecline.put(Consts.USER_ID, userDTO.getUser_id());
-        paramsDecline.put(Consts.BOOKING_ID, artistBooking.getId());
-        paramsDecline.put(Consts.DECLINE_BY, "1");
-        paramsDecline.put(Consts.DECLINE_REASON, "Busy");
+        paramsDecline.put(Const.USER_ID, userDTO.getUser_id());
+        paramsDecline.put(Const.BOOKING_ID, artistBooking.getId());
+        paramsDecline.put(Const.DECLINE_BY, "1");
+        paramsDecline.put(Const.DECLINE_REASON, "Busy");
         ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Consts.DECLINE_BOOKING_API, paramsDecline, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.DECLINE_BOOKING_API, paramsDecline, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             ProjectUtils.pauseProgressDialog();
             if (flag) {
                 ProjectUtils.showToast(getActivity(), msg);

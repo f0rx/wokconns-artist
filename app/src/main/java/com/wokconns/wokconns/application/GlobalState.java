@@ -3,20 +3,20 @@ package com.wokconns.wokconns.application;
 import androidx.multidex.MultiDexApplication;
 
 import com.wokconns.wokconns.dto.HomeDataDTO;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 
 
 public class GlobalState extends MultiDexApplication {
 
     private static GlobalState mInstance;
     HomeDataDTO homeData;
-    SharedPrefrence sharedPrefrence;
+    SharedPrefs sharedPrefs;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        sharedPrefrence = SharedPrefrence.getInstance(this);
+        sharedPrefs = SharedPrefs.getInstance(this);
     }
 
 

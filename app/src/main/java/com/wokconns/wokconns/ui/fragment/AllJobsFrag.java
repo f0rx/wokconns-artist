@@ -31,9 +31,9 @@ import com.wokconns.wokconns.dto.CurrencyDTO;
 import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.adapter.AllJobsAdapter;
 import com.wokconns.wokconns.utils.CustomTextViewBold;
@@ -54,7 +54,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     private ArrayList<AllJobsDTO> allJobsDTOListSection;
     private ArrayList<AllJobsDTO> allJobsDTOListSection1;
     private LinearLayoutManager mLayoutManager;
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private CustomTextViewBold tvNo;
     private LayoutInflater myInflater;
@@ -77,11 +77,11 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all_jobs, container, false);
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
         myInflater = LayoutInflater.from(getActivity());
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        parmsCategory.put(Consts.USER_ID, userDTO.getUser_id());
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
+        parmsCategory.put(Const.USER_ID, userDTO.getUser_id());
         setUiAction(view);
         return view;
     }
@@ -157,7 +157,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getjobs() {
-        new HttpsRequest(Consts.GET_ALL_JOB_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_JOB_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             swipeRefreshLayout.setRefreshing(false);
             if (flag) {
                 tvNo.setVisibility(View.GONE);
@@ -265,7 +265,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
             dailogFilterJobBinding.etCurrencyD.showDropDown();
             CurrencyDTO currencyDTO = (CurrencyDTO) parent.getItemAtPosition(position);
             Log.e(TAG, "onItemClick: " + currencyDTO.getCurrency_symbol());
-            params.put(Consts.CURRENCY, currencyDTO.getCurrency_symbol());
+            params.put(Const.CURRENCY, currencyDTO.getCurrency_symbol());
         });
 
         dialogFilterJob.show();
@@ -280,8 +280,8 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void filteredList() {
-        params.put(Consts.PRICE, ""+dailogFilterJobBinding.seekBar.getProgress());
-        new HttpsRequest(Consts.JOB_FILTER, params, baseActivity).imagePost(TAG, (flag, msg, response) -> {
+        params.put(Const.PRICE, ""+dailogFilterJobBinding.seekBar.getProgress());
+        new HttpsRequest(Const.JOB_FILTER, params, baseActivity).imagePost(TAG, (flag, msg, response) -> {
             dialogFilterJob.dismiss();
             if (flag) {
 
@@ -301,7 +301,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getCategory() {
-        new HttpsRequest(Consts.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     categoryDTOS = new ArrayList<>();
@@ -312,7 +312,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                     spinnerDialogCate = new SpinnerDialog((Activity) baseActivity, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
                     spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
                         dailogFilterJobBinding.etCategoryD.setText(item);
-                        params.put(Consts.CATEGORY_ID, id);
+                        params.put(Const.CATEGORY_ID, id);
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -323,7 +323,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getCurrencyValue() {
-        new HttpsRequest(Consts.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_CURRENCY_API, baseActivity).stringGet(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     currencyDTOArrayList = new ArrayList<>();

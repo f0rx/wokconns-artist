@@ -3,7 +3,7 @@ package com.wokconns.wokconns.jsonparser;
 import android.content.Context;
 import android.content.Intent;
 
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.SignInActivity;
 
 import org.json.JSONArray;
@@ -25,7 +25,7 @@ public class JSONParser {
 
     public static String TAG_SUCCESS = "status";
     public static String TAG_MESSAGE = "message";
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
 
     public JSONParser(Context context, JSONObject response) {
         try {
@@ -33,7 +33,7 @@ public class JSONParser {
             jObj = response;
             SUCCESS = getJsonString(jObj, TAG_SUCCESS);
             MESSAGE = html2text(getJsonString(jObj, TAG_MESSAGE));
-            prefrence = SharedPrefrence.getInstance(context);
+            prefrence = SharedPrefs.getInstance(context);
             if (SUCCESS.equals("0")) {
                 RESULT = false;
 

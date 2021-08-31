@@ -1,9 +1,5 @@
 package com.wokconns.wokconns.ui.adapter;
 
-/**
- * Created by VARUN on 01/01/19.
- */
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,7 +14,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterInvoiceBinding;
 import com.wokconns.wokconns.dto.HistoryDTO;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
+import com.wokconns.wokconns.ui.activity.BaseActivity;
+import com.wokconns.wokconns.ui.fragment.HistoryFragment;
 import com.wokconns.wokconns.utils.ProjectUtils;
 
 import java.util.ArrayList;
@@ -29,9 +27,10 @@ public class AdapterInvoice extends RecyclerView.Adapter<AdapterInvoice.MyViewHo
     Context mContext;
     ArrayList<HistoryDTO> objects = null;
     ArrayList<HistoryDTO> historyDTOList;
-    private SharedPrefrence preference;
+    private SharedPrefs preference;
     private LayoutInflater inflater;
     AdapterInvoiceBinding binding;
+    BaseActivity baseActivity;
 
     public AdapterInvoice(Context mContext, ArrayList<HistoryDTO> objects, LayoutInflater inflater) {
         this.mContext = mContext;
@@ -39,13 +38,22 @@ public class AdapterInvoice extends RecyclerView.Adapter<AdapterInvoice.MyViewHo
         this.historyDTOList = new ArrayList<>();
         this.historyDTOList.addAll(objects);
         this.inflater = inflater;
-        preference = SharedPrefrence.getInstance(mContext);
+        preference = SharedPrefs.getInstance(mContext);
+        this.baseActivity = ((BaseActivity) mContext);
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         binding = DataBindingUtil.inflate(inflater, R.layout.adapter_invoice, parent, false);
         View itemView = binding.getRoot();
+        itemView.setOnClickListener(v -> {
+            baseActivity.ivSearch.setVisibility(View.GONE);
+            baseActivity.rlheader.setVisibility(View.VISIBLE);
+
+            BaseActivity.navItemIndex = 9;
+            BaseActivity.CURRENT_TAG = BaseActivity.TAG_HISTORY;
+            baseActivity.loadHomeFragment(new HistoryFragment(), BaseActivity.CURRENT_TAG);
+        });
         return new MyViewHolder(binding);
     }
 

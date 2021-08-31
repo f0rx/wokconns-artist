@@ -22,15 +22,12 @@ import com.wokconns.wokconns.dto.UserDTO;
 import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.FragmentNewBookingsBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefrence;
+import com.wokconns.wokconns.preferences.SharedPrefs;
 import com.wokconns.wokconns.ui.activity.BaseActivity;
 import com.wokconns.wokconns.ui.adapter.AdapterAllBookings;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
     private LinearLayoutManager mLayoutManager;
 
     private String TAG = NewBookings.class.getSimpleName();
-    private SharedPrefrence prefrence;
+    private SharedPrefs prefrence;
     private UserDTO userDTO;
     private ArtistDetailsDTO artistDetails;
     private HashMap<String, String> parms = new HashMap<>();
@@ -59,9 +56,9 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_bookings, container, false);
-        prefrence = SharedPrefrence.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Consts.USER_DTO);
-        parms.put(Consts.BOOKING_FLAG, "0");
+        prefrence = SharedPrefs.getInstance(getActivity());
+        userDTO = prefrence.getParentUser(Const.USER_DTO);
+        parms.put(Const.BOOKING_FLAG, "0");
         myInflater = LayoutInflater.from(getActivity());
         setUiAction();
         return binding.getRoot();
@@ -144,8 +141,8 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getBookings() {
-        parms.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        new HttpsRequest(Consts.GET_ALL_BOOKING_ARTIST_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        parms.put(Const.ARTIST_ID, userDTO.getUser_id());
+        new HttpsRequest(Const.GET_ALL_BOOKING_ARTIST_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
             binding.swipeLayout.setRefreshing(false);
             if (flag) {
                 binding.tvNo.setVisibility(View.GONE);
@@ -180,10 +177,10 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void getArtist() {
         HashMap<String, String> params = new HashMap<>();
-        params.put(Consts.ARTIST_ID, userDTO.getUser_id());
-        params.put(Consts.USER_ID, userDTO.getUser_id());
+        params.put(Const.ARTIST_ID, userDTO.getUser_id());
+        params.put(Const.USER_ID, userDTO.getUser_id());
 
-        new HttpsRequest(Consts.GET_ARTIST_BY_ID_API, params, requireContext())
+        new HttpsRequest(Const.GET_ARTIST_BY_ID_API, params, requireContext())
                 .stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
@@ -211,22 +208,22 @@ public class NewBookings extends Fragment implements SwipeRefreshLayout.OnRefres
         switch (v.getId()) {
             case R.id.tvPendings:
                 binding.tvStatus.setText(getResources().getString(R.string.pending));
-                parms.put(Consts.BOOKING_FLAG, "0");
+                parms.put(Const.BOOKING_FLAG, "0");
                 getBookings();
                 break;
             case R.id.tvAccepted:
                 binding.tvStatus.setText(getResources().getString(R.string.acc));
-                parms.put(Consts.BOOKING_FLAG, "1");
+                parms.put(Const.BOOKING_FLAG, "1");
                 getBookings();
                 break;
             case R.id.tvRejected:
                 binding.tvStatus.setText(getResources().getString(R.string.rej));
-                parms.put(Consts.BOOKING_FLAG, "2");
+                parms.put(Const.BOOKING_FLAG, "2");
                 getBookings();
                 break;
             case R.id.tvCompleted:
                 binding.tvStatus.setText(getResources().getString(R.string.com));
-                parms.put(Consts.BOOKING_FLAG, "4");
+                parms.put(Const.BOOKING_FLAG, "4");
                 getBookings();
                 break;
 

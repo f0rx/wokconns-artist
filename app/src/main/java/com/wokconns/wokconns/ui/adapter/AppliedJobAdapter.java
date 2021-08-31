@@ -31,12 +31,9 @@ import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.AdapterAppliedJobBinding;
 import com.wokconns.wokconns.databinding.ItemSectionBinding;
 import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Consts;
-import com.wokconns.wokconns.interfacess.Helper;
+import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.ui.fragment.AppliedJobsFrag;
 import com.wokconns.wokconns.utils.ProjectUtils;
-
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,8 +70,8 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.userDTO = userDTO;
         this.mContext = appliedJobsFrag.getActivity();
         this.inflater = inflater;
-        sdf1 = new SimpleDateFormat(Consts.DATE_FORMATE_SERVER, Locale.ENGLISH);
-        timeZone = new SimpleDateFormat(Consts.DATE_FORMATE_TIMEZONE, Locale.ENGLISH);
+        sdf1 = new SimpleDateFormat(Const.DATE_FORMATE_SERVER, Locale.ENGLISH);
+        timeZone = new SimpleDateFormat(Const.DATE_FORMATE_TIMEZONE, Locale.ENGLISH);
 
         date = new Date();
     }
@@ -174,19 +171,19 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             holder.appliedJobBinding.llDecline.setOnClickListener(v -> {
                 params = new HashMap<>();
-                params.put(Consts.AJ_ID, objects.get(position).getAj_id());
-                params.put(Consts.STATUS, "3");
+                params.put(Const.AJ_ID, objects.get(position).getAj_id());
+                params.put(Const.STATUS, "3");
                 rejectDialog(mContext.getResources().getString(R.string.reject), mContext.getResources().getString(R.string.reject_msg));
             });
 
             holder.appliedJobBinding.llStart.setOnClickListener(v -> {
                 paramsStart = new HashMap<>();
-                paramsStart.put(Consts.USER_ID, objects.get(position).getUser_id());
-                paramsStart.put(Consts.ARTIST_ID, objects.get(position).getArtist_id());
-                paramsStart.put(Consts.DATE_STRING, sdf1.format(date).toString().toUpperCase());
-                paramsStart.put(Consts.TIMEZONE, timeZone.format(date));
-                paramsStart.put(Consts.PRICE, objects.get(position).getPrice());
-                paramsStart.put(Consts.JOB_ID, objects.get(position).getJob_id());
+                paramsStart.put(Const.USER_ID, objects.get(position).getUser_id());
+                paramsStart.put(Const.ARTIST_ID, objects.get(position).getArtist_id());
+                paramsStart.put(Const.DATE_STRING, sdf1.format(date).toString().toUpperCase());
+                paramsStart.put(Const.TIMEZONE, timeZone.format(date));
+                paramsStart.put(Const.PRICE, objects.get(position).getPrice());
+                paramsStart.put(Const.JOB_ID, objects.get(position).getJob_id());
                 startDialog(mContext.getResources().getString(R.string.start), mContext.getResources().getString(R.string.start_app));
             });
 
@@ -230,7 +227,7 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void reject() {
 
-        new HttpsRequest(Consts.JOB_STATUS_ARTIST_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.JOB_STATUS_ARTIST_API, params, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);
                 dialog_book.dismiss();
@@ -242,7 +239,7 @@ public class AppliedJobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void startJob() {
-        new HttpsRequest(Consts.START_JOB_API, paramsStart, mContext).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.START_JOB_API, paramsStart, mContext).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 ProjectUtils.showToast(mContext, msg);
                 dialog_book.dismiss();

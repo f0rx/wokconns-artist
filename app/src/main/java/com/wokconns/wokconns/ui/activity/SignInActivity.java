@@ -48,7 +48,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProjectUtils.Fullscreen(SignInActivity.this);
+//        ProjectUtils.Fullscreen(SignInActivity.this);
         setContentView(R.layout.activity_sign_in);
 
         mContext = SignInActivity.this;

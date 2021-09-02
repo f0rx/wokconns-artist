@@ -1,445 +1,464 @@
-package com.wokconns.wokconns.ui.fragment;
+package com.wokconns.wokconns.ui.fragment
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.os.SystemClock;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface
+import android.graphics.*
+import android.os.Bundle
+import android.os.StrictMode
+import android.os.SystemClock
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.Gson
+import com.wokconns.wokconns.R
+import com.wokconns.wokconns.databinding.FragmentCustomerBookingBinding
+import com.wokconns.wokconns.dto.ArtistBooking
+import com.wokconns.wokconns.dto.UserDTO
+import com.wokconns.wokconns.https.HttpsRequest
+import com.wokconns.wokconns.interfacess.Const
+import com.wokconns.wokconns.interfacess.Helper
+import com.wokconns.wokconns.interfacess.LocationFragmentManager
+import com.wokconns.wokconns.network.NetworkManager
+import com.wokconns.wokconns.preferences.SharedPrefs
+import com.wokconns.wokconns.preferences.SharedPrefs.Companion.getInstance
+import com.wokconns.wokconns.ui.activity.BaseActivity
+import com.wokconns.wokconns.utils.ProjectUtils
+import org.json.JSONObject
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.Callable
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
+class CustomerBooking : LocationFragmentManager(), View.OnClickListener {
+    private var prefrence: SharedPrefs? = null
+    private var userDTO: UserDTO? = null
+    private val paramsGetBooking = HashMap<String, String?>()
+    private var artistBooking: ArtistBooking? = null
+    private lateinit var mMapView: MapView
+    private var googleMap: GoogleMap? = null
+    private lateinit var baseActivity: BaseActivity
+    private lateinit var binding: FragmentCustomerBookingBinding
+    var mCustomMarkerView: View? = null
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.wokconns.wokconns.R;
-import com.wokconns.wokconns.databinding.FragmentCustomerBookingBinding;
-import com.wokconns.wokconns.dto.ArtistBooking;
-import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.https.HttpsRequest;
-import com.wokconns.wokconns.interfacess.Const;
-import com.wokconns.wokconns.interfacess.LocationFragmentManager;
-import com.wokconns.wokconns.network.NetworkManager;
-import com.wokconns.wokconns.preferences.SharedPrefs;
-import com.wokconns.wokconns.ui.activity.BaseActivity;
-import com.wokconns.wokconns.utils.ProjectUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.concurrent.Callable;
-
-public class CustomerBooking extends LocationFragmentManager implements View.OnClickListener {
-    private final String TAG = CustomerBooking.class.getSimpleName();
-    private SharedPrefs prefrence;
-    private UserDTO userDTO;
-    private final HashMap<String, String> paramsGetBooking = new HashMap<>();
-    private ArtistBooking artistBooking;
-    private MapView mMapView;
-    private GoogleMap googleMap;
-    private BaseActivity baseActivity;
-
-    FragmentCustomerBookingBinding binding;
-    View mCustomMarkerView;
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_customer_booking, container, false);
-        View view = binding.getRoot();
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        baseActivity.headerNameTV.setText(getResources().getString(R.string.customer_booking));
-        prefrence = SharedPrefs.getInstance(getActivity());
-        userDTO = prefrence.getParentUser(Const.USER_DTO);
-        paramsGetBooking.put(Const.ARTIST_ID, userDTO.getUser_id());
-        mMapView = view.findViewById(R.id.mapView);
-        mMapView.onCreate(savedInstanceState);
-
-        mMapView.onResume(); // needed to get the map to display immediately
-
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_customer_booking, container, false)
+        val view = binding.root
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+        baseActivity.headerNameTV.text = resources.getString(R.string.customer_booking)
+        prefrence = getInstance(activity)
+        userDTO = prefrence?.getParentUser(Const.USER_DTO)
+        paramsGetBooking[Const.ARTIST_ID] = userDTO?.user_id
+        mMapView = view.findViewById(R.id.mapView)
+        mMapView.onCreate(savedInstanceState)
+        mMapView.onResume() // needed to get the map to display immediately
         try {
-            MapsInitializer.initialize(requireActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
+            MapsInitializer.initialize(requireActivity().applicationContext)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        panGoogleMap(prefrence.getValue(Const.LATITUDE), prefrence.getValue(Const.LONGITUDE),
-                userDTO.getName(), userDTO.getAddress());
-        setUiAction();
-        return view;
+        panGoogleMap(
+            prefrence?.getValue(Const.LATITUDE), prefrence?.getValue(Const.LONGITUDE),
+            userDTO?.name, userDTO?.address
+        )
+        setUiAction()
+        return view
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
-        if (NetworkManager.isConnectToInternet(getActivity())) {
-            if (!isShowingRationale) getBooking();
+    override fun onResume() {
+        super.onResume()
+        mMapView.onResume()
+        if (NetworkManager.isConnectToInternet(activity)) {
+            if (!isShowingRationale) booking
         } else {
-            ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
+            ProjectUtils.showToast(
+                requireActivity(),
+                resources.getString(R.string.internet_concation)
+            )
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mMapView.onPause();
+    override fun onPause() {
+        super.onPause()
+        mMapView.onPause()
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mMapView.onDestroy();
+    override fun onDestroy() {
+        super.onDestroy()
+        mMapView.onDestroy()
     }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mMapView.onLowMemory()
     }
 
-    public void setUiAction() {
-        binding.llAccept.setOnClickListener(this);
-        binding.llDecline.setOnClickListener(this);
-        binding.llStart.setOnClickListener(this);
-        binding.llCancel.setOnClickListener(this);
-        binding.llFinishJob.setOnClickListener(this);
+    fun setUiAction() {
+        binding.llAccept.setOnClickListener(this)
+        binding.llDecline.setOnClickListener(this)
+        binding.llStart.setOnClickListener(this)
+        binding.llCancel.setOnClickListener(this)
+        binding.llFinishJob.setOnClickListener(this)
     }
 
-    void panGoogleMap(String latitude, String longitude, String markerTitle, String snippet) {
-        panGoogleMap(latitude, longitude, markerTitle, snippet, true);
-    }
-
-    void panGoogleMap(String latitude, String longitude, String markerTitle, String snippet, boolean animate) {
-        panGoogleMap(latitude, longitude, markerTitle, snippet, animate, null);
+    @JvmOverloads
+    fun panGoogleMap(
+        latitude: String?,
+        longitude: String?,
+        markerTitle: String?,
+        snippet: String?,
+        animate: Boolean = true
+    ) {
+        panGoogleMap(latitude, longitude, markerTitle, snippet, animate, null)
     }
 
     @SuppressLint("MissingPermission")
-    void panGoogleMap(String latitude, String longitude, String markerTitle,
-                      String snippet, boolean animate, Callable<Object> callback) {
-        mMapView.getMapAsync(mMap -> {
-            googleMap = mMap;
-
-            requestLocationPermissions(isGranted -> {
+    fun panGoogleMap(
+        latitude: String?, longitude: String?, markerTitle: String?,
+        snippet: String?, animate: Boolean, callback: Callable<Any?>?
+    ) {
+        mMapView.getMapAsync { mMap: GoogleMap? ->
+            googleMap = mMap
+            requestLocationPermissions({ isGranted: Boolean ->
                 if (isGranted) {
-                    showGPSRationale();
-
-                    googleMap.setMyLocationEnabled(true);
+                    showGPSRationale()
+                    googleMap?.isMyLocationEnabled = true
 
                     // For dropping a marker at a point on the Map
-                    LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                    googleMap.addMarker(new MarkerOptions().position(latLng)
-                            .title(markerTitle == null ? "My Location" : markerTitle).snippet(snippet));
-
-                    if (animate) {
-                        // For zooming automatically to the location of the marker
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    if (latitude != null && longitude != null) {
+                        val latLng = LatLng(latitude.toDouble(), longitude.toDouble())
+                        googleMap?.addMarker(
+                            MarkerOptions().position(latLng)
+                                .title(markerTitle ?: "My Location").snippet(snippet)
+                        )
+                        if (animate) {
+                            // For zooming automatically to the location of the marker
+                            val cameraPosition =
+                                CameraPosition.Builder().target(latLng).zoom(10f).build()
+                            googleMap?.animateCamera(
+                                CameraUpdateFactory.newCameraPosition(
+                                    cameraPosition
+                                )
+                            )
+                        }
                     }
                 }
-            }, callback);
-        });
+            }, callback)
+        }
     }
 
     @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.llAccept:
-                if (NetworkManager.isConnectToInternet(getActivity())) {
-                    booking("1");
-                } else {
-                    ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
-                }
-                break;
-            case R.id.llDecline:
-                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.dec_cpas),
-                        getResources().getString(R.string.decline_msg),
-                        (dialog, which) -> decline(), (dialog, which) -> {
-                        }, false);
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.llAccept -> if (NetworkManager.isConnectToInternet(activity)) {
+                booking("1")
+            } else {
+                ProjectUtils.showToast(
+                    requireActivity(),
+                    resources.getString(R.string.internet_concation)
+                )
+            }
+            R.id.llDecline -> ProjectUtils.showDialog(
+                requireActivity(),
+                resources.getString(R.string.dec_cpas),
+                resources.getString(R.string.decline_msg),
+                { dialog: DialogInterface?, which: Int -> decline() },
+                { dialog: DialogInterface?, which: Int -> },
+                false
+            )
+            R.id.llStart -> if (NetworkManager.isConnectToInternet(requireActivity())) {
+                booking("2")
+            } else {
+                ProjectUtils.showToast(
+                    requireActivity(),
+                    resources.getString(R.string.internet_concation)
+                )
+            }
+            R.id.llCancel -> ProjectUtils.showDialog(
+                requireActivity(),
+                resources.getString(R.string.cancel),
+                resources.getString(R.string.cancel_msg),
+                { dialog: DialogInterface?, which: Int -> decline() },
+                { dialog: DialogInterface?, which: Int -> },
+                false
+            )
+            R.id.llFinishJob -> ProjectUtils.showDialog(
+                requireActivity(),
+                resources.getString(R.string.finish_the_job),
+                resources.getString(R.string.finish_msg),
+                { dialog: DialogInterface?, which: Int ->
+                    if (NetworkManager.isConnectToInternet(
+                            activity
+                        )
+                    ) {
+                        booking("3")
+                    } else {
+                        ProjectUtils.showToast(
+                            requireActivity(),
+                            resources.getString(R.string.internet_concation)
+                        )
+                    }
+                },
+                { dialog: DialogInterface?, which: Int -> },
+                false
+            )
+        }
+    }
 
-                break;
-            case R.id.llStart:
-                if (NetworkManager.isConnectToInternet(requireActivity())) {
-                    booking("2");
-                } else {
-                    ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
-                }
-                break;
-            case R.id.llCancel:
-                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.cancel), getResources().getString(R.string.cancel_msg),
-                        (dialog, which) -> decline(), (dialog, which) -> {
-                        }, false);
-                break;
-            case R.id.llFinishJob:
-                ProjectUtils.showDialog(requireActivity(), getResources().getString(R.string.finish_the_job),
-                        getResources().getString(R.string.finish_msg), (dialog, which) -> {
-                            if (NetworkManager.isConnectToInternet(getActivity())) {
-                                booking("3");
-                            } else {
-                                ProjectUtils.showToast(requireActivity(),
-                                        getResources().getString(R.string.internet_concation));
+    val booking: Unit
+        get() {
+            HttpsRequest(Const.CURRENT_BOOKING_API, paramsGetBooking, requireActivity()).stringPost(
+                Companion.TAG,
+                object : Helper {
+                    override fun backResponse(flag: Boolean, msg: String?, response: JSONObject?) {
+                        if (flag) {
+                            binding.cardData.visibility = View.VISIBLE
+                            binding.cardNoRequest.visibility = View.GONE
+                            try {
+                                artistBooking = Gson().fromJson(
+                                    response?.getJSONObject("data").toString(),
+                                    ArtistBooking::class.java
+                                )
+                                showData()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                binding.cardData.visibility = View.GONE
+                                binding.cardNoRequest.setVisibility(View.VISIBLE)
                             }
-
-                        }, (dialog, which) -> {
-                        }, false);
-                break;
+                        } else {
+                            binding.cardData.visibility = View.GONE
+                            binding.cardNoRequest.visibility = View.VISIBLE
+                            panGoogleMap(
+                                prefrence?.getValue(Const.LATITUDE),
+                                prefrence?.getValue(Const.LONGITUDE),
+                                userDTO?.name,
+                                userDTO?.address
+                            )
+                        }
+                    }
+                })
         }
 
-    }
-
-
-    public void getBooking() {
-        new HttpsRequest(Const.CURRENT_BOOKING_API, paramsGetBooking, getActivity()).stringPost(TAG, (flag, msg, response) -> {
-            if (flag) {
-                binding.cardData.setVisibility(View.VISIBLE);
-                binding.cardNoRequest.setVisibility(View.GONE);
+    fun showData(): Void? {
+        binding.tvName.text = artistBooking?.userName
+        binding.tvLocation.text = artistBooking?.address
+        binding.tvDate.text = String.format(
+            "%s %s",
+            ProjectUtils.changeDateFormate1(artistBooking?.booking_date),
+            artistBooking?.booking_time
+        )
+        Glide.with(requireActivity()).load(artistBooking?.userImage)
+            .placeholder(R.drawable.dummyuser_image)
+            .dontAnimate()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(binding.ivArtist)
+        binding.tvDescription.text = artistBooking?.description
+        if (artistBooking?.booking_type.equals(
+                "0",
+                ignoreCase = true
+            ) || artistBooking?.booking_type.equals("3", ignoreCase = true)
+        ) {
+            if (artistBooking?.booking_flag.equals("0", ignoreCase = true)) {
+                binding.llACDE.visibility = View.VISIBLE
+                binding.llTime.visibility = View.GONE
+                binding.llSt.visibility = View.GONE
+                binding.llFinishJob.visibility = View.GONE
+                binding.tvTxt.text = String.format(
+                    "%s %s[%s]",
+                    resources.getString(R.string.booking),
+                    resources.getString(R.string.pending),
+                    artistBooking?.id
+                )
+            } else if (artistBooking?.booking_flag.equals("1", ignoreCase = true)) {
+                binding.llSt.visibility = View.VISIBLE
+                binding.llACDE.visibility = View.GONE
+                binding.llTime.visibility = View.GONE
+                binding.llFinishJob.visibility = View.GONE
+                binding.tvTxt.text = String.format(
+                    "%s %s[%s]",
+                    resources.getString(R.string.booking),
+                    resources.getString(R.string.acc),
+                    artistBooking?.id
+                )
+            } else if (artistBooking?.booking_flag.equals("3", ignoreCase = true)) {
+                binding.llSt.visibility = View.GONE
+                binding.llACDE.visibility = View.GONE
+                binding.llTime.visibility = View.VISIBLE
+                binding.llFinishJob.visibility = View.VISIBLE
+                binding.llWork.visibility = View.GONE
+                var sdf = SimpleDateFormat("mm.ss", Locale.getDefault())
                 try {
-
-                    artistBooking = new Gson().fromJson(response.getJSONObject("data").toString(), ArtistBooking.class);
-                    showData();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    binding.cardData.setVisibility(View.GONE);
-                    binding.cardNoRequest.setVisibility(View.VISIBLE);
-                }
-
-            } else {
-                binding.cardData.setVisibility(View.GONE);
-                binding.cardNoRequest.setVisibility(View.VISIBLE);
-                panGoogleMap(prefrence.getValue(Const.LATITUDE), prefrence.getValue(Const.LONGITUDE),
-                        userDTO.getName(), userDTO.getAddress());
-            }
-
-
-        });
-    }
-
-    public Void showData() {
-        binding.tvName.setText(artistBooking.getUserName());
-        binding.tvLocation.setText(artistBooking.getAddress());
-        binding.tvDate.setText(String.format("%s %s",
-                ProjectUtils.changeDateFormate1(artistBooking.getBooking_date()),
-                artistBooking.getBooking_time()));
-
-        Glide.with(requireActivity()).
-                load(artistBooking.getUserImage())
-                .placeholder(R.drawable.dummyuser_image)
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(binding.ivArtist);
-
-        binding.tvDescription.setText(artistBooking.getDescription());
-        if (artistBooking.getBooking_type().equalsIgnoreCase("0") || artistBooking.getBooking_type().equalsIgnoreCase("3")) {
-
-            if (artistBooking.getBooking_flag().equalsIgnoreCase("0")) {
-                binding.llACDE.setVisibility(View.VISIBLE);
-                binding.llTime.setVisibility(View.GONE);
-                binding.llSt.setVisibility(View.GONE);
-                binding.llFinishJob.setVisibility(View.GONE);
-
-                binding.tvTxt.setText(String.format("%s %s[%s]",
-                        getResources().getString(R.string.booking),
-                        getResources().getString(R.string.pending),
-                        artistBooking.getId()));
-            } else if (artistBooking.getBooking_flag().equalsIgnoreCase("1")) {
-                binding.llSt.setVisibility(View.VISIBLE);
-                binding.llACDE.setVisibility(View.GONE);
-                binding.llTime.setVisibility(View.GONE);
-                binding.llFinishJob.setVisibility(View.GONE);
-
-                binding.tvTxt.setText(String.format("%s %s[%s]",
-                        getResources().getString(R.string.booking),
-                        getResources().getString(R.string.acc),
-                        artistBooking.getId()));
-            } else if (artistBooking.getBooking_flag().equalsIgnoreCase("3")) {
-
-                binding.llSt.setVisibility(View.GONE);
-                binding.llACDE.setVisibility(View.GONE);
-                binding.llTime.setVisibility(View.VISIBLE);
-                binding.llFinishJob.setVisibility(View.VISIBLE);
-                binding.llWork.setVisibility(View.GONE);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss", Locale.getDefault());
-
-                try {
-                    Date dt;
-
-                    if (artistBooking.getWorking_min().equalsIgnoreCase("0")) {
-                        dt = sdf.parse("0.1");
-
+                    val dt = if (artistBooking?.working_min.equals("0", ignoreCase = true)) {
+                        sdf.parse("0.1")
                     } else {
-                        dt = sdf.parse(artistBooking.getWorking_min());
-
+                        sdf.parse(artistBooking?.working_min)
                     }
-                    sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                    System.out.println(sdf.format(dt));
-                    int min = dt.getHours() * 60 + dt.getMinutes();
-                    int sec = dt.getSeconds();
-                    binding.chronometer.setBase(SystemClock.elapsedRealtime() - (min * 60000 + sec * 1000));
-                    binding.chronometer.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    println(sdf.format(dt))
+                    val min = dt.hours * 60 + dt.minutes
+                    val sec = dt.seconds
+                    binding.chronometer.base =
+                        SystemClock.elapsedRealtime() - (min * 60000 + sec * 1000)
+                    binding.chronometer.start()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
-                binding.tvTxt.setText(String.format("%s %s[%s]",
-                        getResources().getString(R.string.booking),
-                        getResources().getString(R.string.acc),
-                        artistBooking.getId()));
+                binding.tvTxt.text = String.format(
+                    "%s %s[%s]",
+                    resources.getString(R.string.booking),
+                    resources.getString(R.string.acc),
+                    artistBooking?.id
+                )
             }
-
-            panGoogleMap(artistBooking.getC_latitude(), artistBooking.getC_longitude(),
-                    artistBooking.getUserName(), artistBooking.getAddress(), false, this::showData);
-
-        } else if (artistBooking.getBooking_type().equalsIgnoreCase("2")) {
-
-            if (artistBooking.getBooking_flag().equalsIgnoreCase("0")) {
-                binding.llACDE.setVisibility(View.VISIBLE);
-                binding.llTime.setVisibility(View.GONE);
-                binding.llSt.setVisibility(View.GONE);
-                binding.llFinishJob.setVisibility(View.GONE);
-                binding.llWork.setVisibility(View.GONE);
-
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.pending) + "[" + artistBooking.getId() + "]");
-            } else if (artistBooking.getBooking_flag().equalsIgnoreCase("1")) {
-                binding.llSt.setVisibility(View.VISIBLE);
-                binding.llACDE.setVisibility(View.GONE);
-                binding.llTime.setVisibility(View.GONE);
-                binding.llFinishJob.setVisibility(View.GONE);
-                binding.llWork.setVisibility(View.GONE);
-
-                binding.tvTxt.setText(getResources().getString(R.string.booking) + " " + getResources().getString(R.string.acc) + "[" + artistBooking.getId() + "]");
-            } else if (artistBooking.getBooking_flag().equalsIgnoreCase("3")) {
-
-                binding.llSt.setVisibility(View.GONE);
-                binding.llACDE.setVisibility(View.GONE);
-                binding.llTime.setVisibility(View.VISIBLE);
-                binding.llFinishJob.setVisibility(View.VISIBLE);
-                binding.llWork.setVisibility(View.GONE);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("mm.ss", Locale.getDefault());
-
+            panGoogleMap(
+                artistBooking?.c_latitude, artistBooking?.c_longitude,
+                artistBooking?.userName, artistBooking?.address, false
+            ) { showData() }
+        } else if (artistBooking?.booking_type.equals("2", ignoreCase = true)) {
+            if (artistBooking?.booking_flag.equals("0", ignoreCase = true)) {
+                binding.llACDE.visibility = View.VISIBLE
+                binding.llTime.visibility = View.GONE
+                binding.llSt.visibility = View.GONE
+                binding.llFinishJob.visibility = View.GONE
+                binding.llWork.visibility = View.GONE
+                (resources.getString(R.string.booking) + " " +
+                        resources.getString(R.string.pending) + "[" + artistBooking?.id + "]").also {
+                    binding.tvTxt.text = it
+                }
+            } else if (artistBooking?.booking_flag.equals("1", ignoreCase = true)) {
+                binding.llSt.visibility = View.VISIBLE
+                binding.llACDE.visibility = View.GONE
+                binding.llTime.visibility = View.GONE
+                binding.llFinishJob.visibility = View.GONE
+                binding.llWork.visibility = View.GONE
+                (resources.getString(R.string.booking) + " " +
+                        resources.getString(R.string.acc) + "[" + artistBooking?.id + "]").also {
+                    binding.tvTxt.text = it
+                }
+            } else if (artistBooking?.booking_flag.equals("3", ignoreCase = true)) {
+                binding.llSt.visibility = View.GONE
+                binding.llACDE.visibility = View.GONE
+                binding.llTime.visibility = View.VISIBLE
+                binding.llFinishJob.visibility = View.VISIBLE
+                binding.llWork.visibility = View.GONE
+                var sdf = SimpleDateFormat("mm.ss", Locale.getDefault())
                 try {
-                    Date dt;
-
-                    if (artistBooking.getWorking_min().equalsIgnoreCase("0")) {
-                        dt = sdf.parse("0.1");
-
+                    val dt: Date? = if (artistBooking?.working_min.equals("0", ignoreCase = true)) {
+                        sdf.parse("0.1")
                     } else {
-                        dt = sdf.parse(artistBooking.getWorking_min());
-
+                        sdf.parse(artistBooking?.working_min)
                     }
-                    sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                    System.out.println(sdf.format(dt));
-                    int min = dt.getHours() * 60 + dt.getMinutes();
-                    int sec = dt.getSeconds();
-                    binding.chronometer.setBase(SystemClock.elapsedRealtime() - (min * 60000 + sec * 1000));
-                    binding.chronometer.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    println(sdf.format(dt))
+                    if (dt != null) {
+                        val min = dt.hours * 60 + dt.minutes
+                        val sec = dt.seconds
+                        binding.chronometer.base =
+                            SystemClock.elapsedRealtime() - (min * 60000 + sec * 1000)
+                        binding.chronometer.start()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
-                binding.tvTxt.setText(String.format("%s %s[%s]",
-                        getResources().getString(R.string.booking),
-                        getResources().getString(R.string.acc),
-                        artistBooking.getId()));
-
+                binding.tvTxt.text = String.format(
+                    "%s %s[%s]",
+                    resources.getString(R.string.booking),
+                    resources.getString(R.string.acc),
+                    artistBooking?.id
+                )
             }
-
-            panGoogleMap(artistBooking.getC_latitude(), artistBooking.getC_longitude(),
-                    artistBooking.getUserName(), artistBooking.getAddress(), false);
+            panGoogleMap(
+                artistBooking?.c_latitude, artistBooking?.c_longitude,
+                artistBooking?.userName, artistBooking?.address, false
+            )
         }
-
-        return null;
+        return null
     }
 
-    public void booking(String req) {
-        HashMap<String, String> paramsBookingOp = new HashMap<>();
-        paramsBookingOp.put(Const.BOOKING_ID, artistBooking.getId());
-        paramsBookingOp.put(Const.REQUEST, req);
-        paramsBookingOp.put(Const.USER_ID, artistBooking.getUser_id());
-        ProjectUtils.showProgressDialog(baseActivity, true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Const.BOOKING_OPERATION_API, paramsBookingOp, getActivity()).stringPost(TAG, (flag, msg, response) -> {
-            ProjectUtils.pauseProgressDialog();
-            if (flag) {
-                ProjectUtils.showToast(baseActivity, msg);
-                getBooking();
-
-
-                try {
-                    baseActivity.ivSearch.setVisibility(View.GONE);
-                    baseActivity.rlheader.setVisibility(View.VISIBLE);
-
-                    BaseActivity.navItemIndex = 9;
-                    BaseActivity.CURRENT_TAG = BaseActivity.TAG_HISTORY;
-                    baseActivity.loadHomeFragment(new HistoryFragment(), BaseActivity.CURRENT_TAG);
-                } catch (Exception e) {
-                    e.printStackTrace();
+    fun booking(req: String) {
+        val paramsBookingOp = HashMap<String, String?>()
+        paramsBookingOp[Const.BOOKING_ID] = artistBooking?.id
+        paramsBookingOp[Const.REQUEST] = req
+        paramsBookingOp[Const.USER_ID] = artistBooking?.user_id
+        ProjectUtils.showProgressDialog(
+            baseActivity,
+            true,
+            resources.getString(R.string.please_wait)
+        )
+        HttpsRequest(Const.BOOKING_OPERATION_API, paramsBookingOp, requireActivity()).stringPost(
+            Companion.TAG,
+            object : Helper {
+                override fun backResponse(flag: Boolean, msg: String?, response: JSONObject?) {
+                    ProjectUtils.pauseProgressDialog()
+                    if (flag) {
+                        ProjectUtils.showToast(baseActivity, msg)
+                        booking
+                        try {
+                            baseActivity.ivSearch.visibility = View.GONE
+                            baseActivity.rlheader.visibility = View.VISIBLE
+                            BaseActivity.navItemIndex = 9
+                            BaseActivity.CURRENT_TAG = BaseActivity.TAG_HISTORY
+                            baseActivity.loadHomeFragment(
+                                HistoryFragment(),
+                                BaseActivity.CURRENT_TAG
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    } else {
+                        ProjectUtils.showToast(baseActivity, msg)
+                    }
                 }
-            } else {
-                ProjectUtils.showToast(baseActivity, msg);
-            }
-
-
-        });
+            })
     }
 
-    public void decline() {
-        HashMap<String, String> paramsDecline = new HashMap<>();
-        paramsDecline.put(Const.USER_ID, userDTO.getUser_id());
-        paramsDecline.put(Const.BOOKING_ID, artistBooking.getId());
-        paramsDecline.put(Const.DECLINE_BY, "1");
-        paramsDecline.put(Const.DECLINE_REASON, "Busy");
-        ProjectUtils.showProgressDialog(getActivity(), true, getResources().getString(R.string.please_wait));
-        new HttpsRequest(Const.DECLINE_BOOKING_API, paramsDecline, getActivity()).stringPost(TAG, (flag, msg, response) -> {
-            ProjectUtils.pauseProgressDialog();
-            if (flag) {
-                ProjectUtils.showToast(getActivity(), msg);
-                getBooking();
-
-            } else {
-                ProjectUtils.showToast(getActivity(), msg);
-            }
-
-
-        });
+    private fun decline() {
+        val paramsDecline = HashMap<String, String?>()
+        paramsDecline[Const.USER_ID] = userDTO?.user_id
+        paramsDecline[Const.BOOKING_ID] = artistBooking?.id
+        paramsDecline[Const.DECLINE_BY] = "1"
+        paramsDecline[Const.DECLINE_REASON] = "Busy"
+        ProjectUtils.showProgressDialog(activity, true, resources.getString(R.string.please_wait))
+        HttpsRequest(Const.DECLINE_BOOKING_API, paramsDecline, requireActivity()).stringPost(
+            Companion.TAG,
+            object : Helper {
+                override fun backResponse(flag: Boolean, msg: String?, response: JSONObject?) {
+                    ProjectUtils.pauseProgressDialog()
+                    if (flag) {
+                        ProjectUtils.showToast(activity, msg)
+                        booking
+                    } else {
+                        ProjectUtils.showToast(activity, msg)
+                    }
+                }
+            })
     }
 
-    @Override
-    public void onAttach(@NonNull Context activity) {
-        super.onAttach(activity);
-        baseActivity = (BaseActivity) activity;
+    override fun onAttach(activity: Context) {
+        super.onAttach(activity)
+        baseActivity = activity as BaseActivity
     }
 
     /**
@@ -447,68 +466,91 @@ public class CustomerBooking extends LocationFragmentManager implements View.OnC
      * @param bitmap is the image which you want to show in marker.
      * @return
      */
-    private Bitmap getMarkerBitmapFromView(View view, Bitmap bitmap) {
+    private fun getMarkerBitmapFromView(view: View?, bitmap: Bitmap): Bitmap? {
 
 //        mMarkerImageView.setImageBitmap(bitmap);
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        view.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = view.getBackground();
-        if (drawable != null)
-            drawable.draw(canvas);
-        view.draw(canvas);
-        return returnedBitmap;
+        view?.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        view?.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        view?.buildDrawingCache()
+        var returnedBitmap: Bitmap? = null
 
+        if (view != null) {
+            returnedBitmap = Bitmap.createBitmap(
+                view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888
+            )
+
+            val canvas = Canvas(returnedBitmap)
+            canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN)
+            val drawable = view.background
+            drawable?.draw(canvas)
+            view.draw(canvas)
+        }
+        return returnedBitmap
     }
 
-    private void addCustomMarkerFromURL() {
-        mCustomMarkerView = ((LayoutInflater) baseActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+    private fun addCustomMarkerFromURL() {
+        mCustomMarkerView =
+            (baseActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+                R.layout.view_custom_marker,
+                null
+            )
         if (googleMap == null) {
-            return;
+            return
         }
         // adding a marker with image from URL using glide image loading library
         try {
             Glide
-                    .with(baseActivity)
-                    .asBitmap()
-                    .load(userDTO.getImage())
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                .with(baseActivity)
+                .asBitmap()
+                .load(userDTO?.image)
+                .into(object : SimpleTarget<Bitmap?>() {
+                    override fun onResourceReady(
+                        bitmap: Bitmap,
+                        transition: Transition<in Bitmap?>?
+                    ) {
 
-                            // For dropping a marker at a point on the Map
-                            LatLng sydney = new LatLng(Double.parseDouble(artistBooking.getC_latitude()), Double.parseDouble(artistBooking.getC_longitude()));
-                            googleMap.addMarker(new MarkerOptions().position(sydney)
-                                    .title(artistBooking.getUserName()).snippet(artistBooking.getAddress())
-                                    .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(mCustomMarkerView, bitmap))));
+                        // For dropping a marker at a point on the Map
+                        if (artistBooking != null) {
+                            val sydney = LatLng(
+                                artistBooking!!.c_latitude.toDouble(),
+                                artistBooking!!.c_longitude.toDouble()
+                            )
 
+                            val bm = getMarkerBitmapFromView(mCustomMarkerView, bitmap)
+
+                            bm?.let {
+                                googleMap?.addMarker(
+                                    MarkerOptions().position(sydney)
+                                        .title(artistBooking?.userName).snippet(artistBooking?.address)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(it)))
+                            }
                         }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
+                    }
+                })
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
     }
 
-    public Bitmap getBitmapFromLink(String link) {
-        try {
-            URL url = new URL(link);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    fun getBitmapFromLink(link: String?): Bitmap? {
+        return try {
+            val url = URL(link)
+            val connection = url.openConnection() as HttpURLConnection
             try {
-                connection.connect();
-            } catch (Exception e) {
-                Log.v("asfwqeds", e.getMessage());
+                connection.connect()
+            } catch (e: Exception) {
+                Log.v("asfwqeds", e.message.toString())
             }
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException e) {
-            Log.v("asfwqeds", e.getMessage());
-            e.printStackTrace();
-            return null;
+            val input = connection.inputStream
+            BitmapFactory.decodeStream(input)
+        } catch (e: IOException) {
+            Log.v("asfwqeds", e.message.toString())
+            e.printStackTrace()
+            null
         }
+    }
+
+    companion object {
+        private val TAG = CustomerBooking::class.java.simpleName
     }
 }

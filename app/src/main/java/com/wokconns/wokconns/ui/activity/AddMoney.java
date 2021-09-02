@@ -26,7 +26,7 @@ import com.wokconns.wokconns.utils.ProjectUtils;
 import java.util.HashMap;
 
 public class AddMoney extends AppCompatActivity implements View.OnClickListener {
-    private String TAG = AddMoney.class.getSimpleName();
+    private final String TAG = AddMoney.class.getSimpleName();
     private Context mContext;
     private CustomEditText etAddMoney;
     private CustomTextView tv1000, tv1500, tv2000;
@@ -34,7 +34,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
     float rs = 0;
     float rs1 = 0;
     float final_rs = 0;
-   private HashMap<String, String> parmas = new HashMap<>();
+   private final HashMap<String, String> parmas = new HashMap<>();
     private SharedPrefs prefrence;
     private UserDTO userDTO;
     private String amt = "";
@@ -43,6 +43,7 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
     private ImageView ivBack;
     private Dialog dialog;
     private LinearLayout paystackButton, flutterwaveButton, llCancel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,9 +176,9 @@ public class AddMoney extends AppCompatActivity implements View.OnClickListener 
 
 
         ///dialog.getWindow().setBackgroundDrawableResource(R.color.black);
-        paystackButton = (LinearLayout) dialog.findViewById(R.id.paystackButton);
-        flutterwaveButton = (LinearLayout) dialog.findViewById(R.id.flutterwaveButton);
-        llCancel = (LinearLayout) dialog.findViewById(R.id.llCancel);
+        paystackButton = dialog.findViewById(R.id.paystackButton);
+        flutterwaveButton = dialog.findViewById(R.id.flutterwaveButton);
+        llCancel = dialog.findViewById(R.id.llCancel);
 
         dialog.show();
         dialog.setCancelable(false);

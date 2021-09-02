@@ -50,7 +50,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProjectUtils.Fullscreen(SignUpActivity.this);
+//        ProjectUtils.Fullscreen(SignUpActivity.this);
         setContentView(R.layout.activity_sign_up);
         mContext = SignUpActivity.this;
         prefrence = SharedPrefs.getInstance(mContext);

@@ -1,19 +1,10 @@
 package com.wokconns.wokconns.ui.fragment;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +13,21 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.widget.SearchView;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.databinding.DailogFilterJobBinding;
 import com.wokconns.wokconns.dto.AllJobsDTO;
 import com.wokconns.wokconns.dto.CategoryDTO;
 import com.wokconns.wokconns.dto.CurrencyDTO;
 import com.wokconns.wokconns.dto.UserDTO;
-import com.wokconns.wokconns.R;
 import com.wokconns.wokconns.https.HttpsRequest;
 import com.wokconns.wokconns.interfacess.Const;
 import com.wokconns.wokconns.network.NetworkManager;
@@ -47,7 +45,7 @@ import java.util.List;
 
 public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private View view;
-    private String TAG = AllJobsFrag.class.getSimpleName();
+    private final String TAG = AllJobsFrag.class.getSimpleName();
     private RecyclerView RVhistorylist;
     private AllJobsAdapter allJobsAdapter;
     private ArrayList<AllJobsDTO> allJobsDTOList;
@@ -64,11 +62,11 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     HashMap<String, String> parms = new HashMap<>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private HashMap<String, String> params = new HashMap<>();
+    private final HashMap<String, String> params = new HashMap<>();
     private Dialog dialogFilterJob;
     DailogFilterJobBinding dailogFilterJobBinding;
 
-    private HashMap<String, String> parmsCategory = new HashMap<>();
+    private final HashMap<String, String> parmsCategory = new HashMap<>();
     private ArrayList<CategoryDTO> categoryDTOS = new ArrayList<>();
     private ArrayList<CurrencyDTO> currencyDTOArrayList = new ArrayList<>();
     private SpinnerDialog spinnerDialogCate;
@@ -77,9 +75,9 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all_jobs, container, false);
-        prefrence = SharedPrefs.getInstance(getActivity());
+        prefrence = SharedPrefs.getInstance(requireActivity());
         userDTO = prefrence.getParentUser(Const.USER_DTO);
-        myInflater = LayoutInflater.from(getActivity());
+        myInflater = LayoutInflater.from(requireActivity());
         parms.put(Const.ARTIST_ID, userDTO.getUser_id());
         parmsCategory.put(Const.USER_ID, userDTO.getUser_id());
         setUiAction(view);
@@ -87,12 +85,12 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void setUiAction(View v) {
-        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = v.findViewById(R.id.swipe_refresh_layout);
         rlSearch = v.findViewById(R.id.rlSearch);
         svSearch = v.findViewById(R.id.svSearch);
         tvNo = v.findViewById(R.id.tvNo);
         RVhistorylist = v.findViewById(R.id.RVhistorylist);
-        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(requireActivity().getApplicationContext());
         RVhistorylist.setLayoutManager(mLayoutManager);
 
         svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -106,8 +104,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
             public boolean onQueryTextChange(String newText) {
                 try {
                     if (newText.length() > 0) {
-                        allJobsAdapter.filter(newText.toString());
-
+                        allJobsAdapter.filter(newText);
                     }
                 } catch (Exception e) {
 
@@ -119,19 +116,19 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(() -> {
 
-            Log.e("Runnable", "FIRST");
-            if (NetworkManager.isConnectToInternet(getActivity())) {
-                swipeRefreshLayout.setRefreshing(true);
-                getjobs();
+                    Log.e("Runnable", "FIRST");
+                    if (NetworkManager.isConnectToInternet(requireActivity())) {
+                        swipeRefreshLayout.setRefreshing(true);
+                        getjobs();
 
-            } else {
-                ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
-            }
-        }
+                    } else {
+                        ProjectUtils.showToast(requireActivity(), getResources().getString(R.string.internet_concation));
+                    }
+                }
         );
         baseActivity.ivSearch.setOnClickListener(v1 -> {
 
-            if (NetworkManager.isConnectToInternet(getActivity())) {
+            if (NetworkManager.isConnectToInternet(requireActivity())) {
                 if (rlSearch.getVisibility() == View.VISIBLE) {
                     baseActivity.ivSearch.setImageResource(R.drawable.ic_search_white);
                     rlSearch.setVisibility(View.GONE);
@@ -142,7 +139,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
 
                 }
             } else {
-                ProjectUtils.showToast(getActivity(), getString(R.string.internet_concation));
+                ProjectUtils.showToast(requireActivity(), getString(R.string.internet_concation));
             }
 
         });
@@ -157,7 +154,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getjobs() {
-        new HttpsRequest(Const.GET_ALL_JOB_API, parms, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_JOB_API, parms, requireActivity()).stringPost(TAG, (flag, msg, response) -> {
             swipeRefreshLayout.setRefreshing(false);
             if (flag) {
                 tvNo.setVisibility(View.GONE);
@@ -167,7 +164,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                     allJobsDTOList = new ArrayList<>();
                     Type getpetDTO = new TypeToken<List<AllJobsDTO>>() {
                     }.getType();
-                    allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    allJobsDTOList = new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
                     showData();
 
                 } catch (Exception e) {
@@ -274,13 +271,13 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
         dailogFilterJobBinding.tvCancel.setOnClickListener(v -> dialogFilterJob.dismiss());
         dailogFilterJobBinding.tvSubmit.setOnClickListener(
                 v -> {
-                    Log.e(TAG, "onClick: "+dailogFilterJobBinding.seekBar.getProgress());
+                    Log.e(TAG, "onClick: " + dailogFilterJobBinding.seekBar.getProgress());
                     filteredList();
                 });
     }
 
     public void filteredList() {
-        params.put(Const.PRICE, ""+dailogFilterJobBinding.seekBar.getProgress());
+        params.put(Const.PRICE, "" + dailogFilterJobBinding.seekBar.getProgress());
         new HttpsRequest(Const.JOB_FILTER, params, baseActivity).imagePost(TAG, (flag, msg, response) -> {
             dialogFilterJob.dismiss();
             if (flag) {
@@ -289,7 +286,7 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                     allJobsDTOList = new ArrayList<>();
                     Type getJobDTO = new TypeToken<List<AllJobsDTO>>() {
                     }.getType();
-                    allJobsDTOList = (ArrayList<AllJobsDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getJobDTO);
+                    allJobsDTOList = new Gson().fromJson(response.getJSONArray("data").toString(), getJobDTO);
                     showData();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -301,15 +298,15 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void getCategory() {
-        new HttpsRequest(Const.GET_ALL_CATEGORY_API, parmsCategory, getActivity()).stringPost(TAG, (flag, msg, response) -> {
+        new HttpsRequest(Const.GET_ALL_CATEGORY_API, parmsCategory, requireActivity()).stringPost(TAG, (flag, msg, response) -> {
             if (flag) {
                 try {
                     categoryDTOS = new ArrayList<>();
                     Type getpetDTO = new TypeToken<List<CategoryDTO>>() {
                     }.getType();
-                    categoryDTOS = (ArrayList<CategoryDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
+                    categoryDTOS = new Gson().fromJson(response.getJSONArray("data").toString(), getpetDTO);
 
-                    spinnerDialogCate = new SpinnerDialog((Activity) baseActivity, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
+                    spinnerDialogCate = new SpinnerDialog(baseActivity, categoryDTOS, getResources().getString(R.string.select_cate));// With 	Animation
                     spinnerDialogCate.bindOnSpinerListener((item, id, position) -> {
                         dailogFilterJobBinding.etCategoryD.setText(item);
                         params.put(Const.CATEGORY_ID, id);
@@ -329,8 +326,20 @@ public class AllJobsFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                     currencyDTOArrayList = new ArrayList<>();
                     Type getCurrencyDTO = new TypeToken<List<CurrencyDTO>>() {
                     }.getType();
-                    currencyDTOArrayList = (ArrayList<CurrencyDTO>) new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
+                    currencyDTOArrayList = new Gson().fromJson(response.getJSONArray("data").toString(), getCurrencyDTO);
 
+                    CurrencyDTO naira = null;
+
+                    for (CurrencyDTO el : currencyDTOArrayList)
+                        if (el.getCode().equalsIgnoreCase("NGN")) naira = el;
+
+                    CurrencyDTO finalNaira = naira;
+                    dailogFilterJobBinding.etCurrencyD.postDelayed(() -> {
+                        dailogFilterJobBinding.etCurrencyD.setText(String.format("%s", finalNaira), false);
+
+                        dailogFilterJobBinding.etCurrencyD.setSelection(
+                                dailogFilterJobBinding.etCurrencyD.getText().length());
+                    }, 500);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

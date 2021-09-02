@@ -89,7 +89,7 @@
     <string name="get_discount">Get Discount</string>
     <string name="code_copy">Code Copy</string>
     <string name="referral_msg">Hello, this is my Referral Code</string>
-    <string name="opss_share">Opps!! It seems that you have not installed any sharing app.</string>
+    <string name="opss_share">Oops!! It seems that you have not installed any sharing app.</string>
     <string name="support">Support</string>
     <string name="val_title">Please enter title.</string>
     <string name="profile_settings">Personal Profile</string>
@@ -109,7 +109,7 @@
     <string name="date">Date:</string>
     <string name="val_des">Please enter description.</string>
     <string name="val_price">Please enter price.</string>
-    <string name="inprogres">Inprogress</string>
+    <string name="inprogres">In progress</string>
     <string name="reject">Reject</string>
     <string name="reject_msg">Are you sure you want to reject the application?</string>
     <string name="start_app">Are you sure you want to continue with this application?</string>

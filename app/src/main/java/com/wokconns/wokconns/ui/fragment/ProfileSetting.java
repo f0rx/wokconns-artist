@@ -44,11 +44,11 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
     private CustomEditText etOldPassD, etNewPassD, etConfrimPassD;
     private ImageView ivClose;
     private HashMap<String, String> params;
-    private HashMap<String, String> paramsLogout = new HashMap<>();
-    private HashMap<String, File> paramsFile = new HashMap<>();
+    private final HashMap<String, String> paramsLogout = new HashMap<>();
+    private final HashMap<String, File> paramsFile = new HashMap<>();
     private SharedPrefs prefrence;
     private UserDTO userDTO;
-    private String TAG = ProfileSetting.class.getSimpleName();
+    private final String TAG = ProfileSetting.class.getSimpleName();
     private View view;
     private BaseActivity baseActivity;
     private DialogInterface dd;
@@ -72,7 +72,7 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
 
     public void setUiAction() {
         binding.llChangePass.setOnClickListener(this);
-        binding.llLanguage.setOnClickListener(this);
+//        binding.llLanguage.setOnClickListener(this);
         binding.llPrivacy.setOnClickListener(this);
         binding.llFaq.setOnClickListener(this);
     }
@@ -87,11 +87,11 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
                     ProjectUtils.showToast(getActivity(), getResources().getString(R.string.internet_concation));
                 }
                 break;
-            case R.id.ll_language:
-                Intent intent = new Intent(baseActivity, LanguageSelection.class);
-                intent.putExtra(Const.TYPE, "1");
-                startActivity(intent);
-                break;
+//            case R.id.ll_language:
+//                Intent intent = new Intent(baseActivity, LanguageSelection.class);
+//                intent.putExtra(Const.TYPE, "1");
+//                startActivity(intent);
+//                break;
             case R.id.ll_privacy:
                 baseURL = Const.PRIVACY_URL;
                 getURLForWebView();
@@ -110,16 +110,16 @@ public class ProfileSetting extends Fragment implements View.OnClickListener {
         dialog_pass.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog_pass.setContentView(R.layout.dailog_password);
 
-        ivClose = (ImageView) dialog_pass.findViewById(R.id.iv_close);
-        etOldPassD = (CustomEditText) dialog_pass.findViewById(R.id.etOldPassD);
-        etNewPassD = (CustomEditText) dialog_pass.findViewById(R.id.etNewPassD);
-        etConfrimPassD = (CustomEditText) dialog_pass.findViewById(R.id.etConfrimPassD);
+        ivClose = dialog_pass.findViewById(R.id.iv_close);
+        etOldPassD = dialog_pass.findViewById(R.id.etOldPassD);
+        etNewPassD = dialog_pass.findViewById(R.id.etNewPassD);
+        etConfrimPassD = dialog_pass.findViewById(R.id.etConfrimPassD);
 
         etOldPassD.setTransformationMethod(new PasswordTransformationMethod());
         etNewPassD.setTransformationMethod(new PasswordTransformationMethod());
         etConfrimPassD.setTransformationMethod(new PasswordTransformationMethod());
 
-        tvYesPass = (CustomTextViewBold) dialog_pass.findViewById(R.id.tvYesPass);
+        tvYesPass = dialog_pass.findViewById(R.id.tvYesPass);
         dialog_pass.show();
         dialog_pass.setCancelable(false);
 

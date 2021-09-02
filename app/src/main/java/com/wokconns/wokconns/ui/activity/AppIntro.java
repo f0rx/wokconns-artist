@@ -36,7 +36,7 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProjectUtils.Fullscreen(AppIntro.this);
+//        ProjectUtils.Fullscreen(AppIntro.this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_app_intro2);
         mContext = AppIntro.this;
         preference = SharedPrefs.getInstance(mContext);
@@ -150,12 +150,12 @@ public class AppIntro extends AppCompatActivity implements ViewPager.OnPageChang
                 startActivity(new Intent(mContext, SignUpActivity.class));
                 finish();
                 break;
-            case R.id.ll_language:
-                Intent intent = new Intent(mContext, LanguageSelection.class);
-                intent.putExtra(Const.TYPE, "0");
-                startActivity(intent);
-                finish();
-                break;
+//            case R.id.ll_language:
+//                Intent intent = new Intent(mContext, LanguageSelection.class);
+//                intent.putExtra(Const.TYPE, "0");
+//                startActivity(intent);
+//                finish();
+//                break;
         }
     }
 }
